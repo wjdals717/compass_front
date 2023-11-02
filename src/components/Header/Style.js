@@ -62,10 +62,10 @@ export const SDropDownContent = css`
     display: none;
     position: absolute;
     z-index: 1;
-    margin: 22px 40px 0px 0px;
+    margin: 22px 50px 0px 0px;
     padding: 6px 20px;
     background-color: #f1f1f1;
-    min-width: 160px;
+    min-width: 130px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 `;
 
