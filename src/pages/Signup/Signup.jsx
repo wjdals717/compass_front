@@ -10,8 +10,8 @@ import naverStart from "./스크린샷 2023-11-02 151516.png"
 function Signup(props) {
     const navigate = useNavigate();
 
-    const handleLoginOnClick = () => {
-        navigate("/")
+    const handleDetailSignupOnClick = () => {
+        navigate("/auth/detail/signup")
     }
 
     const handleSigninOnClick = () => {
@@ -26,9 +26,9 @@ function Signup(props) {
                         <h1 css={S.STitle}>회원가입</h1>
                         <h2 css={S.STitle2}>회원가입 후 많은 정보를 얻어보세요.</h2>
 
-                    <div css={S.SLoginBox}>
-                        <div css={S.SkakaoLoginBtn}><img src={kakaoStart} onClick={handleLoginOnClick} /></div>
-                        <div css={S.SNaverLoginBtn}><img css={S.SNaverBtn} src={naverStart} onClick={handleLoginOnClick} /></div>
+                    <div css={S.SDetailSignupBox}>
+                        <div css={S.SkakaoDetailSignupBtn}><img src={kakaoStart} onClick={handleDetailSignupOnClick} /></div>
+                        <div css={S.SNaverDetailSignupBtn}><img css={S.SNaverBtn} src={naverStart} onClick={handleDetailSignupOnClick} /></div>
                     </div>
 
                     <div css={S.SSigninBtnBox}>

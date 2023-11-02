@@ -2,8 +2,8 @@ import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
 
+// 기본 틀
 export const SLayout = css`
-    /* background-color: black; */
     margin: 20px;
     width: 1100px;
 `;
@@ -17,6 +17,7 @@ export const SContainer = css`
     left: 300px;
 `;
 
+// 제목
 export const STitle = css`
     font-size: 30px;
     font-weight: 1000;
@@ -43,6 +44,7 @@ export const SLoginBox = css`
     height: 50px;
 `;
 
+// 로그인
 export const SkakaoLoginBtn = css`
     margin-bottom: 10px;
     cursor: pointer;
@@ -57,7 +59,7 @@ export const SNaverBtn = css`
     height: 45px;
 `;
 
-// 회원가입 박스
+// 회원가입 페이지 이동
 export const SSignupBtnBox = css`
     position: relative;
     top: 250px;

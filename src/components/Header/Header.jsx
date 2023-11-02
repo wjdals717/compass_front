@@ -19,7 +19,7 @@ function Header(props) {
     }
 
     const handleLogoutOnClick = () => {
-
+        alert("로그아웃 하시겠습니까?")
         setIsLogin(false)
     }
     
