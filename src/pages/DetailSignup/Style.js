@@ -35,30 +35,27 @@ export const STitle2 = css`
     color: #8c98a4;
 `;
 
-// 상세정보 입력 페이지 이동
-export const SDetailSignupBox = css`
+// 입력
+export const SInputBox = css`
     position: relative;
-    top: 100px;
-    left: 100px;
+    top: 60px;
+    left: 35px;
     width: 350px;
     height: 50px;
 `;
 
-export const SkakaoDetailSignupBtn = css`
-    margin-bottom: 10px;
-    cursor: pointer;
+export const SInuptCompartment = css`
+
+    & * {
+        border: 1px solid #8c98a4;
+        border-radius: 5px;
+        width: 425px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
 `;
 
-export const SNaverDetailSignupBtn = css`
-    cursor: pointer;
-`;
-
-export const SNaverBtn = css`
-    width: 300px;
-    height: 45px;
-`;
-
-// 로그인 페이지 이동
+// 로그인 페이지 이동 버튼
 export const SSigninBtnBox = css`
     position: relative;
     top: 250px;
@@ -76,5 +73,21 @@ export const SSigninBtn = css`
     text-decoration: none;
     background-color: transparent;
     border-color: transparent;
+    cursor: pointer;
+`;
+
+// 가입하기
+export const SSignupBtnBox = css`
+    position: relative;
+    top: 210px;
+    left: 365px;
+`;
+
+export const SSignupBtn = css`
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    width: 97px;
+    height: 40px;
+    background-color: #92C2F4;
     cursor: pointer;
 `;
