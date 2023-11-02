@@ -10,7 +10,7 @@ export const SLayout = css`
 
 export const SContainer = css`
     box-sizing: border-box;
-    background-color: #dbdbdb;
+    background-color: #dbdbdd;
     width: 500px;
     height: 500px;
     position: relative;
@@ -26,7 +26,6 @@ export const STitle = css`
     position: relative;
     top: 40px;
     left: 40px;
-    
 `;
 
 export const STitle2 = css`
@@ -36,7 +35,8 @@ export const STitle2 = css`
     color: #8c98a4;
 `;
 
-export const SLoginBox = css`
+// 상세정보 입력 페이지 이동
+export const SDetailSignupBox = css`
     position: relative;
     top: 100px;
     left: 100px;
@@ -44,13 +44,12 @@ export const SLoginBox = css`
     height: 50px;
 `;
 
-// 로그인
-export const SkakaoLoginBtn = css`
+export const SkakaoDetailSignupBtn = css`
     margin-bottom: 10px;
     cursor: pointer;
 `;
 
-export const SNaverLoginBtn = css`
+export const SNaverDetailSignupBtn = css`
     cursor: pointer;
 `;
 
@@ -59,24 +58,23 @@ export const SNaverBtn = css`
     height: 45px;
 `;
 
-// 회원가입 페이지 이동
-export const SSignupBtnBox = css`
+// 로그인 페이지 이동
+export const SSigninBtnBox = css`
     position: relative;
     top: 250px;
     left: 30px;
 `;
 
-export const SSignupTitle = css`
+export const SSigninTitle = css`
     font-size: 15px;
     color: #8c98a4;
     margin-left: 8px;
 `;
 
-export const SSignupBtn = css`
+export const SSigninBtn = css`
     color: #1976de;
     text-decoration: none;
     background-color: transparent;
     border-color: transparent;
     cursor: pointer;
 `;
-
