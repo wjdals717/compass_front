@@ -1,0 +1,129 @@
+import { css } from '@emotion/react';
+/** @jsxImportSource @emotion/react */
+
+export const STopContainer = css`
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 40px auto;
+    border: none;
+    border-radius: 50px;
+    padding: 30px 40px 20px;
+    width: 800px;
+    box-shadow: 4px 4px 10px 4px #dbdbdb;
+`;
+
+export const SH1 = css`
+    margin-bottom: 25px;
+    font-size: 27px;
+    font-weight: 600;
+`;
+
+export const STopSpan = css`
+    margin-bottom: 15px;
+    color: #999;
+`;
+
+export const SMatchButton = css`
+    margin: 0px 25px;
+    border: 1px solid #dbdbdb;
+    border-radius: 20px;
+    width: 150px;
+    height: 40px;
+    background-color: white;
+    font-size: 23px;
+    box-shadow: 1px 5px 5px 1px #eee;
+    cursor: pointer;
+`;
+
+export const SContainer = css`
+    display: flex;
+    flex-direction: column;
+    margin: 40px auto;
+    border: none;
+    border-radius: 50px;
+    padding: 30px 40px 10px;
+    width: 800px;
+    box-shadow: 4px 4px 10px 4px #dbdbdb;
+`;
+
+export const SContainerName = css`
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+`;
+
+export const SSelectBoxContainer = css`
+    padding-bottom: 30px;
+    & > p {
+        padding-bottom: 10px;
+    }
+`;
+
+export const SNameContainer= css`
+    display: flex;
+    justify-content: space-between;
+
+    & > p {
+        font-size: 13px;
+        color: #999;
+    }
+`;
+
+export const SFileUploadContainer = css`
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+`;
+
+export const SUploadButton = css`
+    margin-top: 5px;
+    border: 1px solid #dbdbdb;
+    border-radius: 20px;
+    width: 100px;
+    height: 30px;
+    background-color: white;
+    box-shadow: 1px 5px 5px 1px #eee;
+    cursor: pointer;
+`;
+
+export const SImgContainer = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -20px;
+    width: 100%;
+`;
+
+export const SImg = css`
+    width: 500px;
+`;
+
+export const SButtonContainer = css`
+    display: flex;
+    justify-content: center;
+    margin: 30px 0px;
+    width: 100%;
+`;
+
+export const SSpanContainer = css`
+    margin: 10px auto;
+    width: 600px;
+
+    & > span {
+        color: #999;
+    }
+`;
+
+export const SSubmitButton = css`
+    border: 1px solid #dbdbdb;
+    border-radius: 20px;
+    width: 500px;
+    font-size: 20px;
+    height: 40px;
+    background-color: #92C2F4;
+    color: white;
+    font-size: 23px;
+    box-shadow: 1px 5px 5px 1px #eee;
+    cursor: pointer;
+`;
