@@ -11,6 +11,7 @@ import Footer from "./components/Footer/Footer";
 import { css } from '@emotion/react';
 
 const wrapper = css`
+  width: 100%;
   height: 100vh;
 `
 

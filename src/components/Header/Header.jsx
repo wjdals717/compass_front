@@ -49,7 +49,7 @@ function Header(props) {
                     <button css={S.SDropBtn} onClick={handleDropdownBtnOnClick}>ooo 님</button>
                     <div css={[S.SDropDownContent, isOpen && S.SDropDownContentVisible]}>
                         <div css={S.SDropDownbarMenu}>
-                            <div css={S.SBtn1}><Link to="/mypage">마이페이지</Link></div>
+                            <div css={S.SBtn1}><Link to="/account/mypage">마이페이지</Link></div>
                             <div css={S.SBtn2}><a href="/" onClick={handleLogoutOnClick}>로그아웃</a></div>
                         </div>
                     </div>
