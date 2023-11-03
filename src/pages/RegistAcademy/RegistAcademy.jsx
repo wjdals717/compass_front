@@ -8,16 +8,34 @@ import uploadPrecautionsImg from '../../assets/uploadPrecautions.png'
 
 function RegistAcademy(props) {
 
-    const [ SelectedOption, setSelectedOpion ] = useState();
+    const [ matchOption, setMatchOption ] = useState();
+
+    const handleMatchOptionChange = (event) => {
+        setMatchOption(event.target.value);
+    }
 
     return (
         <RootContainer>
             <div css={S.STopContainer}>
                 <h1 css={S.SH1}>학원등록하기</h1>
                 <span css={S.STopSpan}>사업자등록증의 상호명(법인명)과 학원명이 같나요?</span>
-                <div>
-                    <button css={S.SMatchButton}>다릅니다</button>
-                    <button css={S.SMatchButton}>같습니다</button>
+                <div css={S.SMatchButtonContainer} >
+                    <input 
+                        type="radio" 
+                        id='different' 
+                        name='match' 
+                        value={false}
+                        onChange={handleMatchOptionChange}
+                    />
+                    <label htmlFor="different">다릅니다</label>
+                    <input 
+                        type="radio" 
+                        id='same' 
+                        name='match' 
+                        value={true}
+                        onChange={handleMatchOptionChange}
+                    />
+                    <label htmlFor="same">같습니다</label>
                 </div>
             </div>
             <div css={S.SContainer}>
@@ -57,13 +75,15 @@ function RegistAcademy(props) {
                         첨부하기
                     </button>
                 </div>
-                <div css={S.SFileUploadContainer}>
-                    <span>학원설립운영등록증</span>
-                    <button css={S.SUploadButton}>
-                        <BsFillFileEarmarkArrowUpFill />
-                        첨부하기
-                    </button>
-                </div>
+                {matchOption === 'true' ? <></>
+                    : <div css={S.SFileUploadContainer}>
+                        <span>학원설립운영등록증</span>
+                        <button css={S.SUploadButton}>
+                            <BsFillFileEarmarkArrowUpFill />
+                            첨부하기
+                        </button>
+                    </div>
+                }
             </div>
             <div css={S.SImgContainer}>
                 <img css={S.SImg} src={uploadPrecautionsImg} alt="" />

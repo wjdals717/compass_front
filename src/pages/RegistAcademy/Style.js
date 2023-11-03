@@ -15,7 +15,7 @@ export const STopContainer = css`
 
 export const SH1 = css`
     margin-bottom: 25px;
-    font-size: 27px;
+    font-size: 30px;
     font-weight: 600;
 `;
 
@@ -24,17 +24,31 @@ export const STopSpan = css`
     color: #999;
 `;
 
-export const SMatchButton = css`
-    margin: 0px 25px;
-    border: 1px solid #dbdbdb;
-    border-radius: 20px;
-    width: 150px;
-    height: 40px;
-    background-color: white;
-    font-size: 23px;
-    box-shadow: 1px 5px 5px 1px #eee;
-    cursor: pointer;
+export const SMatchButtonContainer = css`
+    margin-top: 15px;
+    & > input {
+        display: none;
+    }
+
+    & > input + label {
+        margin: 0px 25px;
+        border: 1px solid #dbdbdb;
+        border-radius: 25px;
+        padding: 10px 30px;
+        background-color: white;
+        font-size: 23px;
+        box-shadow: 1px 5px 5px 1px #eee;
+        cursor: pointer;
+    }
+
+    & > input:checked+label {
+        background-color: #92C2F4;
+        color: white;
+    }
+    
 `;
+
+
 
 export const SContainer = css`
     display: flex;
