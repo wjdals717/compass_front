@@ -37,45 +37,59 @@ export const SearchContainer = css`
     }
 `;
 
+
 export const PageLayout = css`
     position: relative;
     display: flex;
+    padding: 0 10px;
     width: 100%;
     height: 100%;
 `;
 
 export const PageContainer = css`
-    position: relative;
-    flex-grow: 1;
-`;
-
-export const ClassifyBox = css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 30px;
+    width: 980px;
+    padding: 0 60px;
 `;
 
 export const InfoBox = css`
     display: flex;
+    align-items: center;
+    padding: 20px 0;
+`;
+
+export const HeaderBox = css`
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding: 10px 30px;
+    padding: 15px 0;
+
+    div {
+        display: flex;
+        align-items: center;
+        color: #aaa;
+    }
+`;
+
+export const ClassifyBox = css`
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    padding: 5px;
 `;
 
 export const UlBox = css`
     position: relative;
     display: flex;
     justify-content: center;
-    /* align-content: flex-start; */
     flex-wrap: wrap;
-    padding: 10px 20px;
+    padding-bottom: 10px;
     overflow: auto;
 
-    li:nth-child(2n) {
-        margin: 0 20px;
+    li:nth-child(3n+2) {
+        margin: 0px 20px;
     }
-    
-    li:nth-child(3n) {
+
+    li:not(.recent):nth-child(n) {
+        margin-bottom: 15px;
     }
 `;
 

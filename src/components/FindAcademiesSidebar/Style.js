@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 
 export const FilterLayout = css`
-    position: relative;
-    margin: 10px 5px;
-    width: 250px;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
     height: 100%;
 `;
 

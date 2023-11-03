@@ -19,14 +19,6 @@ function FindAcademiesSidebar(props) {
                 <div><input type="checkbox" />성인</div>
             </div>
             <div css={S.FilterContainer}>
-                <h3>분야</h3>
-                <div><input type="checkbox" />공부</div>
-                <div><input type="checkbox" />취미</div>
-                <div><input type="checkbox" />IT</div>
-                <div><input type="checkbox" />보건</div>
-                <div><input type="checkbox" />음악</div>
-            </div>
-            <div css={S.FilterContainer}>
                 <h3>시설 및 편의사항</h3>
                 <div><input type="checkbox" />설명회 진행</div>
                 <div><input type="checkbox" />자습실 제공</div>
