@@ -10,7 +10,8 @@ export const SLayout = css`
 
 export const SContainer = css`
     box-sizing: border-box;
-    background-color: #dbdbdb;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
     width: 500px;
     height: 500px;
     position: relative;
