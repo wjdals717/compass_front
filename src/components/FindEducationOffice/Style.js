@@ -62,9 +62,14 @@ export const SList = css`
     }
 `;
 
+export const STitleName = css`
+    padding: 20px 0px 5px 0px;
+`;
+
 export const SChoiceBox = css`
     display: flex;
     align-items: center;
+    /* justify-content: center; */
     margin: 5px 0px;
     width: 100%;
     height: 50px;
