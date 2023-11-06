@@ -2,24 +2,21 @@ import React, { useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
+import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai'
 
 function Header(props) {
 
     const queryClient = useQueryClient();
     const principalState = queryClient.getQueryState("getPrincipal");
 
-    const navigate = useNavigate();
+    const [view, setView] = useState(false); 
 
     const [ isOpen, setIsOpen ] = useState(false);
 
     const handleDropdownBtnOnClick = () => {
         setIsOpen(!isOpen);
-    }
-
-    const handleLoginOnClick = () => {
-        navigate("/auth/signin");
     }
 
     const handleLogoutOnClick = () => {
@@ -40,18 +37,17 @@ function Header(props) {
             </div>
             <div css={S.SLoginButtonBox}>
                 {!!principalState?.data?.data ? (
-                    <div css={S.SDropDownbar}>
-                    <button css={S.SDropBtn} onClick={handleDropdownBtnOnClick}>{principalState.data.data.nickname} 님</button>
-                    <div css={[S.SDropDownContent, isOpen && S.SDropDownContentVisible]}>
-                        <div css={S.SDropDownbarMenu}>
-                            <div css={S.SBtn1}><Link to="/account/mypage">마이페이지</Link></div>
-                            <div css={S.SBtn2}><a href="/" onClick={handleLogoutOnClick}>로그아웃</a></div>
-                        </div>
+                    <div css={S.SDropLayout} onClick={() => {setView(!view)}}>
+                        반가워요, {principalState.data.data.nickname} 님!{" "}
+                        {view ? <AiOutlineUp/> : <AiOutlineDown/>}
+                        {view && <ul css={S.SDropDown}>
+                            <li><Link to="/account/mypage">마이페이지</Link></li>
+                            <li><div onClick={handleLogoutOnClick}>로그아웃</div></li>
+                        </ul>}
                     </div>
-                </div>
                 ) : (
                     <div>
-                        <Link to={"/auth/signin"} onClick={handleLoginOnClick}>로그인</Link>
+                        <Link to={"/auth/signin"}>로그인</Link>
                     </div>
                 )}
             </div>

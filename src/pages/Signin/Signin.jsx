@@ -9,10 +9,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Signin(props) {
 
-    const navigate = useNavigate();
-
-    const handleLoginOnClick = () => {
-        navigate("/")
+    const handleKaKaoLogin = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
     }
 
     const handleNaverLogin = () => {
@@ -27,7 +25,7 @@ function Signin(props) {
                     <h2 css={S.STitle2}>학습 나침반의 가치를 느껴보세요.</h2>
                         
                     <div css={S.SLoginBox}>
-                        <div css={S.SkakaoLoginBtn}><img src={kakaologin} onClick={handleLoginOnClick} /></div>
+                        <div css={S.SkakaoLoginBtn}><img src={kakaologin} onClick={handleKaKaoLogin} /></div>
                         <div css={S.SNaverLoginBtn}><img css={S.SNaverBtn} src={naverlogin} onClick={handleNaverLogin} /></div>
                     </div>
                 </div>
