@@ -9,6 +9,8 @@ import AcademyInfo from "./pages/AcademyInfo/AcademyInfo";
 import Footer from "./components/Footer/Footer";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import { useQuery } from "react-query";
+import { instance, option } from "./api/config/instance";
 
 const wrapper = css`
   width: 100%;
@@ -22,6 +24,23 @@ const content = css`
 `;
 
 function App() {
+
+  const getPrincipal = useQuery(["getPrincipal"], async () => {
+    try {
+      return await instance.get("/account/principal", option);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }, {
+    retry: 0,
+    refetchInterval: 1000 * 60 * 10,  //10분마다 refetch
+    refetchOnWindowFocus: false
+  });
+
+  if(getPrincipal.isLoading) {
+    return <></>;
+  }
+
   return (
     <div css={wrapper}>
       <Header />
