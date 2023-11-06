@@ -19,11 +19,6 @@ function Signin(props) {
         window.location.href = "http://localhost:8080/oauth2/authorization/naver";
     }
 
-    const handleSignupOnClick = () => {
-        navigate("/auth/signup")
-    }
-
-
     return (
         <RootContainer>
             <div css={S.SLayout}>
@@ -35,12 +30,6 @@ function Signin(props) {
                         <div css={S.SkakaoLoginBtn}><img src={kakaologin} onClick={handleLoginOnClick} /></div>
                         <div css={S.SNaverLoginBtn}><img css={S.SNaverBtn} src={naverlogin} onClick={handleNaverLogin} /></div>
                     </div>
-                    {/* <div css={S.SSignupBtnBox}>
-                        <div css={S.SSignupTitle}>
-                            <span>계정이 없으신가요?</span>
-                        </div>
-                        <button onClick={handleSignupOnClick} css={S.SSignupBtn}>회원가입</button>
-                    </div> */}
                 </div>
             </div>
         </RootContainer>

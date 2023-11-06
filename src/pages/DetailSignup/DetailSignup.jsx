@@ -32,7 +32,7 @@ function DetailSignup(props) {  // /auth/detail/signup
 
     const handleSignupSubmit = async () => {
         try {
-            const response = await instance.post("/api/auth/signup", signupUser);
+            const response = await instance.post("/auth/signup", signupUser);
             alert("회원가입 완료");
             window.location.replace("/auth/signin");
         } catch (error) {

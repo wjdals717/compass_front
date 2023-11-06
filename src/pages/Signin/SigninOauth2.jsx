@@ -8,6 +8,7 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
     const queryClient = useQueryClient();
 
     localStorage.setItem("accessToken", "Bearer " + searchParams.get("token"));
+    queryClient.refetchQueries(["getPrincipal"]);
 
     return <Navigate to={"/"} />
 }
