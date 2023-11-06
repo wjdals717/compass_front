@@ -61,7 +61,7 @@ export const SDropDown = css`
         }
         background-color: #eee;
     }
-    & li {
+    & > li > * {
         display: flex;
         justify-content: center;
         align-items: center;
