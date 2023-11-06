@@ -55,7 +55,7 @@ function DetailSignup(props) {  // /auth/detail/signup
                     <div css={S.SInputBox}>
                         <div css={S.SInuptCompartment}>
                             <div><input type="email" name="email" placeholder='이메일' onChange={handleInputChange}/></div>
-                            <div><input type="text" name="name" placeholder='이름' disabled={true} value={signupUser.name}/></div>
+                            <div><input type="text" name="name" placeholder='이름' onChange={handleInputChange}/></div>
                             <div><input type="text" name="nickname" placeholder='닉네임' onChange={handleInputChange}/></div>
                             <div><input type="text" name="phone" placeholder='전화번호' onChange={handleInputChange}/></div>
                         </div>

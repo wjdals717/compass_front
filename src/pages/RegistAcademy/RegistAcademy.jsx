@@ -1,17 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
 import { BsFillFileEarmarkArrowUpFill, BsInfoCircleFill } from 'react-icons/bs'
 import Select from 'react-select';
 import uploadPrecautionsImg from '../../assets/uploadPrecautions.png'
+import { instance } from '../../api/config/instance';
+import { useQuery } from 'react-query';
+import FindEducationOffice from '../../components/FindEducationOffice/FindEducationOffice';
 
 function RegistAcademy(props) {
 
     const [ matchOption, setMatchOption ] = useState();
+    const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
+    const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
+    const [ choiceEducationOffice, setChoiceEducationOffice ] = useState("");
 
     const handleMatchOptionChange = (event) => {
         setMatchOption(event.target.value);
+    }
+
+    const educationOfficeOptionsState = useQuery(["educationOfficeOptionsState"], async () => {
+        try {
+            return await instance.get("/option/education-offices");
+        }catch(error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setEducationOfficeOptions(response.data.map(option => {
+                return {value: option.educationOfficeCode, label: option.educationOfficeName};
+            }));
+        }
+    });
+
+    const handleEducationOptionChange = (option) => {
+        setSelectedEducationOffice(option.value);
     }
 
     return (
@@ -39,18 +66,14 @@ function RegistAcademy(props) {
                 </div>
             </div>
             <div css={S.SContainer}>
-                <span css={S.SContainerName}>학원 지역*</span>
+                <span css={S.SContainerName}>학원 검색*</span>
                 <div css={S.SSelectBoxContainer}>
-                    <p>시 / 도</p>
-                    <Select />
-                </div>
-                <div css={S.SSelectBoxContainer}>
-                    <p>시 / 군 / 구</p>
-                    <Select />
+                    <p>교육청</p>
+                    <Select options={educationOfficeOptions} onChange={handleEducationOptionChange}/>
                 </div>
                 <div css={S.SSelectBoxContainer}>
                     <p>학원명을 검색해주세요</p>
-                    <Select />
+                    <FindEducationOffice educationOfficeCode={selectedEducationOffice} />
                 </div>
             </div>
             <div css={S.SContainer}>
