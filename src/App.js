@@ -10,6 +10,8 @@ import Footer from "./components/Footer/Footer";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import AcademyInquiry from "./pages/AcademyInquiry/AcademyInquiry";
+import { useQuery } from "react-query";
+import { instance, option } from "./api/config/instance";
 
 const wrapper = css`
   width: 100%;
@@ -19,9 +21,27 @@ const wrapper = css`
 const content = css`
   flex: 1;
   padding-bottom: 90px;
-`
+  min-height: 810px;
+`;
 
 function App() {
+
+  const getPrincipal = useQuery(["getPrincipal"], async () => {
+    try {
+      return await instance.get("/account/principal", option);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }, {
+    retry: 0,
+    refetchInterval: 1000 * 60 * 10,  //10분마다 refetch
+    refetchOnWindowFocus: false
+  });
+
+  if(getPrincipal.isLoading) {
+    return <></>;
+  }
+
   return (
     <div css={wrapper}>
       <Header />
