@@ -2,14 +2,60 @@ import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
 
-export const SMySidebarBox = css`
-    background-color: beige;
+export const MySidebarLayout = css`
     position: relative;
     top: 50px;
+    border-radius: 20px;
+    box-shadow: 4px 4px 10px 4px #dbdbdb;
+    padding: 30px 20px;
+    background-color: beige;
     width: 280px;
-    height: 280px;
+    height: 100%;
 
-    & * {
-        padding: 20px 0px 0px 10px;
+    & a {
+        text-decoration: none;
+    }
+`;
+
+export const UserContainer = css`
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+
+    h2 {
+        margin-right: 10px;
+    }
+
+    & div {
+        border-radius: 50px;
+        background-color: #dbdbdb;
+        padding: 3px 6px 3px 3px;
+    }
+`;
+
+export const IconContainer = css`
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-bottom: 1px solid #dbdbdb;
+    padding: 30px 0;
+
+    & div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    & span {
+        margin: 5px;
+    }
+`;
+
+export const RoleContainer = css`
+    margin-top: 10px;
+
+    & div {
+        padding: 12px;
     }
 `;

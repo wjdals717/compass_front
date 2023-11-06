@@ -5,7 +5,7 @@ import MyPage from '../../pages/MyPage/MyPage';
 function AccountRoute(props) {
     return (
         <Routes>
-            <Route path='/mypage' element={ <MyPage/>}/>
+            <Route path='/mypage/*' element={ <MyPage />}/>
         </Routes>
     );
 }

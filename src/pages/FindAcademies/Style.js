@@ -106,4 +106,3 @@ export const LiBox = css`
         height: 200px;
     }
 `;
-

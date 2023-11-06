@@ -9,6 +9,7 @@ import AcademyInfo from "./pages/AcademyInfo/AcademyInfo";
 import Footer from "./components/Footer/Footer";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import AcademyInquiry from "./pages/AcademyInquiry/AcademyInquiry";
 
 const wrapper = css`
   width: 100%;
@@ -32,6 +33,7 @@ function App() {
           <Route path="/academy/find" element={ <FindAcademies/> } /> 
           <Route path="/academy/regist" element={ <RegistAcademy/> } /> 
           <Route path="/academy/info" element={ <AcademyInfo/> } /> 
+          <Route path="/academy/inquiry" element={ <AcademyInquiry /> } /> 
         </Routes>
       </div>
       <Footer/>
