@@ -1,15 +1,15 @@
 import { css } from '@emotion/react';
 
-export const SHead= (isHeaderFixed) => css`
-    position: ${isHeaderFixed ? "fixed" : "static"};
-    top: ${isHeaderFixed ? "-50px" : ""};
-    left: ${isHeaderFixed ? "auto" : "0"};
-    right: ${isHeaderFixed ? "auto" : "0"};
+export const SLayout = css`
+    position: relative;
+    margin: 0px auto;
+    width: 1000px;
+`;
+
+export const SHead = css`
     display: flex;
     flex-direction: column;
     margin: 30px 0px 20px;
-    border-bottom: 2px solid #dbdbdb;
-    width: ${isHeaderFixed ? "1200px" : "100%"};
     background-color: white;
     z-index: 100;
 `;
@@ -73,10 +73,22 @@ export const SStar = css`
     color: yellow;
 `;
 
-export const SMoveBar = css`
+export const SNavigation = css`
+    text-decoration: none;
+    color: #999;
+`;
+
+export const SMoveBar = (isHeaderFixed) => css`
+    position: ${isHeaderFixed ? "fixed" : "static"};
+    top: ${isHeaderFixed ? "0px" : ""};
+    left: ${isHeaderFixed ? "auto" : "0"};
+    right: ${isHeaderFixed ? "auto" : "0"};
     display: flex;
     justify-content: space-between;
+    border-bottom: 2px solid #dbdbdb;
+    width: ${isHeaderFixed ? "1000px" : ""};
     font-size: 22px;
+    background-color: white;
     & > input {
         display: none;
     }
@@ -95,13 +107,12 @@ export const SMoveBar = css`
     }
 `;
 
-export const SNavigation = css`
-    text-decoration: none;
-`;
-
 export const SIntroductionContainer  = css`
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 300px;  
+    height: 300px;
+    
 `;
 
 export const STitle = css`
@@ -109,12 +120,26 @@ export const STitle = css`
     font-size: 23px;
 `;
 
+export const SIntroductions = css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+`;
+
 export const SIntroduction = css`
-    margin:0px 10px 10px;
+    display: flex;
+    width: 50%;
+    margin-bottom:10px;
     font-size: 18px;
 
+    & > div {
+        width: 200px;
+    }
+
     & > span {
-        margin-left: 500px;
+        width: 300px;
     }
 `;
 
@@ -164,8 +189,24 @@ export const SReviewList = css`
 
 export const SReviewInfo = css`
     display: flex;
+    justify-content: space-between;
     width: 100%;
 
+    & > button {
+        margin-bottom: 10px;
+        border: 1px solid #92C2F4;
+        border-radius: 5px;
+        width: 200px;
+        font-size: 18px;
+        font-weight: 600;
+        background-color: #92C2F4;
+        color: white;
+        cursor: pointer;
+    }
+`;
+
+export const SReviewUserScoreContainer = css`
+    display: flex;
     & > h1 {
         font-size: 18px;
         margin-right: 10px;
@@ -174,18 +215,7 @@ export const SReviewInfo = css`
         border: none;
         width: 40px;
     }
-    & > button {
-        margin-left: 820px;
-        margin-bottom: 10px;
-        border: 1px solid #92C2F4;
-        border-radius: 5px;
-        width: 250px;
-        font-size: 18px;
-        font-weight: 600;
-        background-color: #92C2F4;
-        color: white;
-        cursor: pointer;
-    }
+    
 `;
 
 export const SClassInfo = css`
@@ -207,4 +237,60 @@ export const STable = css`
     & td {
         cursor: pointer;
     }
+`;
+
+export const SSide = css`
+    position: absolute;
+    top: 65px;
+    right: 110px;
+    width: 60px;
+    height: 100%;
+`;
+
+export const SOptionBox = css`
+    position: sticky;
+    top: 180px;
+    width: 60px;
+    height: 110px;
+`;
+
+export const SLikeButton = css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border: none;
+    padding: 0px;
+    width: 60px;
+    font-size: 13px;
+    background-color: white;
+    cursor: pointer;
+`;
+
+export const SLikeIcon = css`
+    display: flex;
+    flex-direction: column;
+    width: 60px;
+    font-size: 30px;
+`;
+
+export const SinquiryButton = css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    padding: 0px;
+    width: 60px;
+    font-size: 13px;
+    background-color: white;
+    cursor: pointer;
+`;
+
+export const SinquiryIcon = css`
+    display: flex;
+    flex-direction: column;
+    width: 60px;
+    font-size: 30px;
 `;
