@@ -74,6 +74,17 @@ export const SSelectBoxContainer = css`
     }
 `;
 
+export const SChoiceBox = css`
+    display: flex;
+    align-items: center;
+    margin: 5px 0px;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    padding: 5px;
+`;
+
 export const SNameContainer= css`
     display: flex;
     justify-content: space-between;
