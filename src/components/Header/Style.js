@@ -43,49 +43,32 @@ export const SLoginButtonBox = css`
     }
 `;
 
-export const SDropDownbar = css`
-    padding: 20px;
-    position: relative;
-    display: inline-block;
+export const SDropLayout = css`
+    cursor: pointer;
 `;
 
-export const SDropBtn = css`
-    font-size: 16px;
-    background-color: transparent;
-    border: transparent;
-    color: black;
-    padding : 0px 50px 0px 30px;
-    cursor : pointer;
-`;
-
-export const SDropDownContent = css`
-    display: none;
+export const SDropDown = css`
     position: absolute;
+    top: 65px;
+    border: 1px solid #dbdbdb;
+    box-shadow: 0px 4px 10px 0px #dbdbdb;
+    background-color: white;
+    width: 150px;
     z-index: 1;
-    margin: 22px 0px 0px 0px;
-    padding: 6px 20px;
-    background-color: #f1f1f1;
-    min-width: 130px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-`;
-
-export const SDropDownContentVisible = css`
-    display: block;
-`;
-
-export const SDropDownbarMenu = css`
-    & * {
-        color: black;
-        text-decoration: none;
-        text-align: center;
+    & :hover{
+        & * {
+            color: #DD4022;
+        }
+        background-color: #eee;
     }
-`;
-
-export const SBtn1 = css`
-    padding: 5px;
-    border-bottom: 1px solid black;
-`;
-
-export const SBtn2 = css`
-    padding: 5px;
+    & li {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+    }
+    & li:first-of-type {
+        border-bottom: 1px solid #dbdbdb;
+    }
 `;
