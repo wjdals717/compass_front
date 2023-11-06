@@ -2,13 +2,10 @@ import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
 export const SInterestAcademyBox = css`
-    position: relative;
-    bottom: 230px;
-    left: 300px;
     border-radius: 20px;
     box-shadow: 4px 4px 10px 4px #dbdbdb;
     padding: 30px;
-    width: 70%;
+    width: 850px;
     height: 100%;
     background-color: wheat;
 

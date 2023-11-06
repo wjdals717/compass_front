@@ -1,14 +1,13 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
-export const SInterestBox = css`
+export const SLayout = css`
+    display: flex;
+    justify-content: space-between;
+    margin: 50px 0;
+    width: 1160px;
 `;
 
 export const SInterestListBox = css`
 
-    & * {
-        background-color: rgb(253, 255, 221);
-        width: 200px;
-        height: 200px;
-    }
 `;

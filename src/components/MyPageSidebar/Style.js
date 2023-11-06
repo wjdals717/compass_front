@@ -3,8 +3,8 @@ import { css } from '@emotion/react';
 
 
 export const MySidebarLayout = css`
-    position: relative;
-    top: 50px;
+    /* position: relative; */
+    /* top: 50px; */
     border-radius: 20px;
     box-shadow: 4px 4px 10px 4px #dbdbdb;
     padding: 30px 20px;
