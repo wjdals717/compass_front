@@ -4,45 +4,39 @@ import { css } from '@emotion/react';
 
 // 기본 틀
 export const SLayout = css`
-    margin: 20px;
-    width: 1100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 export const SContainer = css`
-    box-sizing: border-box;
+    margin: 50px auto;
     border: 1px solid #dbdbdb;
     border-radius: 5px;
+    padding: 50px;
     width: 500px;
-    height: 500px;
-    position: relative;
-    left: 300px;
+    height: 600px;
+    & > * {
+        margin-bottom: 30px;
+    }
 `;
 
 // 제목
 export const STitle = css`
     font-size: 30px;
     font-weight: 1000;
-    margin-bottom: 10px;
-    display: flex;
-    position: relative;
-    top: 40px;
-    left: 40px;
-    
 `;
 
 export const STitle2 = css`
-    position: relative;
-    top: 40px;
-    left: 40px;
     color: #8c98a4;
 `;
 
 export const SLoginBox = css`
-    position: relative;
-    top: 100px;
-    left: 100px;
-    width: 350px;
-    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
 `;
 
 // 로그인

@@ -1,6 +1,6 @@
 import React from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
@@ -8,6 +8,7 @@ import kakaoStart from "./kakaoStart.png"
 import naverStart from "./스크린샷 2023-11-02 151516.png"
 
 function Signup(props) {
+    const [ searchParams, setSearchParams ] = useSearchParams();
     const navigate = useNavigate();
 
     const handleDetailSignupOnClick = () => {
@@ -17,7 +18,6 @@ function Signup(props) {
     const handleSigninOnClick = () => {
         navigate("/auth/signin")
     }
-
 
     return (
         <RootContainer>

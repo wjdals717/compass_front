@@ -7,15 +7,20 @@ import { BrowserRouter } from 'react-router-dom';
 import { Global } from '@emotion/react';
 import { Reset } from 'styled-reset';
 import { Common } from './styles/Global/Common';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-
-  <BrowserRouter>
-    <Global styles={Common} />
-    <Reset />
-    <App />
-  </BrowserRouter>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <Global styles={Common} />
+      <Reset />
+      <App />
+    </BrowserRouter>
+  </QueryClientProvider>
+  
   
 );
 
