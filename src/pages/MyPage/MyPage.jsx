@@ -15,14 +15,20 @@ import MypageLike from '../../components/MyPageContainer/MypageLike/MypageLike';
 import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/StudentSidebar';
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
-import * as S from "./Style";
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
+
+const SLayout = css`
+    display: flex;
+    justify-content: space-between;
+    margin: 50px 0;
+    width: 1160px;
+`;
 
 function MyPage(props) {
     return (
         <RootContainer>
-            <div css={S.SLayout}>
+            <div css={SLayout}>
                 <StudentSidebar />
                 {/* <AcademySidebar /> */}
                 {/* <WebMastesrSidebar /> */}

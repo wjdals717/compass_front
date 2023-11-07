@@ -19,7 +19,7 @@ function AcademyInquiry(props) {
                 </div>
                 <div css={S.InputContainer}>
                     <input type="text" name='title'/>
-                    <input type="text" name='content'/>
+                    <textarea name="" id="" cols="30" rows="10"></textarea>
                 </div>
                 <div css={S.ButtonContainer}>
                     <button onClick={InquiryButtonClick}>문의하기</button>
