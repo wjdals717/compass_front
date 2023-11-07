@@ -9,11 +9,10 @@ export const SLayout = css`
     width: 1100px;
 
     h1 {
-        margin: 20px 0;
-        font-size: 20px;
+        margin: 20px 0 30px;
+        font-size: 22px;
         font-weight: 600;
     }
-
 `;
 
 export const AcademyContainer = css`
@@ -27,6 +26,7 @@ export const AcademyContainer = css`
         border-radius: 5px;
         padding: 10px;
         width: 200px;
+        height: 40px;
         text-align: center;
     }
 `;
@@ -35,18 +35,17 @@ export const InputContainer = css`
     display: flex;
     flex-direction: column;
 
-    input {
+    input, textarea {
         margin: 10px 0;
         border: 1px solid #dbdbdb;
         border-radius: 5px;
         padding: 10px;
-        text-align: center;
+        text-align: left;
         width: 100%;
     }
 
-    input:nth-child(2) {
-        height: 500px;
-    }
+    input { height: 40px; }
+    textarea { height: 430px; }
 `;
 
 export const ButtonContainer = css`

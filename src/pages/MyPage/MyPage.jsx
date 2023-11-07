@@ -15,26 +15,37 @@ import MypageLike from '../../components/MyPageContainer/MypageLike/MypageLike';
 import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/StudentSidebar';
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
+import { css } from '@emotion/react';
+/** @jsxImportSource @emotion/react */
+
+const SLayout = css`
+    display: flex;
+    justify-content: space-between;
+    margin: 50px 0;
+    width: 1160px;
+`;
 
 function MyPage(props) {
     return (
         <RootContainer>
-            <StudentSidebar/>
-            {/* <AcademySidebar /> */}
-            {/* <WebMastesrSidebar /> */}
-            <MypageContainer title={"title"}>
-                <Routes>
-                    <Route path='/' element={<MypageLike />} />
-                    <Route path='/user' element={<MypageUser />} />
-                    <Route path='/inquiry' element={<MyPageInquiry />} />
-                    <Route path='/review' element={<MypageReview />} />
-                    <Route path='/myacademy' element={<MyPageMyAcamedy />} />
-                    <Route path='/adpayment' element={<MypageAdPayment />} />
-                    <Route path='/consultation' element={<MyPageConsultation />} />
-                    <Route path='/academywaiting' element={<AcademyWaiting />} />
-                    <Route path='/inquirylist' element={<InquiryList />} />
-                </Routes>
-            </MypageContainer>
+            <div css={SLayout}>
+                <StudentSidebar />
+                {/* <AcademySidebar /> */}
+                {/* <WebMastesrSidebar /> */}
+                <MypageContainer title={"title"}>
+                    <Routes>
+                        <Route path='/' element={<MypageLike />} />
+                        <Route path='/user' element={<MypageUser />} />
+                        <Route path='/inquiry' element={<MyPageInquiry />} />
+                        <Route path='/review' element={<MypageReview />} />
+                        <Route path='/myacademy' element={<MyPageMyAcamedy />} />
+                        <Route path='/adpayment' element={<MypageAdPayment />} />
+                        <Route path='/consultation' element={<MyPageConsultation />} />
+                        <Route path='/academywaiting' element={<AcademyWaiting />} />
+                        <Route path='/inquirylist' element={<InquiryList />} />
+                    </Routes>
+                </MypageContainer>
+            </div>
         </RootContainer>
     );
 }
