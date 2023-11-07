@@ -69,6 +69,7 @@ function FindEducationOffice({ educationOfficeCode }) {
             console.log(response);
             if(Object.keys(response?.data).includes("acaInsTiInfo")) { // 학원 정보(keys값)를 가져왔는지 확인
                 // 학원 정보를 업데이트 하고 페이지 번호 증가
+                console.log(response.data.acaInsTiInfo[1]?.row);
                 setAcademyData({
                     totalCount: response?.data?.acaInsTiInfo[0].head[0].list_total_count, 
                     list: [...academyData.list].concat(response.data.acaInsTiInfo[1]?.row)
@@ -76,7 +77,7 @@ function FindEducationOffice({ educationOfficeCode }) {
                 setPage(page + 1);
             }
         },
-        enabled: false
+        enabled: false  //자동 리패치 중지
     })
 
     // 학원명 입력값이 변경될 때 호출되는 이벤트 핸들러
