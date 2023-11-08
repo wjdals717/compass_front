@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
-import defalutProfile from './고양이.jpg';
+import defalutProfile from '../../../assets/고양이.jpg';
 
 function MypageLike(props) {
     return (

@@ -3,8 +3,8 @@ import RootContainer from '../../components/RootContainer/RootContainer';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
-import kakaologin from "./kakaobar.png"
-import naverlogin from "./naver login.png"
+import kakaologin from "../../assets/kakaobar.png"
+import naverlogin from "../../assets/naver login.png"
 import { useNavigate } from 'react-router-dom';
 
 function Signin(props) {

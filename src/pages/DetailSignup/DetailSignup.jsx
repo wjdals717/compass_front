@@ -13,7 +13,7 @@ function DetailSignup(props) {  // /auth/detail/signup
     const [ signupUser, setSignupUser ] = useState({
         email: "",
         oauth2Id: searchParams.get("oauth2Id"),
-        name: searchParams.get("name"),
+        name: "",
         nickname: "",
         phone: "",
         provider: searchParams.get("provider")
