@@ -8,6 +8,10 @@ export const SLayout = css`
         background-color: white;
         padding: 3px 5px;
         cursor: pointer;
+        :disabled {
+            color: #dbdbdb;
+            cursor: default;
+        }
     }
 `;
 
