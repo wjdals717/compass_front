@@ -10,11 +10,14 @@ import { useQuery } from 'react-query';
 import FindEducationOffice from '../../components/FindEducationOffice/FindEducationOffice';
 
 function RegistAcademy(props) {
-
     const [ matchOption, setMatchOption ] = useState();
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
     const [ choiceEducationOffice, setChoiceEducationOffice ] = useState("");
+
+    const [ file1, setFile1 ] = useState('');
+    const [ file2, setFile2 ] = useState('');
+    const [ file3, setFile3 ] = useState('');
 
     const handleMatchOptionChange = (event) => {
         setMatchOption(event.target.value);
@@ -41,6 +44,17 @@ function RegistAcademy(props) {
         setSelectedEducationOffice(option.value);
     }
 
+    const uploadLableChange = (e) => {
+        switch (e.target.name) {
+            case 'file1':
+                setFile1(e.target.value);   break;
+            case 'file2':
+                setFile2(e.target.value);   break;
+            case 'file3':
+                setFile3(e.target.value);   break;
+        }
+    }
+
     return (
         <RootContainer>
             <div css={S.STopContainer}>
@@ -61,6 +75,7 @@ function RegistAcademy(props) {
                         name='match' 
                         value={true}
                         onChange={handleMatchOptionChange}
+                        defaultChecked
                     />
                     <label htmlFor="same">같습니다</label>
                 </div>
@@ -79,33 +94,34 @@ function RegistAcademy(props) {
             <div css={S.SContainer}>
                 <div css={S.SNameContainer}>
                     <span css={S.SContainerName}>사전확인서류 제출*</span>
-                    <p>
-                        사전확인 서류란?
-                        <BsInfoCircleFill />
-                    </p>
+                    <p>사전확인 서류란?<BsInfoCircleFill /></p>
                 </div>
                 <div css={S.SFileUploadContainer}>
                     <span>사업자등록증 또는 사업자등록등명원 (택 1)</span>
-                    <button css={S.SUploadButton}>
-                        <BsFillFileEarmarkArrowUpFill />
-                        첨부하기
-                    </button>
+                    <label css={S.SUploadLabel} htmlFor='file1'>
+                        <BsFillFileEarmarkArrowUpFill size={14}/> 첨부하기
+                    </label>
+                    <p>{file1}</p>
+                    <input type="file" name='file1' id='file1'  onChange={uploadLableChange}/>
                 </div>
                 <div css={S.SFileUploadContainer}>
                     <span>대표자 신분증</span>
-                    <button css={S.SUploadButton}>
-                        <BsFillFileEarmarkArrowUpFill />
-                        첨부하기
-                    </button>
+                    <label css={S.SUploadLabel} htmlFor='file2'>
+                        <BsFillFileEarmarkArrowUpFill size={14}/> 첨부하기
+                    </label>
+                    <p>{file2}</p>
+                    <input type="file" name='file2' id='file2' onChange={uploadLableChange}/>
                 </div>
-                {matchOption === 'true' ? <></>
-                    : <div css={S.SFileUploadContainer}>
+                {matchOption === 'false' ? 
+                    <div css={S.SFileUploadContainer}>
                         <span>학원설립운영등록증</span>
-                        <button css={S.SUploadButton}>
-                            <BsFillFileEarmarkArrowUpFill />
-                            첨부하기
-                        </button>
+                        <label css={S.SUploadLabel} htmlFor='file3'>
+                        <BsFillFileEarmarkArrowUpFill size={14}/> 첨부하기
+                        </label>
+                        <p>{file3}</p>
+                        <input type="file" name='file3' id='file3' onChange={uploadLableChange}/>
                     </div>
+                    : <></>
                 }
             </div>
             <div css={S.SImgContainer}>
