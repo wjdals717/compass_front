@@ -9,13 +9,30 @@ import { instance } from '../../api/config/instance';
 import { useQuery } from 'react-query';
 import FindEducationOffice from '../../components/FindEducationOffice/FindEducationOffice';
 
+
 function RegistAcademy(props) {
+
+    const [ academyContent, setAcademyContent ] = useState({
+        academyRegistrationId: 0,
+        acaAsnum: "",
+        acaNm: "",
+        admstZoneNm: "",
+        atptOfcdcScCode: "",
+        match: 0,
+        useId: 0,
+        businessRegistrationFile: "",
+        idFile: "",
+        operationRegistrationFile: ""
+    })
 
     const [ matchOption, setMatchOption ] = useState();
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
-    const [ choiceEducationOffice, setChoiceEducationOffice ] = useState("");
+    const [ isModalOpen, setIsModalOpen ] = useState(false);
 
+    const [ selectOptions, setSelecOptions ] = useState([]);
+    const [ selectedOption, setSelectedOption ] = useState(selectOptions[0]);
+    
     const handleMatchOptionChange = (event) => {
         setMatchOption(event.target.value);
     }
@@ -39,6 +56,57 @@ function RegistAcademy(props) {
 
     const handleEducationOptionChange = (option) => {
         setSelectedEducationOffice(option.value);
+    }
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    }
+
+    useEffect(() => {
+        setAcademyContent({
+            ...academyContent,
+            registId: selectOptions?.value,
+            registName: selectOptions?.label
+        });
+    }, [selectedOption])
+
+    const handlesubmissionClick = async () => {
+        if (!selectedEducationOffice) {
+            
+            alert("학원을 선택해주세요");
+        } else {
+            const filesInputs = document.querySelectorAll('input[type="file"]');
+            let AllFilesAttached = true;
+    
+            filesInputs.forEach((fileInput) => {
+                if (fileInput.files.length === 0) {
+                    AllFilesAttached = false;
+                }
+            });
+    
+            if (!AllFilesAttached) {
+                
+                alert("서류를 첨부하세요");
+            } else {
+                try {
+                    const option = {
+                        headers: {
+                            Authorization: localStorage.getItem("accessToken")
+                        }
+                    };
+                    await instance.post("/academy", academyContent, option);
+                    console.log("넘어옴?")
+                    alert("등록하시겠습니까?");
+                } catch (error) {
+                    console.error(error);
+
+                }
+            }
+        }
     }
 
     return (
@@ -79,35 +147,43 @@ function RegistAcademy(props) {
             <div css={S.SContainer}>
                 <div css={S.SNameContainer}>
                     <span css={S.SContainerName}>사전확인서류 제출*</span>
-                    <p>
-                        사전확인 서류란?
-                        <BsInfoCircleFill />
-                    </p>
+                    <div>
+                        <p>사전확인 서류란?</p>
+                        <button css={S.SModalBtn} onClick={openModal}><BsInfoCircleFill /></button>
+                        {isModalOpen && (
+                            <div css={`${S.SModalContainer}`}>
+                                <div css={S.SModalContent}>
+                                    <ul css={S.SModalDocument}>사전확인서류란?</ul>
+                                    <li>학원 정보 관리 서비스를 사용하시기 전 학원 관리자님의 정보 확인을 위해 제출받는 서류입니다.<br></br>
+                                        신뢰성 있는 서비스를 제공하기 위해 사전확인서류로 학원 관리자임을 확인하고 있습니다.<br></br> 
+                                        학원명과 관리자 확인이 불가능한 경우 추가적인 확인 절차가 있을 수 있습니다.
+                                    </li>
+                                    <button css={S.SModalClosebtn} onClick={closeModal}>닫기</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                 </div>
                 <div css={S.SFileUploadContainer}>
                     <span>사업자등록증 또는 사업자등록등명원 (택 1)</span>
-                    <button css={S.SUploadButton}>
-                        <BsFillFileEarmarkArrowUpFill />
-                        첨부하기
-                    </button>
+                    <input type="file" css={S.SUpload}/>
                 </div>
                 <div css={S.SFileUploadContainer}>
                     <span>대표자 신분증</span>
-                    <button css={S.SUploadButton}>
-                        <BsFillFileEarmarkArrowUpFill />
-                        첨부하기
-                    </button>
+                    <input type="file" css={S.SUpload}/>
                 </div>
                 {matchOption === 'true' ? <></>
                     : <div css={S.SFileUploadContainer}>
                         <span>학원설립운영등록증</span>
-                        <button css={S.SUploadButton}>
+                        <input type="file" css={S.SUpload}/>
+                        {/* <button css={S.SUploadButton}>
                             <BsFillFileEarmarkArrowUpFill />
                             첨부하기
-                        </button>
-                    </div>
-                }
+                        </button> */}
+                    </div>}
             </div>
+
             <div css={S.SImgContainer}>
                 <img css={S.SImg} src={uploadPrecautionsImg} alt="" />
             </div>
@@ -115,7 +191,7 @@ function RegistAcademy(props) {
                 <span>학원 등록은 3일 이내로 완료되며 그 전까지 학원 관리를 제외한 모든 기능을 정상적으로 이용하실 수 있습니다.</span>
             </div>
             <div css={S.SButtonContainer}>
-                <button css={S.SSubmitButton}>제출</button>
+                <button css={S.SSubmitButton} onClick={handlesubmissionClick}>제출</button>
             </div>
         </RootContainer>
     );

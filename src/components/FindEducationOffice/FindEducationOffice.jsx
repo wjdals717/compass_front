@@ -101,7 +101,6 @@ function FindEducationOffice({ educationOfficeCode }) {
     // 선택된 학원 정보를 설정하는 이벤트 핸들러
     const selectedChoiceClick = (academy) => {
         setSelectedAcademy(academy);
-        console.log("선택됨?")
     }
 
     return (
