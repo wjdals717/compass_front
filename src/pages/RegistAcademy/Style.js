@@ -67,6 +67,47 @@ export const SContainerName = css`
     font-weight: 600;
 `;
 
+export const SModalBtn = css`
+    background-color: transparent;
+    border: transparent;
+    cursor: pointer;
+`;
+
+export const SModalContainer = css`
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    
+    &.hiden {
+        display: none;
+    }
+`;
+
+export const SModalDocument = css`
+    margin-bottom: 10px;
+`;
+
+export const SModalContent = css`
+    position: absolute;
+    background-color: #dbdbdb;
+    border-radius: 5px;
+    width: 300px;
+    height: 250px;
+    padding: 15px;
+`;
+
+export const SModalClosebtn = css`
+    position: relative;
+    top: 30px;
+    left: 220px;
+`;
+
 export const SSelectBoxContainer = css`
     padding-bottom: 30px;
     & > p {
@@ -109,12 +150,18 @@ export const SUploadLabel = css`
     margin: 5px;
     border: 1px solid #dbdbdb;
     border-radius: 20px;
-    padding-top: 7px;
-    width: 100px;
+    width: 100%;
     height: 30px;
     text-align: center;
     background-color: white;
     box-shadow: 1px 5px 5px 1px #eee;
+    cursor: pointer;
+`;
+
+export const SUpload = css`
+    width: 310px;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
     cursor: pointer;
 `;
 
