@@ -31,8 +31,6 @@ function RegistAcademy(props) {
     const queryClient = useQueryClient();
     const principal = queryClient.getQueryState("getPrincipal");
 
-    console.log(matchOption);
-
     const [ academyContent, setAcademyContent ] = useState({
         acaAsnum: "",                       //학원 코드
         acaNm: "",                          //학원 이름
@@ -57,8 +55,6 @@ function RegistAcademy(props) {
         }));
     }, [selectedAcademy, matchOption]);
 
-    console.log(academyContent);
-    
     const handleMatchOptionChange = (event) => {
         setMatchOption(event.target.value);
     }
@@ -112,7 +108,6 @@ function RegistAcademy(props) {
                 console.error(error);
             },
             () => { //업로드가 완료되었을 경우
-                console.log(e.target.name);
                 getDownloadURL(storageRef).then(downloadUrl => {    //방금전 성공한 업로드 경로를 가져옴
                     console.log(downloadUrl);
                     setAcademyContent({
@@ -150,7 +145,6 @@ function RegistAcademy(props) {
                         AllFilesAttached = false;
                     }
                 });
-                console.log(AllFilesAttached);
                 
                 if (!AllFilesAttached) {
                     alert("서류를 첨부하세요");
