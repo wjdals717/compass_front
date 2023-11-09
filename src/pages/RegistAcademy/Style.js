@@ -150,18 +150,12 @@ export const SUploadLabel = css`
     margin: 5px;
     border: 1px solid #dbdbdb;
     border-radius: 20px;
-    width: 100%;
+    padding-top: 7px;
+    width: 100px;
     height: 30px;
     text-align: center;
     background-color: white;
     box-shadow: 1px 5px 5px 1px #eee;
-    cursor: pointer;
-`;
-
-export const SUpload = css`
-    width: 310px;
-    border: 1px solid #dbdbdb;
-    border-radius: 5px;
     cursor: pointer;
 `;
 

@@ -6,38 +6,58 @@ import { BsFillFileEarmarkArrowUpFill, BsInfoCircleFill } from 'react-icons/bs'
 import Select from 'react-select';
 import uploadPrecautionsImg from '../../assets/uploadPrecautions.png'
 import { instance } from '../../api/config/instance';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import FindEducationOffice from '../../components/FindEducationOffice/FindEducationOffice';
+import { selectedAcademyState } from '../../store/RegistAtom';
+import { useRecoilState } from 'recoil';
+import { ref, getDownloadURL, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { storage } from '../../api/firebase/firebase';
 
 
 function RegistAcademy(props) {
-
-    const [ academyContent, setAcademyContent ] = useState({
-        academyRegistrationId: 0,
-        acaAsnum: "",
-        acaNm: "",
-        admstZoneNm: "",
-        atptOfcdcScCode: "",
-        match: 0,
-        useId: 0,
-        businessRegistrationFile: "",
-        idFile: "",
-        operationRegistrationFile: ""
-    })
-
-    const [ matchOption, setMatchOption ] = useState();
+    const [ matchOption, setMatchOption ] = useState("true");
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
     const [ choiceEducationOffice, setChoiceEducationOffice ] = useState("");
 
-    const [ file1, setFile1 ] = useState('');
-    const [ file2, setFile2 ] = useState('');
-    const [ file3, setFile3 ] = useState('');
-
+    const [ businessRegistrationFile, setBusinessRegistrationFile ] = useState('');
+    const [ idFile, setIdFile ] = useState('');
+    const [ operationRegistrationFile, setOperationRegistrationFile ] = useState('');
+    const [ progressPercent, setProgressPercent ] = useState(0);
+    
     const [ isModalOpen, setIsModalOpen ] = useState(false);
 
-    const [ selectOptions, setSelecOptions ] = useState([]);
-    const [ selectedOption, setSelectedOption ] = useState(selectOptions[0]);
+    const [ selectedAcademy, setSelectedAcademy ] = useRecoilState(selectedAcademyState);
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal");
+
+    console.log(matchOption);
+
+    const [ academyContent, setAcademyContent ] = useState({
+        acaAsnum: "",                       //학원 코드
+        acaNm: "",                          //학원 이름
+        admstZoneNm: "",                    //행정구역명
+        atptOfcdcScCode: "",                //교육청 코드
+        userId: "",
+        match: "",
+        businessRegistrationFile: "",
+        idFile: "",
+        operationRegistrationFile: ""
+    })
+    
+    useEffect(() => {
+        setAcademyContent(prevAcademyContent => ({
+            ...prevAcademyContent,
+            acaAsnum: selectedAcademy.ACA_ASNUM,
+            admstZoneNm: selectedAcademy.ADMST_ZONE_NM,
+            acaNm: selectedAcademy.ACA_NM,
+            atptOfcdcScCode: selectedAcademy.ATPT_OFCDC_SC_CODE,
+            userId: principal?.data?.data.userId,
+            match: matchOption
+        }));
+    }, [selectedAcademy, matchOption]);
+
+    console.log(academyContent);
     
     const handleMatchOptionChange = (event) => {
         setMatchOption(event.target.value);
@@ -65,14 +85,43 @@ function RegistAcademy(props) {
     }
 
     const uploadLableChange = (e) => {
-        switch (e.target.name) {
-            case 'file1':
-                setFile1(e.target.value);   break;
-            case 'file2':
-                setFile2(e.target.value);   break;
-            case 'file3':
-                setFile3(e.target.value);   break;
+        const files = [...e.target.files];
+        
+        switch (e.target.name) {    //화면에 보여주기 위함(label)
+            case 'businessRegistrationFile':
+                setBusinessRegistrationFile(e.target.value);   break;
+            case 'idFile':
+                setIdFile(e.target.value);                     break;
+            case 'operationRegistrationFile':
+                setOperationRegistrationFile(e.target.value);  break;
         }
+
+        //firebase에 저장
+        const storageRef = ref(storage, `files/${e.target.name}/${academyContent.atptOfcdcScCode}/${academyContent.acaAsnum}_${files[0].name}`);    // 해당 파일의 이름으로 firebase의 storage에 저장됨
+        const uploadTask = uploadBytesResumable(storageRef, files[0]);        // 파일 업로드가 실행됨
+
+        uploadTask.on(          //업로드가 시작되면
+            "state_changed",    //파일이 변경되고 있을 때
+            (snapshot) => {     //파일 업로드 대기 중 프로그레스 바 적용할 때 사용
+                // 증가하는 %가 들어있음
+                setProgressPercent(
+                    Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)  //bytesTransferred : 매번 상태를 캡쳐해 줌  // 1%씩 증가하도록 함
+                )
+            },
+            (error) => {        //업로드 실패할 경우
+                console.error(error);
+            },
+            () => { //업로드가 완료되었을 경우
+                console.log(e.target.name);
+                getDownloadURL(storageRef).then(downloadUrl => {    //방금전 성공한 업로드 경로를 가져옴
+                    console.log(downloadUrl);
+                    setAcademyContent({
+                        ...academyContent, 
+                        [e.target.name]: downloadUrl
+                    });
+                })
+            }
+        )
     }
 
     const openModal = () => {
@@ -83,47 +132,38 @@ function RegistAcademy(props) {
         setIsModalOpen(false);
     }
 
-    useEffect(() => {
-        setAcademyContent({
-            ...academyContent,
-            registId: selectOptions?.value,
-            registName: selectOptions?.label
-        });
-    }, [selectedOption])
-
     const handlesubmissionClick = async () => {
-        if (!selectedEducationOffice) {
-            
-            alert("학원을 선택해주세요");
-        } else {
-            const filesInputs = document.querySelectorAll('input[type="file"]');
-            let AllFilesAttached = true;
-    
-            filesInputs.forEach((fileInput) => {
-                if (fileInput.files.length === 0) {
-                    AllFilesAttached = false;
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
                 }
-            });
-    
-            if (!AllFilesAttached) {
-                
-                alert("서류를 첨부하세요");
+            };
+            if (!selectedEducationOffice) {
+                alert("학원을 선택해주세요");
             } else {
-                try {
-                    const option = {
-                        headers: {
-                            Authorization: localStorage.getItem("accessToken")
-                        }
-                    };
+                const filesInputs = document.querySelectorAll('input[type="file"]');
+                let AllFilesAttached = true;
+        
+                filesInputs.forEach((fileInput) => {
+                    if (fileInput.files.length === 0) {
+                        AllFilesAttached = false;
+                    }
+                });
+                console.log(AllFilesAttached);
+                
+                if (!AllFilesAttached) {
+                    alert("서류를 첨부하세요");
+                } else {
+                    console.log(academyContent);
                     await instance.post("/academy", academyContent, option);
-                    console.log("넘어옴?")
                     alert("등록하시겠습니까?");
-                } catch (error) {
-                    console.error(error);
-
                 }
             }
+        } catch (error) {
+            console.error(error);
         }
+        
     }
 
     return (
@@ -159,13 +199,13 @@ function RegistAcademy(props) {
                 </div>
                 <div css={S.SSelectBoxContainer}>
                     <p>학원명을 검색해주세요</p>
-                    <FindEducationOffice educationOfficeCode={selectedEducationOffice} />
+                    <FindEducationOffice educationOfficeCode={selectedEducationOffice}/>
                 </div>
             </div>
             <div css={S.SContainer}>
                 <div css={S.SNameContainer}>
                     <span css={S.SContainerName}>사전확인서류 제출*</span>
-                    <div>
+                    {/* <div>
                         <p>사전확인 서류란?</p>
                         <button css={S.SModalBtn} onClick={openModal}><BsInfoCircleFill /></button>
                         {isModalOpen && (
@@ -180,34 +220,33 @@ function RegistAcademy(props) {
                                 </div>
                             </div>
                         )}
-                    </div>
-
+                    </div> */}
                     <p>사전확인 서류란?<BsInfoCircleFill /></p>
                 </div>
                 <div css={S.SFileUploadContainer}>
                     <span>사업자등록증 또는 사업자등록등명원 (택 1)</span>
-                    <label css={S.SUploadLabel} htmlFor='file1'>
+                    <label css={S.SUploadLabel} htmlFor='businessRegistrationFile'>
                         <BsFillFileEarmarkArrowUpFill size={14}/> 첨부하기
                     </label>
-                    <p>{file1}</p>
-                    <input type="file" name='file1' id='file1'  onChange={uploadLableChange}/>
+                    <p>{businessRegistrationFile}</p>
+                    <input type="file" name='businessRegistrationFile' id='businessRegistrationFile'  onChange={uploadLableChange}/>
                 </div>
                 <div css={S.SFileUploadContainer}>
                     <span>대표자 신분증</span>
-                    <label css={S.SUploadLabel} htmlFor='file2'>
+                    <label css={S.SUploadLabel} htmlFor='idFile'>
                         <BsFillFileEarmarkArrowUpFill size={14}/> 첨부하기
                     </label>
-                    <p>{file2}</p>
-                    <input type="file" name='file2' id='file2' onChange={uploadLableChange}/>
+                    <p>{idFile}</p>
+                    <input type="file" name='idFile' id='idFile' onChange={uploadLableChange}/>
                 </div>
                 {matchOption === 'false' ? 
                     <div css={S.SFileUploadContainer}>
                         <span>학원설립운영등록증</span>
-                        <label css={S.SUploadLabel} htmlFor='file3'>
+                        <label css={S.SUploadLabel} htmlFor='operationRegistrationFile'>
                         <BsFillFileEarmarkArrowUpFill size={14}/> 첨부하기
                         </label>
-                        <p>{file3}</p>
-                        <input type="file" name='file3' id='file3' onChange={uploadLableChange}/>
+                        <p>{operationRegistrationFile}</p>
+                        <input type="file" name='operationRegistrationFile' id='operationRegistrationFile' onChange={uploadLableChange}/>
                     </div>
                     : <></>
                 }
