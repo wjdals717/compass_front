@@ -61,9 +61,9 @@ function MypageUser(props) {
         try {
             const option = {
                 headers: {
-                  Authorization: localStorage.getItem("accessToken")
+                    Authorization: localStorage.getItem("accessToken")
                 }
-              }
+            }
             await instance.post("/account/auth/email", {}, option);  // 주소, 데이터, 옵션
             alert("인증 메일 전송 완료. 인증 요청 메일을 확인해주세요.");
         } catch (error) {

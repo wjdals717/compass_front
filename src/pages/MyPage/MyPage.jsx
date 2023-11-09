@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 import MyPageSidebar from '../../components/MyPageSidebar/MyPageSidebar';
 import MypageContainer from '../../components/MyPageContainer/MypageContainer';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useSearchParams } from 'react-router-dom';
 import MypageUser from '../../components/MyPageContainer/MypageUser/MypageUser';
 import MyPageInquiry from '../../components/MyPageContainer/StudentMypage/MypageInquiry/MypageInquiry';
 import MypageReview from '../../components/MyPageContainer/StudentMypage/MypageReview/MypageReview';
@@ -16,6 +16,7 @@ import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/Studen
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
 import { css } from '@emotion/react';
+import { useQueryClient } from 'react-query';
 /** @jsxImportSource @emotion/react */
 
 const SLayout = css`
@@ -25,13 +26,33 @@ const SLayout = css`
     width: 1160px;
 `;
 
+
 function MyPage(props) {
+
+    const queryClient = useQueryClient();
+    const principalState = queryClient.getQueryState("getPrincipal")
+    const principal = principalState?.data?.data;
+
+    const [ roleId, setRoleId ] = useState(principal.roleId);
+
+    useEffect(() => {
+        console.log(principal);
+    }, [roleId])
+
+    const sidebarComponent =
+        roleId === 0
+            ? <WebMastesrSidebar/>
+            : roleId === 1
+            ? <StudentSidebar />
+            : roleId === 2
+            ? <AcademySidebar />
+            : null;
     return (
         <RootContainer>
             <div css={SLayout}>
-                <StudentSidebar />
-                {/* <AcademySidebar /> */}
-                {/* <WebMastesrSidebar /> */}
+                {/* <MyPageSidebar/> */}
+                {sidebarComponent}
+
                 <MypageContainer title={"title"}>
                     <Routes>
                         <Route path='/' element={<MypageLike />} />
