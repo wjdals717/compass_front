@@ -54,8 +54,8 @@ function App() {
         <Routes>
           <Route path="/" element={ <Home/> }/>
           <Route path="/auth/*" element={ <AuthRoute/> } /> 
-          <Route path="/account/*" element={ <AccountRoute/> } /> 
-          <Route path="/academy/find" element={ <FindAcademies/> } /> 
+          <Route path="/account/*" element={ <AccountRoute/> } />
+          <Route path="/academy/find/:page" element={ <FindAcademies/> } />
           <Route path="/academy/regist" element={ <RegistAcademy/> } /> 
           <Route path="/academy/info" element={ <AcademyInfo/> } /> 
           <Route path="/academy/inquiry" element={ <AcademyInquiry /> } /> 
