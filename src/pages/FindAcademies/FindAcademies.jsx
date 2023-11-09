@@ -10,28 +10,29 @@ import Modal from '../../components/Modal/Modal';
 import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { selectedLocationState } from '../../store/Modal';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
 
     const [ hasOptions, setHasOptions ] = useState(false); // 조건 여부(지역, 카테고리)
-    const [ selectedLocation, setSelectedLocation ] = useState({    // 지역
-        educationOfficeCodes: "",
-        administrative_district_name: ""
-
-    });
+    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useState({    // 카테고리
-        REALM_SC_NM: ""
+        realm_sc_nm: "",
+        le_crse_nm: ""
     });
 
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ modalName, setModalName ] = useState("");
 
-    const [ totalCount, setTotalCount ] = useState(2100);   // 아무 조건도 주지 않았을 경우 가져올 총 학원 수 2100개
+    const [ totalCount, setTotalCount ] = useState(2100);   // 아무 조건도 주지 않았을 경우 가져올 총 학원 수 2100개 조건이 있을경우 가지고온 학원 수에 따라 달라짐
     const { page } = useParams();
     const [ academyList, setAcademyList ] = useState();
 
     const educationOfficeCodes = ["B10", "C10", "D10", "E10", "F10", "G10", "H10", "I10", "J10", "K10", "M10", "N10", "P10", "Q10", "R10", "S10" , "T10"]
+
+    console.log(selectedLocation);
 
     // 조건이 없을 경우
     const fetchAcademyData = async () => {
@@ -62,10 +63,111 @@ function FindAcademies(props) {
         setAcademyList(allAcademyData);
     };
 
+    // 조건이 있는 경우
+    const selectAcademyData = async () => {
+        const allAcademyData = [];
+        const academiesPerPage = 21;    // 페이지당 표시될 학원 수
+        if (selectedLocation.atpt_ofcdc_sc_code) {
+            try {
+                const options = {
+                    params: {
+                        KEY: "5234f1f7767447b4abc251d862f281e5",
+                        Type: "json",
+                        pIndex: page,
+                        pSize: academiesPerPage,
+                        ATPT_OFCDC_SC_CODE: selectedLocation.atpt_ofcdc_sc_code,
+                    }
+                }
+
+                // ADMST_ZONE_NM이 selectedLocation에 존재하는지 확인
+                if (selectedLocation.admst_zone_nm) {
+                    options.params.ADMST_ZONE_NM = selectedLocation.admst_zone_nm;
+                }
+    
+                // api, options를 get 요청
+                const response = await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", options);
+
+                if (Object.keys(response?.data).includes("acaInsTiInfo")) {
+                    response.data.acaInsTiInfo[1]?.row.forEach((academy) => {
+                        allAcademyData.push(academy);
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            setAcademyList(allAcademyData);
+        }
+        // for (const code of educationOfficeCodes) {
+        //     try {
+        //         const optionsForTotalCount = {
+        //             params: {
+        //                 KEY: "5234f1f7767447b4abc251d862f281e5",
+        //                 Type: "json",
+        //                 pIndex: 1,
+        //                 pSize: 1,
+        //                 ATPT_OFCDC_SC_CODE: code
+        //             }
+        //         };
+    
+        //         const totalCountResponse = await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", optionsForTotalCount);
+        //         const ListTotalCount = totalCountResponse?.data.acaInsTiInfo[0]?.head[0].list_total_count;
+    
+        //         if (!ListTotalCount) {
+        //             continue;
+        //         }
+    
+        //         // 현재 교육청의 학원 수를 총 학원 수에 더해 업데이트
+        //         setTotalCount((prevTotalCount) => prevTotalCount + ListTotalCount);
+    
+        //         let currentPage = page;
+        //         let academiesToFetch = academiesPerPage;
+    
+        //         if (academiesToFetch > ListTotalCount) {
+        //             academiesToFetch = ListTotalCount;
+        //             currentPage = 1;
+        //         }
+    
+        //         const optionsForAcademies = {
+        //             params: {
+        //                 KEY: "5234f1f7767447b4abc251d862f281e5",
+        //                 Type: "json",
+        //                 pIndex: currentPage,
+        //                 pSize: academiesToFetch,
+        //                 ATPT_OFCDC_SC_CODE: code
+        //             }
+        //         };
+    
+        //         const response = await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", optionsForAcademies);
+    
+        //         if (Object.keys(response?.data).includes("acaInsTiInfo")) {
+        //             response.data.acaInsTiInfo[1]?.row.forEach((academy) => {
+        //                 allAcademyData.push(academy);
+        //             });
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // }
+        // setAcademyList(allAcademyData);
+    };
+
     useEffect(() => {
-        fetchAcademyData(); // fetchAcademyData 함수를 호출
-        
-    },[page])
+        if (!hasOptions) {
+            fetchAcademyData();
+        } else {
+            selectAcademyData();
+        }
+    }, [page, selectedLocation, hasOptions]);
+    
+    // selectedLocation이 변경될 때 hasOptions 업데이트
+    useEffect(() => {
+        if (selectedLocation.atpt_ofcdc_sc_code) {
+            setHasOptions(true);
+            navigate("/academy/find/1");
+        } else {
+            setHasOptions(false);
+        }
+    }, [selectedLocation]);
 
     const pagenation = () => {
         const totalAcademyCount = totalCount;
@@ -174,7 +276,8 @@ function FindAcademies(props) {
             <Modal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
                 modalName={modalName}
-                setAcademyList={setAcademyList} />
+                setAcademyList={setAcademyList}
+                setSelectedLocation={setSelectedLocation}/>
         </RootContainer>
     );
 }

@@ -4,6 +4,8 @@ import * as S from "./Style"
 import ReactModal from 'react-modal';
 import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
+import { useRecoilState } from 'recoil';
+import { selectedLocationState } from '../../store/Modal';
 
 function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
 
@@ -12,21 +14,16 @@ function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
     const [ districtOptionShow, setDistrictOptionShow ] = useState(false);
     const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]);
     const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState("");
-    const [ selectedLocationOptions, setSelectedLocationOptions ] = useState({
-        education_office_code:"",
-        administrative_district_name: "",
-        academy_name: ""
-    });
+    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
 
     // api로 넘길 검색 정보
     useEffect(() => {
-        setSelectedLocationOptions({
-            ...selectedLocationOptions,
-            education_office_code: educationOfficeOption,
-            administrative_district_name: administrativeDistrictOption
+        setSelectedLocation({
+            ...selectedLocation,
+            atpt_ofcdc_sc_code: educationOfficeOption,
+            admst_zone_nm: administrativeDistrictOption
         })
     },[educationOfficeOption, administrativeDistrictOption])
-
 
     const closeModal = () => {
         setModalIsOpen(false);
@@ -67,6 +64,8 @@ function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
     const filteredAdministrativeDistrictOptions = administrativeDistrictOptions.filter(option => {
         return option.educationOfficeCode === educationOfficeOption;
     });
+
+    
 
     return (
         <ReactModal isOpen={modalIsOpen} onRequestClose={closeModal} css={S.SLayout}>
