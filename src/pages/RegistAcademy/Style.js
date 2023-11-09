@@ -56,7 +56,7 @@ export const SContainer = css`
     margin: 40px auto;
     border: none;
     border-radius: 50px;
-    padding: 30px 40px 10px;
+    padding: 30px 40px;
     width: 800px;
     box-shadow: 4px 4px 10px 4px #dbdbdb;
 `;
@@ -140,24 +140,22 @@ export const SFileUploadContainer = css`
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
+
+    & input {
+        display: none;
+    }
 `;
 
-// 필요할까요?
-export const SUploadButton = css`
-    margin-top: 5px;
+export const SUploadLabel = css`
+    margin: 5px;
     border: 1px solid #dbdbdb;
     border-radius: 20px;
-    width: 100%;
+    padding-top: 7px;
+    width: 100px;
     height: 30px;
+    text-align: center;
     background-color: white;
     box-shadow: 1px 5px 5px 1px #eee;
-    cursor: pointer;
-`;
-
-export const SUpload = css`
-    width: 310px;
-    border: 1px solid #dbdbdb;
-    border-radius: 5px;
     cursor: pointer;
 `;
 

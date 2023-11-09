@@ -84,8 +84,9 @@ export const SMoveBar = (isHeaderFixed) => css`
     left: ${isHeaderFixed ? "auto" : "0"};
     right: ${isHeaderFixed ? "auto" : "0"};
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     border-bottom: 2px solid #dbdbdb;
+    padding: 10px;
     width: ${isHeaderFixed ? "1000px" : ""};
     font-size: 22px;
     background-color: white;
@@ -112,7 +113,6 @@ export const SIntroductionContainer  = css`
     flex-direction: column;
     width: 100%;
     height: 300px;
-    
 `;
 
 export const STitle = css`

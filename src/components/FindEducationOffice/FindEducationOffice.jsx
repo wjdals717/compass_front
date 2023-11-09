@@ -4,6 +4,8 @@ import { css } from '@emotion/react';
 import * as S from "./Style"
 import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
+import { useRecoilState } from 'recoil';
+import { selectedAcademyState } from '../../store/RegistAtom';
 
 function FindEducationOffice({ educationOfficeCode }) {
     
@@ -23,7 +25,7 @@ function FindEducationOffice({ educationOfficeCode }) {
     });
 
     // 선택된 학원 정보를 저장하는 상태 변수
-    const [ selectedAcademy, setSelectedAcademy ] = useState(null);
+    const [ selectedAcademy, setSelectedAcademy ] = useRecoilState(selectedAcademyState);
 
     // Intersection Observer를 이용하여 무한 스크롤을 감지하는 useEffect
     useEffect(() => {
@@ -69,6 +71,7 @@ function FindEducationOffice({ educationOfficeCode }) {
             console.log(response);
             if(Object.keys(response?.data).includes("acaInsTiInfo")) { // 학원 정보(keys값)를 가져왔는지 확인
                 // 학원 정보를 업데이트 하고 페이지 번호 증가
+                console.log(response.data.acaInsTiInfo[1]?.row);
                 setAcademyData({
                     totalCount: response?.data?.acaInsTiInfo[0].head[0].list_total_count, 
                     list: [...academyData.list].concat(response.data.acaInsTiInfo[1]?.row)
@@ -76,7 +79,7 @@ function FindEducationOffice({ educationOfficeCode }) {
                 setPage(page + 1);
             }
         },
-        enabled: false
+        enabled: false  //자동 리패치 중지
     })
 
     // 학원명 입력값이 변경될 때 호출되는 이벤트 핸들러

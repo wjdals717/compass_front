@@ -8,17 +8,20 @@ import { Global } from '@emotion/react';
 import { Reset } from 'styled-reset';
 import { Common } from './styles/Global/Common';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { RecoilRoot } from 'recoil';
 
 const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <Global styles={Common} />
-      <Reset />
-      <App />
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <Global styles={Common} />
+        <Reset />
+        <App />
+      </BrowserRouter>
+    </RecoilRoot>
   </QueryClientProvider>
   
   
