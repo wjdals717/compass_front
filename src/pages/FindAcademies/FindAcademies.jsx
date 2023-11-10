@@ -284,11 +284,11 @@ function FindAcademies(props) {
                 {pagenation()}
             </div>
             <span css={S.Span(hasOptions)}>조건없이 검색 시 100페이지까지 보여집니다. 찾는 결과가 없다면 검색 조건을 이용해 주세요</span>
-            <Modal modalIsOpen={modalIsOpen} 
+            {/* <Modal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
                 modalName={modalName}
                 setAcademyList={setAcademyList}
-                setSelectedLocation={setSelectedLocation}/>
+                setSelectedLocation={setSelectedLocation}/> */}
         </RootContainer>
     );
 }

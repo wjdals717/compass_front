@@ -20,7 +20,12 @@ function RegistAcademy(props) {
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
     const [ choiceEducationOffice, setChoiceEducationOffice ] = useState("");
 
-    const [ businessRegistrationFile, setBusinessRegistrationFile ] = useState('');
+    const [ uploadeFile, setUploadeFile ] = useState({
+        businessRegistrationFile: 0,
+        idFile: 0,
+        operationRegistrationFile: 0
+    })
+    const [ businessRegistrationFile, setBusinessRegistrationFile ] = useState();
     const [ idFile, setIdFile ] = useState('');
     const [ operationRegistrationFile, setOperationRegistrationFile ] = useState('');
     const [ progressPercent, setProgressPercent ] = useState(0);
@@ -114,6 +119,10 @@ function RegistAcademy(props) {
                         ...academyContent, 
                         [e.target.name]: downloadUrl
                     });
+                    setUploadeFile({
+                        ...uploadeFile,
+                        [e.target.name]: 1
+                    })
                 })
             }
         )
@@ -150,14 +159,23 @@ function RegistAcademy(props) {
                     alert("서류를 첨부하세요");
                 } else {
                     console.log(academyContent);
-                    await instance.post("/academy", academyContent, option);
-                    alert("등록하시겠습니까?");
+
+                    //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
+                    if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
+                        if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
+                            await instance.post("/academy", academyContent, option);
+                        } else {
+                            alert("업로드 중입니다. 잠시만 기다려주세요.");
+                        }
+                    } else {
+                        alert("업로드 중입니다. 잠시만 기다려주세요.");
+                    }
+                    alert("등록되었습니다. 신청은 3일 이내 확인됩니다.");
                 }
             }
         } catch (error) {
-            console.error(error);
+            alert(error.response.data.sendFail);
         }
-        
     }
 
     return (
