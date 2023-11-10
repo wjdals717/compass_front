@@ -56,7 +56,7 @@ export const SContainer = css`
     margin: 40px auto;
     border: none;
     border-radius: 50px;
-    padding: 30px 40px 10px;
+    padding: 30px 40px;
     width: 800px;
     box-shadow: 4px 4px 10px 4px #dbdbdb;
 `;
@@ -65,6 +65,47 @@ export const SContainerName = css`
     margin-bottom: 20px;
     font-size: 20px;
     font-weight: 600;
+`;
+
+export const SModalBtn = css`
+    background-color: transparent;
+    border: transparent;
+    cursor: pointer;
+`;
+
+export const SModalContainer = css`
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    
+    &.hiden {
+        display: none;
+    }
+`;
+
+export const SModalDocument = css`
+    margin-bottom: 10px;
+`;
+
+export const SModalContent = css`
+    position: absolute;
+    background-color: #dbdbdb;
+    border-radius: 5px;
+    width: 300px;
+    height: 250px;
+    padding: 15px;
+`;
+
+export const SModalClosebtn = css`
+    position: relative;
+    top: 30px;
+    left: 220px;
 `;
 
 export const SSelectBoxContainer = css`
@@ -99,14 +140,20 @@ export const SFileUploadContainer = css`
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
+
+    & input {
+        display: none;
+    }
 `;
 
-export const SUploadButton = css`
-    margin-top: 5px;
+export const SUploadLabel = css`
+    margin: 5px;
     border: 1px solid #dbdbdb;
     border-radius: 20px;
+    padding-top: 7px;
     width: 100px;
     height: 30px;
+    text-align: center;
     background-color: white;
     box-shadow: 1px 5px 5px 1px #eee;
     cursor: pointer;

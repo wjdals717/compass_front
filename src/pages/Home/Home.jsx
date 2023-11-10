@@ -5,9 +5,13 @@ import RootContainer from '../../components/RootContainer/RootContainer';
 import * as S from "./Style"
 import { AiOutlineDown, AiOutlineSearch } from 'react-icons/ai'
 import SelectBtn from '../../components/SelectBtn/SelectBtn';
-import academyImg from './academy.jpg'
+import academyImg from '../../assets/academy.jpg'
+import { useNavigate } from 'react-router-dom';
 
 function Home(props) {
+
+    const navigate = useNavigate();
+
     return (
         <RootContainer>
             <div css={S.SMainLayout}>
