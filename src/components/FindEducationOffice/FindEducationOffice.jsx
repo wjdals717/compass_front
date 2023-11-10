@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import * as S from "./Style"
 import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
-import { useRecoilState } from 'recoil';
+import { atom, useRecoilState, useResetRecoilState } from 'recoil';
 import { selectedAcademyState } from '../../store/RegistAtom';
 
 function FindEducationOffice({ educationOfficeCode }) {
@@ -26,6 +26,12 @@ function FindEducationOffice({ educationOfficeCode }) {
 
     // 선택된 학원 정보를 저장하는 상태 변수
     const [ selectedAcademy, setSelectedAcademy ] = useRecoilState(selectedAcademyState);
+
+    useEffect(() => {
+        return () => {
+            setSelectedAcademy([]);
+        };
+    }, []);
 
     // Intersection Observer를 이용하여 무한 스크롤을 감지하는 useEffect
     useEffect(() => {
@@ -134,11 +140,9 @@ function FindEducationOffice({ educationOfficeCode }) {
             <div>
                 <ul css={S.STitleName}>선택된 학원</ul>
                 <div css={S.SChoiceBox}>
-                    {selectedAcademy && (
+                    {selectedAcademy.length != 0 && (
                         <div>
-                            {selectedAcademy.ACA_ASNUM},
-                            {selectedAcademy.ADMST_ZONE_NM},
-                            {selectedAcademy.ACA_NM}
+                            {selectedAcademy.ACA_ASNUM}, {selectedAcademy.ADMST_ZONE_NM}, {selectedAcademy.ACA_NM}
                         </div>
                     )}
                 </div>

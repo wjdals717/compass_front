@@ -20,5 +20,4 @@ function WebMastesrSidebar(props) {
         </MyPageSidebar>
     );
 }
-
 export default WebMastesrSidebar;

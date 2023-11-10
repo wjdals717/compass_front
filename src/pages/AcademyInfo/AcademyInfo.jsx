@@ -6,19 +6,24 @@ import { FaLocationDot } from 'react-icons/fa6'
 import { AiFillStar, AiOutlineCheck, AiFillHeart,AiOutlineHeart } from 'react-icons/ai'
 import { IoHomeSharp } from 'react-icons/io5'
 import { BsFillPeopleFill, BsBarChartLineFill, BsFillCalendar2CheckFill, BsFillBookFill, BsFillPencilFill, BsChatLeftTextFill } from 'react-icons/bs'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
 
-function AcademyInfo({educationOfficeCode, academyCode, academyName}) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
+function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
     const navigate = useNavigate();
     const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
+    
+    // const { educationOfficeCode, academyCode } = useParams();       //찾기 페이지에서 학원 정보 가져옴
+    const location = useLocation();
 
     // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
     const getAcademies = useQuery(["getAcademies"], async () => {
         try {
+            const searchParams = new URLSearchParams(location.search);
+
             const options = {
                 // (key(필수 type), value(변수설명)) 형식
                 params: {
@@ -26,9 +31,8 @@ function AcademyInfo({educationOfficeCode, academyCode, academyName}) { //교육
                     Type: "json",
                     pIndex: 1,
                     pSize: 20,
-                    ATPT_OFCDC_SC_CODE: "C10",
-                    ACA_ASNUM: "3000020166",
-                    ACA_NM: "1등급국어교습소"
+                    ATPT_OFCDC_SC_CODE: searchParams.get('education_office_codes'),
+                    ACA_ASNUM: searchParams.get('academy_num')
                 }
             }
             // api, options를 get 요청
@@ -42,7 +46,6 @@ function AcademyInfo({educationOfficeCode, academyCode, academyName}) { //교육
         refetchOnWindowFocus: false,
         onSuccess: response => {
             if(Object.keys(response?.data).includes("acaInsTiInfo")) { // 학원 정보(keys값)를 가져왔는지 확인
-                // 학원 정보를 업데이트 하고 페이지 번호 증가
                 setAcademyData(response?.data?.acaInsTiInfo[1]?.row[0]);
             }
         }

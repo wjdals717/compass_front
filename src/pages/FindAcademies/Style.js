@@ -99,6 +99,7 @@ export const LiBox = css`
     border: 1px solid #dbdbdb;
     border-radius: 5px;
     padding: 10px;
+    width: 272px;
 
     img {
         border-radius: 10px;
@@ -106,3 +107,16 @@ export const LiBox = css`
         height: 200px;
     }
 `;
+
+export const PageButtonContainer = css`
+    display: flex;
+    justify-content: center;
+`;
+
+export const Span = (hasOptions) => css`
+    display: ${hasOptions ? "none" : "flex"};
+    font-size: 12px;
+    color: #aaa;
+`;
+
+
