@@ -31,7 +31,7 @@ function Header(props) {
             <div css={S.SContainer}>
                 <Link to={"/"}><h1 css={S.SLogoButton}>학습 나침반</h1></Link>
                 <div css={S.SButtonBox}>
-                    <Link to={"/academy/find"}>학원 찾기</Link>
+                    <Link to={"/academy/find/1"}>학원 찾기</Link>
                     <Link to={"/academy/regist"}>학원 등록</Link>
                 </div>
             </div>
