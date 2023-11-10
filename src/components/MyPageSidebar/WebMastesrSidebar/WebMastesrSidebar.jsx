@@ -10,7 +10,7 @@ function WebMastesrSidebar(props) {
     return (
         <MyPageSidebar role={'마스터'}>
             <div css={S.RoleContainer}>
-                <Link to='/account/mypage/academywaiting'>
+                <Link to='/account/mypage/academywaiting/1'>
                     <div>📜 학원 등록 대기목록</div>
                 </Link>
                 <Link to='/account/mypage/inquirylist'>

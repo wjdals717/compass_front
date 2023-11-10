@@ -29,9 +29,9 @@ function MyPage(props) {
     return (
         <RootContainer>
             <div css={SLayout}>
-                <StudentSidebar />
+                {/* <StudentSidebar /> */}
                 {/* <AcademySidebar /> */}
-                {/* <WebMastesrSidebar /> */}
+                <WebMastesrSidebar />
                 <MypageContainer title={"title"}>
                     <Routes>
                         <Route path='/' element={<MypageLike />} />
@@ -41,7 +41,7 @@ function MyPage(props) {
                         <Route path='/myacademy' element={<MyPageMyAcamedy />} />
                         <Route path='/adpayment' element={<MypageAdPayment />} />
                         <Route path='/consultation' element={<MyPageConsultation />} />
-                        <Route path='/academywaiting' element={<AcademyWaiting />} />
+                        <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
                         <Route path='/inquirylist' element={<InquiryList />} />
                     </Routes>
                 </MypageContainer>
