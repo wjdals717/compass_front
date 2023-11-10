@@ -91,8 +91,7 @@ function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
                     ))}
                 </ul>
             </div>
-            <button>선택</button>
-            <button onClick={closeModal}>닫기</button>
+            <button onClick={closeModal}>선택</button>
         </ReactModal>
     );
 }

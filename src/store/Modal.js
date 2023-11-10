@@ -7,3 +7,11 @@ export const selectedLocationState = atom({
         admst_zone_nm: ""
     },
 });
+
+export const selectedcategoryState = atom({
+    key: 'selectedcategoryState',
+    default: {
+        realm_sc_nm: "",
+        le_crse_nm: ""
+    },
+});

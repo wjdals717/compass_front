@@ -11,17 +11,15 @@ import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { selectedLocationState } from '../../store/Modal';
+import { selectedLocationState, selectedcategoryState } from '../../store/Modal';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
 
     const [ hasOptions, setHasOptions ] = useState(false); // 조건 여부(지역, 카테고리)
     const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // 지역
-    const [ selectedCategory, setSelectedCategory ] = useState({    // 카테고리
-        realm_sc_nm: "",
-        le_crse_nm: ""
-    });
+    const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedcategoryState); // 카테고리
+    const [ selectedContent, setSelectedContent ] = useState(""); // 학원 이름
 
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ modalName, setModalName ] = useState("");
@@ -33,7 +31,9 @@ function FindAcademies(props) {
     const educationOfficeCodes = ["B10", "C10", "D10", "E10", "F10", "G10", "H10", "I10", "J10", "K10", "M10", "N10", "P10", "Q10", "R10", "S10" , "T10"]
 
     console.log(selectedLocation);
-
+    console.log(selectedCategory);
+    console.log(selectedContent);
+    
     // 조건이 없을 경우
     const fetchAcademyData = async () => {
         const allAcademyData = [];
@@ -82,6 +82,11 @@ function FindAcademies(props) {
                 // ADMST_ZONE_NM이 selectedLocation에 존재하는지 확인
                 if (selectedLocation.admst_zone_nm) {
                     options.params.ADMST_ZONE_NM = selectedLocation.admst_zone_nm;
+                }
+
+                // selectedContent(ACA_NM)가 존재하는지 확인
+                if (selectedContent) {
+                    options.params.ACA_NM = selectedContent;
                 }
     
                 // api, options를 get 요청
@@ -151,23 +156,28 @@ function FindAcademies(props) {
         // setAcademyList(allAcademyData);
     };
 
+    // 조건이 생길 때 학원목록 업데이트
     useEffect(() => {
         if (!hasOptions) {
             fetchAcademyData();
         } else {
             selectAcademyData();
         }
-    }, [page, selectedLocation, hasOptions]);
+    }, [page, hasOptions]);
     
-    // selectedLocation이 변경될 때 hasOptions 업데이트
+    // 조건이 변경될 때 hasOptions 업데이트
     useEffect(() => {
-        if (selectedLocation.atpt_ofcdc_sc_code) {
+        if (selectedLocation.atpt_ofcdc_sc_code || selectedCategory.realm_sc_nm || selectedCategory.le_crse_nm || selectedContent) {
             setHasOptions(true);
             navigate("/academy/find/1");
         } else {
             setHasOptions(false);
         }
-    }, [selectedLocation]);
+    }, [selectedLocation, selectedCategory, selectedContent]);
+
+    const handleInputOnChange = (e) => {
+        setSelectedContent(e.target.value)
+    }
 
     const pagenation = () => {
         const totalAcademyCount = totalCount;
@@ -204,6 +214,7 @@ function FindAcademies(props) {
         )
     }
 
+
     return (
         <RootContainer>
             <div css={S.SearchLayout}>
@@ -211,7 +222,7 @@ function FindAcademies(props) {
                 <div css={S.SearchContainer}>
                     <SelectBtn setModalIsOpen={setModalIsOpen} name='지역 선택' setModalName={setModalName}>지역 선택</SelectBtn>
                     <SelectBtn setModalIsOpen={setModalIsOpen} name='카테고리 선택' setModalName={setModalName}>카테고리 선택</SelectBtn>
-                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요'/>
+                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' onChange={handleInputOnChange}/>
                     <button>검색</button>
                 </div>
             </div>
