@@ -4,15 +4,10 @@ import { css } from '@emotion/react';
 import * as S from "./Style"
 import { AiOutlineDown } from 'react-icons/ai'
 
-function SelectBtn({ children, name, setModalIsOpen, setModalName }) {
-
-    const openModal = () => {
-        setModalIsOpen(true);
-        setModalName(name);
-    };
+function SelectBtn({ children }) {
 
     return (
-        <div css={S.SSelectBox} onClick={openModal}>
+        <div css={S.SSelectBox}>
             <div>{children} <AiOutlineDown/></div>
         </div>
     );
