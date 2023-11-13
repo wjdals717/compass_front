@@ -25,17 +25,18 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             const searchParams = new URLSearchParams(location.search);
 
             const options = {
+                // (key(필수 type), value(변수설명)) 형식
                 params: {
+                    KEY: "5234f1f7767447b4abc251d862f281e5",
+                    Type: "json",
                     pIndex: 1,
                     pSize: 20,
-                    userId: searchParams.get('userId')
-                },
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
+                    ATPT_OFCDC_SC_CODE: searchParams.get('education_office_codes'),
+                    ACA_ASNUM: searchParams.get('academy_num')
                 }
             }
             // api, options를 get 요청
-            return await instance.get("/academies", options);
+            return await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", options);
         }catch (error) {
             console.error(error);
         }
@@ -44,11 +45,15 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         retry: 0,
         refetchOnWindowFocus: false,
         onSuccess: response => {
-            setAcademyData(response?.data?.academies);
+            if(Object.keys(response?.data).includes("acaInsTiInfo")) { // 학원 정보(keys값)를 가져왔는지 확인
+                setAcademyData(response?.data?.acaInsTiInfo[1]?.row[0]);
+            }
         }
     })
 
-    useEffect(() => {   //페이지 스크롤에 따른 좋아요/문의 위치 이동
+    console.log(academyData);
+
+    useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 200) {
                 setIsHeaderFixed(true);
