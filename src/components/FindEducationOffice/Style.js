@@ -48,16 +48,16 @@ export const SList = css`
         padding: 5px;
     }
 
-    & > :nth-child(1) {
+    & > :nth-of-type(1) {
         width: 15%;
     }
-    & > :nth-child(2) {
+    & > :nth-of-type(2) {
         width: 15%;
     }
-    & > :nth-child(3) {
+    & > :nth-of-type(3) {
         width: 60%;
     }
-    & > :nth-child(4) {
+    & > :nth-of-type(4) {
         width: 10%;
     }
 `;

@@ -26,18 +26,13 @@ const SLayout = css`
     width: 1160px;
 `;
 
-
 function MyPage(props) {
 
     const queryClient = useQueryClient();
-    const principalState = queryClient.getQueryState("getPrincipal")
+    const principalState = queryClient.getQueryState("getPrincipal");
     const principal = principalState?.data?.data;
 
     const [ roleId, setRoleId ] = useState(principal.roleId);
-
-    useEffect(() => {
-        console.log(principal);
-    }, [roleId])
 
     const sidebarComponent =
         roleId === 0
@@ -47,12 +42,11 @@ function MyPage(props) {
             : roleId === 2
             ? <AcademySidebar />
             : null;
+
     return (
         <RootContainer>
             <div css={SLayout}>
-                {/* <MyPageSidebar/> */}
                 {sidebarComponent}
-
                 <MypageContainer title={"title"}>
                     <Routes>
                         <Route path='/' element={<MypageLike />} />

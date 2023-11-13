@@ -8,11 +8,11 @@ export const UlBox = css`
     padding-bottom: 10px;
     overflow: auto;
 
-    li:nth-child(3n+2) {
+    li:nth-of-type(3n+2) {
         margin: 0px 20px;
     }
 
-    li:not(.recent):nth-child(n) {
+    li:not(.recent):nth-of-type(n) {
         margin-bottom: 15px;
     }
 `;

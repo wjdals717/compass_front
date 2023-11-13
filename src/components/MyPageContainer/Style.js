@@ -43,7 +43,7 @@ export const STable = css`
         overflow: auto;
     }
 
-    td:nth-child(1){    //1번째 td인 경우
+    td:nth-of-type(1){    //1번째 td인 경우
         font-weight: 600;
     }
 

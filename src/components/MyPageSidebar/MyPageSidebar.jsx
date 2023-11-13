@@ -12,10 +12,9 @@ import AcademySidebar from './AcademySidebar/AcademySidebar';
 function MyPageSidebar({ role, children }) {
 
     const queryClient = useQueryClient();
-    const principalState = queryClient.getQueryState("getPrincipal")
+    const principalState = queryClient.getQueryState("getPrincipal");
     const principal = principalState.data.data;
     const [ roleMypageSidebar, setRoleMypageSidebar ] = useState(null);
-    console.log(principal)
 
     useEffect(() => {
         if (principal.roleId !== roleMypageSidebar) {
@@ -26,13 +25,10 @@ function MyPageSidebar({ role, children }) {
     return (
         <div css={S.MySidebarLayout}>
             <div css={S.UserContainer}>
-                <h2>닉네임</h2>
+                <h2>{principal.nickname}</h2>
                 <div>
                     🍀<span>{role}</span>
                 </div>
-            </div>
-            <div>
-                
             </div>
             { children }
         </div>
