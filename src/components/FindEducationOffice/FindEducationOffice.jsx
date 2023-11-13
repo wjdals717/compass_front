@@ -53,7 +53,6 @@ function FindEducationOffice({ educationOfficeCode }) {
     const getAcademies = useQuery(["getAcademies"], async () => {
         try {
             const options = {
-                // (key(필수 type), value(변수설명)) 형식
                 params: {
                     pIndex: page,
                     pSize: 20,
@@ -64,7 +63,6 @@ function FindEducationOffice({ educationOfficeCode }) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-
             // api, options를 get 요청
             return await instance.get("/academies", options);
         }catch (error) {
