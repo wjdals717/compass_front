@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
@@ -16,7 +16,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
     
-    // const { educationOfficeCode, academyCode } = useParams();       //찾기 페이지에서 학원 정보 가져옴
     const location = useLocation();
 
     // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
@@ -27,15 +26,15 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             const options = {
                 params: {
                     pIndex: 1,
-                    pSize: 20,
-                    userId: searchParams.get('userId')
+                    pSize: 1,
+                    ACADEMY_ID: searchParams.get('ACADEMY_ID')
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
             // api, options를 get 요청
-            return await instance.get("/academies", options);
+            return await instance.get("/academy", options);
         }catch (error) {
             console.error(error);
         }
@@ -44,11 +43,13 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         retry: 0,
         refetchOnWindowFocus: false,
         onSuccess: response => {
-            setAcademyData(response?.data?.academies);
+            setAcademyData(response?.data);
         }
     })
 
-    useEffect(() => {   //페이지 스크롤에 따른 좋아요/문의 위치 이동
+    console.log(academyData);
+
+    useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {
             if (window.scrollY > 200) {
                 setIsHeaderFixed(true);
@@ -72,31 +73,33 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             <div css={S.SLayout}>
                 <div css={S.SHead}>
                     <div css={S.SAcademyInfoContainer}>
-                        <div css={S.SAcademtLogo}></div>
+                        <div>
+                            <div css={S.SAcademtLogo}></div>
+                        </div>
                         <div css={S.SAcademyInfo}>
-                            <div css={S.SAcademyName}>{academyData.ACA_NM}</div>
-                            <div css={S.SAcademyLocation}><FaLocationDot/>{academyData.FA_RDNMA}</div>
+                            <div css={S.SAcademyName}>{academyData?.ACA_NM}</div>
+                            <div css={S.SAcademyLocation}><FaLocationDot/>{academyData?.FA_RDNMA}</div>
                             <div css={S.SScoreAndReviewContainer}>
                                 <AiFillStar css={S.SAcademyStar}/> 
                                 별점 5 · 학원후기(n개)
                             </div>
                         </div>
                     </div>
-                    <div css={S.SMoveBar(isHeaderFixed)}>
+                    <div css={S.SMoveBar(isHeaderFixed)} >
                         <input type="radio" id='academyintroduction' name='category'/>
-                        <label htmlFor="academyintroduction">
+                        <label htmlFor="academyintroduction" >
                             <a href="#introduction" css={S.SNavigation}>학원소개</a>
                         </label>
                         <input type="radio" id='academyconvenience' name='category'/>
-                        <label htmlFor="academyconvenience">
+                        <label htmlFor="academyconvenience" >
                             <a href="#convenience" css={S.SNavigation}>시설 및 편의 사항
                         </a></label>
                         <input type="radio" id='academyreview' name='category'/>
-                        <label htmlFor="academyreview">
+                        <label htmlFor="academyreview" >
                             <a href="#review" css={S.SNavigation}>수강후기</a>
                         </label>
                         <input type="radio" id='academyclassinfo' name='category'/>
-                        <label htmlFor="academyclassinfo">
+                        <label htmlFor="academyclassinfo" >
                             <a href="#classinfo" css={S.SNavigation}>학원 수업 정보</a>
                         </label>
                     </div>
@@ -131,7 +134,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             </div>
                             <div css={S.SIntroduction}>
                                 <div><FaLocationDot/><span>위치</span></div>
-                                <span>{academyData.FA_RDNMA + academyData.FA_RDNDA}</span>
+                                <span>{academyData?.FA_RDNMA + academyData?.FA_RDNDA}</span>
                             </div>
                         </div>
                         
