@@ -13,7 +13,6 @@ import { instance } from '../../api/config/instance';
 function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
     const navigate = useNavigate();
     const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
-    const introductionRef = useRef(null);                           // <a></a> 사용하면 아래쪽으로 자동 스크롤이 발생하는 것 방지
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
     
@@ -65,10 +64,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         };
     }, []);
 
-    const scrollToIntroduction = () => {
-        introductionRef.current.scrollIntoView({ behavior: 'smooth' });
-    };
-
     if(getAcademies.isLoading) {    //undefined인 경우
         return <></>
     }
@@ -90,27 +85,27 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             </div>
                         </div>
                     </div>
-                    <div css={S.SMoveBar(isHeaderFixed)}>
+                    <div css={S.SMoveBar(isHeaderFixed)} >
                         <input type="radio" id='academyintroduction' name='category'/>
-                        <label htmlFor="academyintroduction" onClick={scrollToIntroduction}>
+                        <label htmlFor="academyintroduction" >
                             <a href="#introduction" css={S.SNavigation}>학원소개</a>
                         </label>
                         <input type="radio" id='academyconvenience' name='category'/>
-                        <label htmlFor="academyconvenience" onClick={scrollToIntroduction}>
+                        <label htmlFor="academyconvenience" >
                             <a href="#convenience" css={S.SNavigation}>시설 및 편의 사항
                         </a></label>
                         <input type="radio" id='academyreview' name='category'/>
-                        <label htmlFor="academyreview" onClick={scrollToIntroduction}>
+                        <label htmlFor="academyreview" >
                             <a href="#review" css={S.SNavigation}>수강후기</a>
                         </label>
                         <input type="radio" id='academyclassinfo' name='category'/>
-                        <label htmlFor="academyclassinfo" onClick={scrollToIntroduction}>
+                        <label htmlFor="academyclassinfo" >
                             <a href="#classinfo" css={S.SNavigation}>학원 수업 정보</a>
                         </label>
                     </div>
                 </div>
                 <div>
-                    <div css={S.SIntroductionContainer} ref={introductionRef} id='introduction'>
+                    <div css={S.SIntroductionContainer} id='introduction'>
                         <h1 css={S.STitle}>학원소개</h1>
                         <div css={S.SIntroductions}>
                             <div css={S.SIntroduction}>
