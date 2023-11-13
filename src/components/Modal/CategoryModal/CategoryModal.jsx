@@ -16,16 +16,15 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
     const [ categoryDetailOption, setCategoryDetailOption ] = useState(""); // 선택된 상세 카테고리 
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // api로 넘길 카테고리 정보
 
-    // api로 넘길 카테고리 검색 정보
-    useEffect(() => {
+
+
+    const closeModal = () => {
+        // api로 넘길 카테고리 검색 정보
         setSelectedCategory({
             ...selectedCategory,
             realm_sc_nm: categoryOption,
             le_crse_nm: categoryDetailOption
         })
-    },[categoryOption, categoryDetailOption])
-
-    const closeModal = () => {
         setModalIsOpen(false);
     };
 

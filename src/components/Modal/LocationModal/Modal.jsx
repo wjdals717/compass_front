@@ -16,16 +16,13 @@ function Modal({ modalIsOpen, setModalIsOpen}) {
     const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState(""); // 선택된 행정구역
     const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // api로 넘길 교육청, 행정구역 정보
 
-    // api로 넘길 지역 검색 정보
-    useEffect(() => {
+    const closeModal = () => {
+        // 지역 검색 정보
         setSelectedLocation({
             ...selectedLocation,
             atpt_ofcdc_sc_code: educationOfficeOption,
             admst_zone_nm: administrativeDistrictOption
         })
-    },[educationOfficeOption, administrativeDistrictOption])
-
-    const closeModal = () => {
         setModalIsOpen(false);
     };
 

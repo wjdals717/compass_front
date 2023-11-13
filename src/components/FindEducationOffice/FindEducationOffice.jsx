@@ -53,19 +53,18 @@ function FindEducationOffice({ educationOfficeCode }) {
     const getAcademies = useQuery(["getAcademies"], async () => {
         try {
             const options = {
-                // (key(필수 type), value(변수설명)) 형식
                 params: {
-                    KEY: "5234f1f7767447b4abc251d862f281e5",
-                    Type: "json",
                     pIndex: page,
                     pSize: 20,
                     ATPT_OFCDC_SC_CODE: educationOfficeCode,
                     ACA_NM: academyNameInput
+                },
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
                 }
             }
-
             // api, options를 get 요청
-            return await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", options);
+            return await instance.get("/academies", options);
         }catch (error) {
             console.error(error);
         }
@@ -75,15 +74,11 @@ function FindEducationOffice({ educationOfficeCode }) {
         refetchOnWindowFocus: false,
         onSuccess: response => {
             console.log(response);
-            if(Object.keys(response?.data).includes("acaInsTiInfo")) { // 학원 정보(keys값)를 가져왔는지 확인
-                // 학원 정보를 업데이트 하고 페이지 번호 증가
-                console.log(response.data.acaInsTiInfo[1]?.row);
-                setAcademyData({
-                    totalCount: response?.data?.acaInsTiInfo[0].head[0].list_total_count, 
-                    list: [...academyData.list].concat(response.data.acaInsTiInfo[1]?.row)
-                });
-                setPage(page + 1);
-            }
+            setAcademyData({
+                totalCount: response?.data?.list_total_count, 
+                list: [...academyData.list].concat(response?.data?.academies)
+            });
+            setPage(page + 1);
         },
         enabled: false  //자동 리패치 중지
     })
@@ -125,7 +120,7 @@ function FindEducationOffice({ educationOfficeCode }) {
                     <div>학원명</div>
                     <div></div>
                 </li>
-                {academyData?.list?.map((academy) => {
+                {!getAcademies.isLoading && academyData?.list?.map((academy) => {
                     return (
                         <li key={academy.ACA_ASNUM} css={S.SList}>
                             <div>{academy.ACA_ASNUM}</div>
