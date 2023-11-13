@@ -35,8 +35,6 @@ function FindAcademies(props) {
     const { page } = useParams();
     const [ academyList, setAcademyList] = useState([]);
     
-    
-    
     const getAcademyList = useQuery(["getAcademyList"], async () => {
         try {
             const options = {

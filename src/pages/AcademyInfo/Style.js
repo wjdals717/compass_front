@@ -44,6 +44,7 @@ export const SAcademyName = css`
     margin-bottom: 10px;
     font-size: 24px;
     font-weight: 600;
+    line-height: 32px;
 `;
 
 export const SAcademyLocation = css`
