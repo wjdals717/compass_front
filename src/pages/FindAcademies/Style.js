@@ -115,7 +115,7 @@ export const PageButtonContainer = css`
 
 export const Span = (hasOptions) => css`
     display: ${hasOptions ? "none" : "flex"};
-    justify-content: center;
+    font-size: 12px;
     color: #aaa;
 `;
 

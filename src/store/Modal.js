@@ -8,8 +8,8 @@ export const selectedLocationState = atom({
     },
 });
 
-export const selectedcategoryState = atom({
-    key: 'selectedcategoryState',
+export const selectedCategoryState = atom({
+    key: 'selectedCategoryState',
     default: {
         realm_sc_nm: "",
         le_crse_nm: ""

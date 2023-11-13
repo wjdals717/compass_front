@@ -3,20 +3,20 @@ import React, { useEffect, useState } from 'react';
 import * as S from "./Style"
 import ReactModal from 'react-modal';
 import { useQuery } from 'react-query';
-import { instance } from '../../api/config/instance';
+import { instance } from '../../../api/config/instance';
 import { useRecoilState } from 'recoil';
-import { selectedLocationState } from '../../store/Modal';
+import { selectedLocationState } from '../../../store/Modal';
 
-function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
+function Modal({ modalIsOpen, setModalIsOpen}) {
 
-    const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
-    const [ educationOfficeOption, setEducationOfficeOption ] = useState("");
-    const [ districtOptionShow, setDistrictOptionShow ] = useState(false);
-    const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]);
-    const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState("");
-    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
+    const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]); // 교육청 목록
+    const [ educationOfficeOption, setEducationOfficeOption ] = useState(""); // 선택된 교육청
+    const [ districtOptionShow, setDistrictOptionShow ] = useState(false); // 교육청이 선택 됐을 때 행정구역 정보
+    const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]); // 행정구역 목록
+    const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState(""); // 선택된 행정구역
+    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // api로 넘길 교육청, 행정구역 정보
 
-    // api로 넘길 검색 정보
+    // api로 넘길 지역 검색 정보
     useEffect(() => {
         setSelectedLocation({
             ...selectedLocation,
@@ -46,7 +46,7 @@ function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
         }
     });
 
-    const getAdministrativeDistrictOptions = useQuery(["getAdministrativeDistrictOptions"], async () => {
+    const getAdministrativeDistrictOptionsState = useQuery(["getAdministrativeDistrictOptionsState"], async () => {
         try {
             return await instance.get("/option/administrative-districts");
         } catch (error) {
@@ -64,12 +64,11 @@ function Modal({ modalIsOpen, setModalIsOpen, modalName }) {
     const filteredAdministrativeDistrictOptions = administrativeDistrictOptions.filter(option => {
         return option.educationOfficeCode === educationOfficeOption;
     });
-
     
 
     return (
         <ReactModal isOpen={modalIsOpen} onRequestClose={closeModal} css={S.SLayout}>
-            {modalName}
+            <div>지역 선택</div>
             <div css={S.SListContainer}>
                 <ul css={S.SEducationOfficeList}>
                     {educationOfficeOptions.map((option) => (
