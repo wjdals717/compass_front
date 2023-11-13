@@ -37,10 +37,7 @@ function RegistAcademy(props) {
     const principal = queryClient.getQueryState("getPrincipal");
 
     const [ academyContent, setAcademyContent ] = useState({
-        acaAsnum: "",                       //학원 코드
-        acaNm: "",                          //학원 이름
-        admstZoneNm: "",                    //행정구역명
-        atptOfcdcScCode: "",                //교육청 코드
+        academyId: "",
         userId: "",
         match: "",
         businessRegistrationFile: "",
@@ -51,10 +48,7 @@ function RegistAcademy(props) {
     useEffect(() => {
         setAcademyContent(prevAcademyContent => ({
             ...prevAcademyContent,
-            acaAsnum: selectedAcademy.ACA_ASNUM,
-            admstZoneNm: selectedAcademy.ADMST_ZONE_NM,
-            acaNm: selectedAcademy.ACA_NM,
-            atptOfcdcScCode: selectedAcademy.ATPT_OFCDC_SC_CODE,
+            academyId: selectedAcademy.ACADEMY_ID,
             userId: principal?.data?.data.userId,
             match: matchOption
         }));
