@@ -7,76 +7,53 @@ import FindAcademiesSidebar from '../../components/FindAcademiesSidebar/FindAcad
 import defalutProfile from './고양이.jpg';
 import { RiAdvertisementFill } from 'react-icons/ri';
 import Modal from '../../components/Modal/LocationModal/Modal';
-import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedCategoryState, selectedLocationState } from '../../store/Modal';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
+import { useQuery } from 'react-query';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
 
-    const [ hasOptions, setHasOptions ] = useState(false); // 조건 여부(지역, 카테고리)
-    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // 지역
+    const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
     const [ selectedContent, setSelectedContent ] = useState(""); // 학원 이름
     let aca_nm = "";
 
-    console.log(hasOptions)
+    console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
+    console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
+    console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
+    console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
+    console.log("selectedContent:" + selectedContent);
+
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
 
-    const [ totalCount, setTotalCount ] = useState(0);   // 아무 조건도 주지 않았을 경우 가져올 총 학원 수 2100개 조건이 있을경우 가지고온 학원 수에 따라 달라짐
+    const [ totalCount, setTotalCount ] = useState(0);
     const { page } = useParams();
-    const [ academyList, setAcademyList ] = useState();
-
-    const educationOfficeCodes = ["B10", "C10", "D10", "E10", "F10", "G10", "H10", "I10", "J10", "K10", "M10", "N10", "P10", "Q10", "R10", "S10" , "T10"]
+    const [ academyList, setAcademyList] = useState([]);
     
-    // 조건이 없을 경우
-    const fetchAcademyData = async () => {
-        const allAcademyData = [];
-        setTotalCount(2100);
-        for (const code of educationOfficeCodes) {
-            try {
-                const options = {
-                    params: {
-                        KEY: "5234f1f7767447b4abc251d862f281e5",
-                        Type: "json",
-                        pIndex: page,
-                        pSize: (code === "B10" || code === "J10") ? 3 : 1,
-                        ATPT_OFCDC_SC_CODE: code
-                    }
-                };
-
-                const response = await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", options);
-
-                if (Object.keys(response?.data).includes("acaInsTiInfo")) {
-                    response.data.acaInsTiInfo[1]?.row.forEach((academy) => {
-                        allAcademyData.push(academy);
-                    });
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        setAcademyList(allAcademyData);
-    };
-
-    // 조건이 있는 경우(조건을 줄 경우 무조건 지역을 선택하도록)
-    const selectAcademyData = async () => {
-        const allAcademyData = [];
+    
+    
+    const getAcademyList = useQuery(["getAcademyList"], async () => {
         try {
             const options = {
                 params: {
-                    KEY: "5234f1f7767447b4abc251d862f281e5",
-                    Type: "json",
                     pIndex: page,
-                    pSize: 21,
-                    ATPT_OFCDC_SC_CODE: selectedLocation.atpt_ofcdc_sc_code,
+                    pSize: 21
+                },
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
                 }
             }
-
+            
+            // ATPT_OFCDC_SC_CODE가 selectedLocation에 존재하는지 확인
+            if (selectedLocation.atpt_ofcdc_sc_code) {
+                options.params.ATPT_OFCDC_SC_CODE = selectedLocation.atpt_ofcdc_sc_code;
+            }
+            
             // ADMST_ZONE_NM이 selectedLocation에 존재하는지 확인
             if (selectedLocation.admst_zone_nm) {
                 options.params.ADMST_ZONE_NM = selectedLocation.admst_zone_nm;
@@ -97,48 +74,32 @@ function FindAcademies(props) {
             }
     
             // api, options를 get 요청
-            const response = await instance.get("https://open.neis.go.kr/hub/acaInsTiInfo", options);
+            const response = await instance.get("/academies", options);
+            console.log(response);
 
-            if (Object.keys(response?.data).includes("acaInsTiInfo")) {
-                // 조건에 해당하는 총 학원수로 다시 페이지네이션
-                setTotalCount(response.data.acaInsTiInfo[0]?.head[0].list_total_count);
-                response.data.acaInsTiInfo[1]?.row.forEach((academy) => {
-                    allAcademyData.push(academy);
-                });
-            }
+            // Update academyList with the data from the response
+            setAcademyList(response.data.academies);
+
+            // Set the total count
+            setTotalCount(response.data.listTotalCount);
+            
         } catch (error) {
             console.error(error);
         }
-        setAcademyList(allAcademyData);
-    };
+    }) 
 
     // 조건이 생길 때 학원목록 업데이트
     useEffect(() => {
-        if (!hasOptions) {
-            fetchAcademyData();
-        } else {
-            selectAcademyData();
-        }
-    }, [page, hasOptions, selectedLocation, selectedCategory, selectedContent]);
+        getAcademyList.refetch()
+    }, [page, selectedLocation, selectedCategory, selectedContent]);
     
-    // 조건이 변경될 때 hasOptions 업데이트
-    useEffect(() => {
-        if (selectedLocation.atpt_ofcdc_sc_code) {
-            setHasOptions(true);
-            navigate("/academy/find/1");
-        } else {
-            setHasOptions(false);
-        }
-    }, [selectedLocation]);
 
     const handleInputOnChange = (e) => {
         aca_nm = e.target.value
     }
 
     const handleSelectContent = () => {
-        
         setSelectedContent(aca_nm);
-        
     }
 
     const pagenation = () => {
@@ -182,7 +143,6 @@ function FindAcademies(props) {
 
     const openCategoryModal = () => {
         setCategoryModalIsOpen(true);
-        
     };
     
 
@@ -207,7 +167,6 @@ function FindAcademies(props) {
                 <div css={S.PageContainer}>
                     <div css={S.InfoBox}>
                         <div>{totalCount}개의 학원이 있습니다.</div>
-                        <span css={S.Span(hasOptions)}>조건이 없으면 2100개까지 보여집니다. 찾는 결과가 없다면 검색 조건을 이용해 주세요</span>
                     </div>
                     <div>
                         <div css={S.HeaderBox}>
@@ -221,17 +180,17 @@ function FindAcademies(props) {
                             <li css={S.LiBox} className='recent'>
                                 <img src={defalutProfile} alt="" />
                                 <strong>학원 이름</strong>
-                                <div>학원 설명</div>
+                                <div>학원 위치</div>
                             </li>
                             <li css={S.LiBox} className='recent'>
                                 <img src={defalutProfile} alt="" />
                                 <strong>학원 이름</strong>
-                                <div>학원 설명</div>
+                                <div>학원 위치</div>
                             </li>
                             <li css={S.LiBox} className='recent'>
                                 <img src={defalutProfile} alt="" />
                                 <strong>학원 이름</strong>
-                                <div>학원 설명</div>
+                                <div>학원 위치</div>
                             </li>
                         </ul>
                     </div>
@@ -245,9 +204,8 @@ function FindAcademies(props) {
                             </select>
                         </div>
                         <ul css={S.UlBox}>
-                            {academyList?.map((academy) => {
-                                const key = `${academy.ATPT_OFCDC_SC_CODE}_${academy.ACA_ASNUM}`;
-                                return <li key={key} css={S.LiBox} onClick={()=> {navigate(`/academy/info?education_office_codes=${academy.ATPT_OFCDC_SC_CODE}&academy_num=${academy.ACA_ASNUM}`)}}>
+                            {academyList.map((academy) => {
+                                return <li key={academy.ACADEMY_ID} css={S.LiBox} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
                                     <img src={defalutProfile} alt="" />
                                     <strong>{academy.ACA_NM}</strong>
                                     <div>{academy.FA_RDNMA}</div>
@@ -266,13 +224,6 @@ function FindAcademies(props) {
             <CategoryModal modalIsOpen={categoryModalIsOpen} 
                 setModalIsOpen={setCategoryModalIsOpen} 
                 setSelectedCategory={setSelectedCategory}/>
-
-            <span css={S.Span(hasOptions)}>조건없이 검색 시 100페이지까지 보여집니다. 찾는 결과가 없다면 검색 조건을 이용해 주세요</span>
-            {/* <Modal modalIsOpen={modalIsOpen} 
-                setModalIsOpen={setModalIsOpen} 
-                modalName={modalName}
-                setAcademyList={setAcademyList}
-                setSelectedLocation={setSelectedLocation}/> */}
 
         </RootContainer>
     );
