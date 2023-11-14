@@ -6,7 +6,6 @@ import { Route, Routes, useSearchParams } from 'react-router-dom';
 import MypageUser from '../../components/MyPageContainer/MypageUser/MypageUser';
 import MyPageInquiry from '../../components/MyPageContainer/StudentMypage/MypageInquiry/MypageInquiry';
 import MypageReview from '../../components/MyPageContainer/StudentMypage/MypageReview/MypageReview';
-import MyPageMyAcamedy from '../../components/MyPageContainer/AcademyMypage/MypageMyAcamedy/MypageMyAcamedy';
 import MypageAdPayment from '../../components/MyPageContainer/AcademyMypage/MypageAdPayment/MypageAdPayment';
 import MyPageConsultation from '../../components/MyPageContainer/AcademyMypage/MypageConsultation/MypageConsultation';
 import AcademyWaiting from '../../components/MyPageContainer/WebMasterMypage/AcademyWaiting/AcademyWaiting';
@@ -17,6 +16,8 @@ import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
 import { css } from '@emotion/react';
 import { useQueryClient } from 'react-query';
+import MypageAppliedAcademy from '../../components/MyPageContainer/AcademyMypage/MypageAppliedAcademy/MypageAppliedAcademy';
+import MypageMyAcademy from '../../components/MyPageContainer/AcademyMypage/MypageMyAcademy/MypageMyAcademy';
 /** @jsxImportSource @emotion/react */
 
 const SLayout = css`
@@ -53,7 +54,8 @@ function MyPage(props) {
                         <Route path='/user' element={<MypageUser />} />
                         <Route path='/inquiry' element={<MyPageInquiry />} />
                         <Route path='/review' element={<MypageReview />} />
-                        <Route path='/myacademy' element={<MyPageMyAcamedy />} />
+                        <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
+                        <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />
                         <Route path='/adpayment' element={<MypageAdPayment />} />
                         <Route path='/consultation' element={<MyPageConsultation />} />
                         <Route path='/academywaiting/:page' element={<AcademyWaiting />} />

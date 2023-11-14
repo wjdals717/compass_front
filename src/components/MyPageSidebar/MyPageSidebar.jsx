@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
-import {AiFillSetting} from 'react-icons/ai';
-import { Link } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
-import WebMastesrSidebar from './WebMastesrSidebar/WebMastesrSidebar';
-import StudentSidebar from './StudentSidebar/StudentSidebar';
-import AcademySidebar from './AcademySidebar/AcademySidebar';
 
 function MyPageSidebar({ role, children }) {
 
