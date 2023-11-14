@@ -49,7 +49,9 @@ function FindAcademies(props) {
                     ADMST_ZONE_NM: selectedLocation.admst_zone_nm,
                     REALM_SC_NM: selectedCategory.realm_sc_nm,
                     LE_CRSE_NM: selectedCategory.le_crse_nm,
-                    ACA_NM: selectedContent
+                    ACA_NM: selectedContent,
+                    ageIds: selectedAgeOptions.join(","),
+                    convenienceIds: selectedConvenienceOptions.join(",")
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
@@ -73,7 +75,8 @@ function FindAcademies(props) {
 
     // 조건이 생길 때 학원목록 업데이트
     useEffect(() => {
-        getAcademyList.refetch()
+        getAcademyList.refetch();
+        console.log("다시불러오기 되나?")
     }, [page, selectedLocation, selectedCategory, selectedContent, selectedAgeOptions, selectedConvenienceOptions]);
     
 

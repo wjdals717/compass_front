@@ -31,14 +31,11 @@ function ConvenienceOptions(props) {
     // 선택된 ConvenienceOption의 value값을 리스트에 추가 또는 제거
     const handleCheckboxChange = (value) => {
         setSelectedConvenienceOptions((prevOptions) => {
-            const updatedList = prevOptions.list.includes(value)
-                ? prevOptions.list.filter(option => option !== value)
-                : [...prevOptions.list, value];
+            const updatedList = prevOptions.includes(value)
+                ? prevOptions.filter(option => option !== value)
+                : [...prevOptions, value];
 
-            return {
-                convenienceCount: updatedList.length,
-                list: updatedList,
-            };
+            return updatedList;  // 수정된 배열을 직접 반환
         });
     };
 
@@ -50,7 +47,7 @@ function ConvenienceOptions(props) {
                 <div key={option.value}>
                     <input
                         type="checkbox"
-                        checked={selectedConvenienceOptions.list.includes(option.value)}
+                        checked={selectedConvenienceOptions.includes(option.value)}
                         onChange={() => handleCheckboxChange(option.value)}
                     />
                     {option.label}

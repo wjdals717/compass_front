@@ -18,16 +18,10 @@ export const selectedCategoryState = atom({
 
 export const selectedAgeState = atom({
     key: 'selectedAgeState',
-    default: {
-        AgeCount: 0,
-        list: []
-    }
+    default: []
 });
 
 export const selectedConvenienceState = atom({
     key: 'selectedConvenienceState',
-    default: {
-        convenienceCount: 0,
-        list: []
-    }
+    default: []
 });
