@@ -5,17 +5,18 @@ import ReactModal from 'react-modal';
 import { useQuery } from 'react-query';
 import { instance } from '../../../api/config/instance';
 import { useRecoilState } from 'recoil';
-import { selectedLocationState } from '../../../store/Modal';
+import { selectedLocationState } from '../../../store/searchOptions';
 
-function Modal({ modalIsOpen, setModalIsOpen}) {
+function LocationModal({ modalIsOpen, setModalIsOpen}) {
 
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]); // 교육청 목록
     const [ educationOfficeOption, setEducationOfficeOption ] = useState(""); // 선택된 교육청
     const [ districtOptionShow, setDistrictOptionShow ] = useState(false); // 교육청이 선택 됐을 때 행정구역 정보
     const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]); // 행정구역 목록
     const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState(""); // 선택된 행정구역
-    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // api로 넘길 교육청, 행정구역 정보
+    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // 선택된 교육청, 행정구역 정보
 
+    // 선택 버튼
     const closeModal = () => {
         // 지역 검색 정보
         setSelectedLocation({
@@ -25,6 +26,12 @@ function Modal({ modalIsOpen, setModalIsOpen}) {
         })
         setModalIsOpen(false);
     };
+
+    // 초기화
+    const handleResetButton = () => {
+        setEducationOfficeOption("");
+        setAdministrativeDistrictOption("");
+    }
 
     const educationOfficeOptionsState = useQuery(["educationOfficeOptionsState"], async () => {
         try {
@@ -38,7 +45,8 @@ function Modal({ modalIsOpen, setModalIsOpen}) {
         refetchOnWindowFocus: false,
         onSuccess: response => {
             setEducationOfficeOptions(response.data.map(option => {
-                return {value: option.educationOfficeCode, label: option.educationOfficeName};
+                const label = option.educationOfficeName.substring(0, option.educationOfficeName.length - 3);
+                return {value: option.educationOfficeCode, label: label};
             }));
         }
     });
@@ -87,9 +95,10 @@ function Modal({ modalIsOpen, setModalIsOpen}) {
                     ))}
                 </ul>
             </div>
+            <button onClick={handleResetButton}>초기화</button>
             <button onClick={closeModal}>선택</button>
         </ReactModal>
     );
 }
 
-export default Modal;
+export default LocationModal;

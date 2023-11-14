@@ -5,7 +5,7 @@ import * as S from "./Style"
 import { instance } from '../../../api/config/instance';
 import { useQuery } from 'react-query';
 import ReactModal from 'react-modal';
-import { selectedCategoryState } from '../../../store/Modal';
+import { selectedCategoryState } from '../../../store/searchOptions';
 
 function CategoryModal({ modalIsOpen, setModalIsOpen }) {
     
@@ -17,7 +17,7 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // api로 넘길 카테고리 정보
 
 
-
+    // 선택 버튼
     const closeModal = () => {
         // api로 넘길 카테고리 검색 정보
         setSelectedCategory({
@@ -27,6 +27,12 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
         })
         setModalIsOpen(false);
     };
+
+    // 초기화
+    const handleResetButton = () => {
+        setCategoryOption("");
+        setCategoryDetailOption("")
+    }
 
 
     const categoryOptionsState = useQuery(["categoryOptionsState"], async () => {
@@ -96,6 +102,7 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
                     ))}
                 </ul>
             </div>
+            <button onClick={handleResetButton}>초기화</button>
             <button onClick={closeModal}>선택</button>
         </ReactModal>
     );

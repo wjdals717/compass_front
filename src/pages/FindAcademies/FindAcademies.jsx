@@ -6,11 +6,11 @@ import * as S from "./Style"
 import FindAcademiesSidebar from '../../components/FindAcademiesSidebar/FindAcademiesSidebar';
 import defalutProfile from './고양이.jpg';
 import { RiAdvertisementFill } from 'react-icons/ri';
-import Modal from '../../components/Modal/LocationModal/Modal';
+import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { selectedCategoryState, selectedLocationState } from '../../store/Modal';
+import { selectedAgeState, selectedCategoryState, selectedConvenienceState, selectedLocationState } from '../../store/searchOptions';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery } from 'react-query';
 
@@ -21,6 +21,9 @@ function FindAcademies(props) {
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
     const [ selectedContent, setSelectedContent ] = useState(""); // 학원 이름
     let aca_nm = "";
+
+    const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
+    const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
 
     console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
     console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
@@ -35,45 +38,25 @@ function FindAcademies(props) {
     const { page } = useParams();
     const [ academyList, setAcademyList] = useState([]);
     
-    
-    
+
     const getAcademyList = useQuery(["getAcademyList"], async () => {
         try {
             const options = {
                 params: {
                     pIndex: page,
-                    pSize: 21
+                    pSize: 21,
+                    ATPT_OFCDC_SC_CODE: selectedLocation.atpt_ofcdc_sc_code,
+                    ADMST_ZONE_NM: selectedLocation.admst_zone_nm,
+                    REALM_SC_NM: selectedCategory.realm_sc_nm,
+                    LE_CRSE_NM: selectedCategory.le_crse_nm,
+                    ACA_NM: selectedContent
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            
-            // ATPT_OFCDC_SC_CODE가 selectedLocation에 존재하는지 확인
-            if (selectedLocation.atpt_ofcdc_sc_code) {
-                options.params.ATPT_OFCDC_SC_CODE = selectedLocation.atpt_ofcdc_sc_code;
-            }
-            
-            // ADMST_ZONE_NM이 selectedLocation에 존재하는지 확인
-            if (selectedLocation.admst_zone_nm) {
-                options.params.ADMST_ZONE_NM = selectedLocation.admst_zone_nm;
-            }
-
-            // selectedCategory.realm_sc_nm가 존재하는지 확인
-            if (selectedCategory.realm_sc_nm) {
-                options.params.REALM_SC_NM = selectedCategory.realm_sc_nm;
-            }
-            // selectedCategory.le_crse_nm가 존재하는지 확인
-            if (selectedCategory.le_crse_nm) {
-                options.params.LE_CRSE_NM = selectedCategory.le_crse_nm;
-            }
-
-            // selectedContent(ACA_NM)가 존재하는지 확인
-            if (selectedContent) {
-                options.params.ACA_NM = selectedContent;
-            }
     
-            // api, options를 get 요청
+            // options를 get 요청
             const response = await instance.get("/academies", options);
             console.log(response);
 
@@ -91,7 +74,7 @@ function FindAcademies(props) {
     // 조건이 생길 때 학원목록 업데이트
     useEffect(() => {
         getAcademyList.refetch()
-    }, [page, selectedLocation, selectedCategory, selectedContent]);
+    }, [page, selectedLocation, selectedCategory, selectedContent, selectedAgeOptions, selectedConvenienceOptions]);
     
 
     const handleInputOnChange = (e) => {
@@ -133,7 +116,6 @@ function FindAcademies(props) {
                     navigate(`/academy/find/${parseInt(page) + 1}`);
                 }}>&#62;</button>
             </>
-
         )
     }
 
@@ -144,7 +126,6 @@ function FindAcademies(props) {
     const openCategoryModal = () => {
         setCategoryModalIsOpen(true);
     };
-    
 
 
     return (
@@ -218,13 +199,12 @@ function FindAcademies(props) {
             <div css={S.PageButtonContainer}>
                 {pagenation()}
             </div>
-            <Modal modalIsOpen={modalIsOpen} 
+            <LocationModal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
                 setSelectedLocation={setSelectedLocation}/>
             <CategoryModal modalIsOpen={categoryModalIsOpen} 
                 setModalIsOpen={setCategoryModalIsOpen} 
                 setSelectedCategory={setSelectedCategory}/>
-
         </RootContainer>
     );
 }
