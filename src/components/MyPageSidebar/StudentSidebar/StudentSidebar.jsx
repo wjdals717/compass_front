@@ -24,6 +24,9 @@ function StudentSidebar(props) {
                 </Link>
             </div>
             <div css={S.RoleContainer}>
+                <Link to='/account/mypage/appliedacademy/1'>
+                    <div>🗒️ 학원 신청 목록</div>
+                </Link>
                 <Link to='/account/mypage/inquiry'>
                     <div>📞 나의 학원 문의</div>
                 </Link>
