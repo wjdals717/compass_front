@@ -16,14 +16,10 @@ import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/Studen
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
 import { css } from '@emotion/react';
-<<<<<<< HEAD
-import { useQueryClient } from 'react-query';
 import MypageAppliedAcademy from '../../components/MyPageContainer/AcademyMypage/MypageAppliedAcademy/MypageAppliedAcademy';
 import MypageMyAcademy from '../../components/MyPageContainer/AcademyMypage/MypageMyAcademy/MypageMyAcademy';
-=======
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
->>>>>>> 좋아요버튼활성화됨
 /** @jsxImportSource @emotion/react */
 
 const SLayout = css`
@@ -72,20 +68,13 @@ function MyPage(props) {
             : roleId === 2
             ? <AcademySidebar />
             : null;
-<<<<<<< HEAD
-=======
         console.log(principal)
->>>>>>> 좋아요버튼활성화됨
 
     return (
         <RootContainer>
             <div css={SLayout}>
-<<<<<<< HEAD
-                {sidebarComponent}
-=======
                 {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
 
->>>>>>> 좋아요버튼활성화됨
                 <MypageContainer title={"title"}>
                     <Routes>
                         <Route path='/' element={<MypageLike />} />

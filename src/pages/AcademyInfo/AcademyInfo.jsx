@@ -26,30 +26,9 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const str = category ? category.indexOf("(대)") : -1;
     const modifiedCategory = str !== -1 ? category.substring(0, str) : category;
     const userId = principal?.data?.data?.userId
-    const [ academy, setAcademy ] = useState({});
 
     const searchParams = new URLSearchParams(location.search);
     const academyId = searchParams.get('ACADEMY_ID')
-
-    const getAcademy = useQuery(["getAcademy"], async () => {
-        try { 
-            const option = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            return await instance.get(`/academy/${userId}`, option);
-        } catch(error) {
-            console.log("잘넘어감?")
-        }
-    }, {
-        refetchOnWindowFocus: false,
-        
-        onSuccess: response => {
-            
-            // setAcademy(response.data)
-        }
-    })
 
     const getLikeState = useQuery(["getLikeState"], async () => {
         try {
@@ -70,7 +49,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 await instance.post(`/account/like/${academyId}/${userId}`);
             }
             getLikeState.refetch();
-            getAcademy.refetch();
         } catch(error) {
             console.log(error)
         }
@@ -122,9 +100,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         };
     }, []);
 
-    if(getAcademies.isLoading) {    //undefined인 경우
-        return <></>
-    }
+    
 
     return (
         <RootContainer>
@@ -268,7 +244,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         onClick={handleLikeButtonClick}>
                             <AiOutlineHeart css={S.SLikeIcon}/>
                             관심학원
-                            <div>{getAcademy?.data?.data?.academyLikeCount}</div>
+                            <div>{getAcademies?.data?.data?.academyLikeCount}</div>
                         </button>
                     }
                     <button css={S.SinquiryButton}>
