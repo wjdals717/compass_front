@@ -21,7 +21,6 @@ export const STextContainer = css`
 `;
 
 export const SImgBox = css`
-    border: 1px solid #dbdbdb;
     width: 450px;
     height: 100%;
 `;
@@ -85,6 +84,7 @@ export const SSearchBtnBox = css`
 
 export const SRegistContainer = css`
     position: relative;
+    margin: 0px 50px;
     border-radius: 20px;
     padding: 30px;
     width: 100%;
@@ -97,10 +97,18 @@ export const SImg = css`
     left: 0;
     z-index: -1;
     object-fit: cover;
+    width: 500px;
+    height: 330px;
 `;
 
 export const SRegistTitle = css`
     margin-bottom: 10px;
     font-size: 24px;
     font-weight: 600;
+`;
+
+export const SLinkContainer = css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 `;
