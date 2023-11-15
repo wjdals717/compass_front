@@ -237,14 +237,10 @@ export const STable = css`
     border-collapse: collapse;
     border: 1px solid #dbdbdb;
 
-    & th, td {
+    & thead, tr, th, td {
         border: 1px solid #999;
         height: 30px;
         text-align: center;
-    }
-
-    & td {
-        cursor: pointer;
     }
 `;
 
