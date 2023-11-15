@@ -38,7 +38,6 @@ function MypageLike(props) {
     });
 
     const likeAcademiesData = getLikeAcademiesQuery?.data;
-    console.log(getLikeAcademiesQuery.data)
     
     return (
         <div>

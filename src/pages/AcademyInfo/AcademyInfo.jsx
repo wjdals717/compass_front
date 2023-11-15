@@ -36,7 +36,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         try {
             return await instance.get(`/account/like/${academyId}/${userId}`)
         } catch(error) {
-
+            console.error(error)
         }
     }, {
         refetchOnWindowFocus: false,
@@ -73,10 +73,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             console.log(error)
         }
     }
-
-    // const { ACADEMY_ID } = useParams();
-
-    // console.log(ACADEMY_ID);
     
     // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
     const getAcademy = useQuery(["getAcademy"], async () => {
@@ -106,7 +102,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     })
     
     console.log(academyData);
-    console.log(academyId);
 
     const getReviews = useQuery(["getReviews", academyId], async () => {
         // api, options를 get 요청
@@ -130,8 +125,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             }));
         }
     });
-
-    console.log(reviewData);
 
     useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {

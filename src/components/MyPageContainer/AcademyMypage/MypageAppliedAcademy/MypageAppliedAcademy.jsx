@@ -33,7 +33,6 @@ function MypageAppliedAcademy(props) {
 
     const handleAcademyOnClick = (academy) => {
         setSelectedAcademy(academy);
-        console.log(selectedAcademy);
     }
 
     const pagination = () => {

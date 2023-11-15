@@ -6,8 +6,6 @@ import * as S from "./Style";
 function MypageContainer({ title, children }) {
     return (
         <div css={S.SInterestAcademyBox}>
-            {/* <div css={S.SInterestTitle}>{title}</div>
-            <div css={S.SInterestList}>{children}</div> */}
             { children }
         </div>
     );

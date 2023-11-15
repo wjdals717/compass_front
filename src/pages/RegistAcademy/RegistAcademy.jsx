@@ -104,7 +104,6 @@ function RegistAcademy(props) {
                     alert("서류를 첨부하세요");
                     return;
                 }
-                console.log(academyContent);
 
                 //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
                 if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
