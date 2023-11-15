@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
+import * as GS from '../../../../styles/Global/Common';
 import { useNavigate, useParams } from 'react-router-dom';
 import { instance } from '../../../../api/config/instance';
 import { useQuery } from 'react-query';
@@ -33,7 +34,6 @@ function MypageAppliedAcademy(props) {
 
     const handleAcademyOnClick = (academy) => {
         setSelectedAcademy(academy);
-        console.log(selectedAcademy);
     }
 
     const pagination = () => {
@@ -99,7 +99,7 @@ function MypageAppliedAcademy(props) {
                                             <td>{academy.acaAsnum}</td>
                                             <td>{academy.acaNm}</td>
                                             <td>{academy.approvalStatus === 0 ? "승인 대기" : "승인 거절"}</td>
-                                            <td><button onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
+                                            <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
                                         </tr>
                             })
                         }

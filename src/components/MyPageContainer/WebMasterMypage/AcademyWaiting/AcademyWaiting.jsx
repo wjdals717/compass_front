@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
+import * as GS from '../../../../styles/Global/Common';
 import { instance } from '../../../../api/config/instance';
 import { useQuery } from 'react-query';
 import SelectedAcademy from './SelectedAcademy/SelectedAcademy';
@@ -93,7 +94,7 @@ function AcademyWaiting(props) {
                                             <td>{academy.acaAsnum}</td>
                                             <td>{academy.acaNm}</td>
                                             <td>{academy.name}</td>
-                                            <td><button onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
+                                            <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
                                         </tr>
                                 })
                         }

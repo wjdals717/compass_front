@@ -33,7 +33,6 @@ function MypageMyAcademy(props) {
 
     const handleAcademyOnClick = (academy) => {
         setSelectedAcademy(academy);
-        console.log(selectedAcademy);
     }
 
     return (

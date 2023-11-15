@@ -10,16 +10,18 @@ export const Common = css`
 
 export const SButton = css`
     position: relative;
-    border: 0;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
     padding: 5px 8px;
     display: inline-block;
     text-align: center;
-    color: white;
-    background-color: #7fb1bf;
+    color: black;
+    background-color: #eee;
+    cursor: pointer;
     :active {
-        top: 4px; 
-        box-shadow: 0 0 #74a3b0; 
-        background-color: #709CA8;
+        top: 2px; 
+        box-shadow: 0 0 #eee; 
+        background-color: #aaa;
+        color: white;
     }
-
 `

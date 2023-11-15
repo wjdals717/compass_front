@@ -23,17 +23,6 @@ export const STable = css`
         overflow: auto;
         cursor: default;
     }
-
-    button {
-        border: 1px solid #aaa;
-        border-radius: 5px;
-        padding: 5px 8px;
-        background-color: #eee;
-        cursor: pointer;
-        :active {
-            background-color: #ddd;
-        }
-    }
 `;
 
 export const SPageNumbers = css`
