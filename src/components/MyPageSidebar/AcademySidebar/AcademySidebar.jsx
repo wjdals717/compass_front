@@ -3,17 +3,24 @@ import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import MyPageSidebar from '../MyPageSidebar';
 import {AiFillSetting} from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import * as S from "../Style";
+import { useQueryClient } from 'react-query';
 
 function AcademySidebar(props) {
+
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal");
+    const likeCountOfMypage = queryClient.getQueryState("getLikeCountOfMypage");
+    const { likeId } = useParams();
+
     return (
         <MyPageSidebar role={'학원 관리자'}>
             <div css={S.IconContainer}>
                 <Link to='/account/mypage'>
                     <div>
                         <span>❤️</span>
-                        <span>관심 학원 0개</span>
+                        <span>관심 학원 {likeCountOfMypage?.data?.data}개</span>
                     </div>
                 </Link>
                 <Link to='/account/mypage/user'>

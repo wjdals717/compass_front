@@ -25,6 +25,7 @@ export const LiBox = css`
     padding: 10px;
     background-color: white;
     font-size: 16px;
+    cursor: pointer;
 
     img {
         margin-bottom: 5px;
@@ -36,6 +37,8 @@ export const LiBox = css`
     strong {
         margin: 5px 0;
         font-weight: 600;
+        width: 230px;
+        word-wrap: break-word;
     }
 
     div {
