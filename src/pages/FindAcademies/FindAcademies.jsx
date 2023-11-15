@@ -35,6 +35,16 @@ function FindAcademies(props) {
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
 
+    // 모달이 열릴 때 스크롤 막기
+    const disableBodyScroll = () => {
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 모달이 닫힐 때 스크롤 복원
+    const enableBodyScroll = () => {
+        document.body.style.overflow = 'auto';
+    }
+
     const [ totalCount, setTotalCount ] = useState(0);
     const { page } = useParams();
     const [ academyList, setAcademyList] = useState([]);
@@ -80,7 +90,7 @@ function FindAcademies(props) {
         refetchOnWindowFocus: false
     }) 
 
-    // 조건이 생길 때 학원목록 업데이트
+    // 조건이 생길 때 학원목록 업데이트, 1page로 이동
     useEffect(() => {
         navigate("/academy/find/1");
         if(page === "1") {
@@ -90,7 +100,6 @@ function FindAcademies(props) {
     
     useEffect(() => {
         if(page === "1") {
-            console.log("test")
             setAcademyList([]);
             setTotalCount(0);
         }
@@ -141,10 +150,12 @@ function FindAcademies(props) {
 
     const openLocationModal = () => {
         setModalIsOpen(true);
+        disableBodyScroll();
     };
 
     const openCategoryModal = () => {
         setCategoryModalIsOpen(true);
+        disableBodyScroll();
     };
 
 
@@ -221,9 +232,11 @@ function FindAcademies(props) {
             </div>
             <LocationModal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
+                enableBodyScroll={enableBodyScroll}
                 setSelectedLocation={setSelectedLocation}/>
             <CategoryModal modalIsOpen={categoryModalIsOpen} 
                 setModalIsOpen={setCategoryModalIsOpen} 
+                enableBodyScroll={enableBodyScroll}
                 setSelectedCategory={setSelectedCategory}/>
         </RootContainer>
     );

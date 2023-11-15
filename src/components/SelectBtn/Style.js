@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
 export const SSelectBox = css`
+    height: 100%;
     cursor: pointer;
 
     & > div {

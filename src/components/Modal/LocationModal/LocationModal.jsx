@@ -7,7 +7,7 @@ import { instance } from '../../../api/config/instance';
 import { useRecoilState } from 'recoil';
 import { selectedLocationState } from '../../../store/searchOptions';
 
-function LocationModal({ modalIsOpen, setModalIsOpen}) {
+function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
 
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]); // 교육청 목록
     const [ educationOfficeOption, setEducationOfficeOption ] = useState(""); // 선택된 교육청
@@ -25,6 +25,7 @@ function LocationModal({ modalIsOpen, setModalIsOpen}) {
             admst_zone_nm: administrativeDistrictOption
         })
         setModalIsOpen(false);
+        enableBodyScroll();
     };
 
     // 초기화
@@ -81,7 +82,12 @@ function LocationModal({ modalIsOpen, setModalIsOpen}) {
                             setEducationOfficeOption(option.value);
                             setDistrictOptionShow(true);
                             setAdministrativeDistrictOption("");
-                        }}>
+                            }}
+                            css={[
+                                S.SEducationOfficeListItem, // 기존 스타일을 포함
+                                option.value === educationOfficeOption && S.SCategoryListItemSelected // 선택된 li에 대한 스타일
+                            ]}
+                            >
                             {option.label}
                         </li>
                     ))}
@@ -89,14 +95,22 @@ function LocationModal({ modalIsOpen, setModalIsOpen}) {
                 <ul css={S.SDistrictOptionList(districtOptionShow)}>
                     {filteredAdministrativeDistrictOptions.map((option) => (
                         <li key={option.administrativeDistrictId} 
-                        onClick={() => {setAdministrativeDistrictOption(option.administrativeDistrictName)}}>
+                        onClick={() => {setAdministrativeDistrictOption(option.administrativeDistrictName)}}
+                        css={[
+                            S.SDistrictOptionListItem, // 기존 스타일을 포함
+                            option.administrativeDistrictName === administrativeDistrictOption && S.SDistrictOptionListItemSelected // 선택된 li에 대한 스타일
+                        ]}
+                        >
                             {option.administrativeDistrictName}
                         </li>
                     ))}
                 </ul>
             </div>
-            <button onClick={handleResetButton}>초기화</button>
-            <button onClick={closeModal}>선택</button>
+            <div css={S.ButtonContainer}>
+                <button onClick={handleResetButton}>초기화</button>
+                <button onClick={closeModal}>선택</button>
+            </div>
+            
         </ReactModal>
     );
 }
