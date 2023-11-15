@@ -301,7 +301,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             {getLikeState?.data?.data ? <AiFillHeart css={S.SLikeIcon(getLikeState?.data?.data)}/> :
                             <AiOutlineHeart css={S.SLikeIcon(getLikeState?.data?.data)}/>}
                             관심학원
-                            <div>{getAcademy?.data?.data?.academyLikeCount}</div>
+                            <div>{likeCountOfInfo?.data?.data}</div>
                         </button>
                     }
                     <button css={S.SinquiryButton}>
