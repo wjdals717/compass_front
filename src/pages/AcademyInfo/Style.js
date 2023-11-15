@@ -147,6 +147,14 @@ export const SIntroduction = css`
 export const SConvenienceContainer = css`
     width: 100%;
     height: 200px;
+
+    div {
+        display: flex;
+        padding: 0 20px;
+    }
+    span {
+        margin-right: 20px;
+    }
 `;
 
 export const SReviewContainer = css`

@@ -15,7 +15,7 @@ import { storage } from '../../api/firebase/firebase';
 
 
 function RegistAcademy(props) {
-    const [ matchOption, setMatchOption ] = useState("true");
+    const [ matchOption, setMatchOption ] = useState(true);
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
     const [ choiceEducationOffice, setChoiceEducationOffice ] = useState("");
@@ -92,7 +92,7 @@ function RegistAcademy(props) {
         }
 
         //firebase에 저장
-        const storageRef = ref(storage, `files/${e.target.name}/${academyContent.atptOfcdcScCode}/${academyContent.acaAsnum}_${files[0].name}`);    // 해당 파일의 이름으로 firebase의 storage에 저장됨
+        const storageRef = ref(storage, `files/${e.target.name}/${academyContent.userId}/${files[0].name}`);    // 해당 파일의 이름으로 firebase의 storage에 저장됨
         const uploadTask = uploadBytesResumable(storageRef, files[0]);        // 파일 업로드가 실행됨
 
         uploadTask.on(          //업로드가 시작되면
@@ -151,21 +151,21 @@ function RegistAcademy(props) {
                 
                 if (!AllFilesAttached) {
                     alert("서류를 첨부하세요");
-                } else {
-                    console.log(academyContent);
-
-                    //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
-                    if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
-                        if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
-                            await instance.post("/academy", academyContent, option);
-                        } else {
-                            alert("업로드 중입니다. 잠시만 기다려주세요.");
-                        }
-                    } else {
-                        alert("업로드 중입니다. 잠시만 기다려주세요.");
-                    }
-                    alert("등록되었습니다. 신청은 3일 이내 확인됩니다.");
+                    return;
                 }
+                console.log(academyContent);
+
+                //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
+                if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
+                    if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
+                        await instance.post("/academy", academyContent, option);
+                    }
+                    alert("업로드 중입니다. 잠시만 기다려주세요.");
+                    return;
+                } else {
+                    alert("업로드 중입니다. 잠시만 기다려주세요.");
+                }
+                alert("등록되었습니다. 신청은 3일 이내 확인됩니다.");
             }
         } catch (error) {
             alert(error.response.data.sendFail);
@@ -245,7 +245,7 @@ function RegistAcademy(props) {
                     <p>{idFile}</p>
                     <input type="file" name='idFile' id='idFile' onChange={uploadLableChange}/>
                 </div>
-                {matchOption === 'false' ? 
+                {!matchOption ? 
                     <div css={S.SFileUploadContainer}>
                         <span>학원설립운영등록증</span>
                         <label css={S.SUploadLabel} htmlFor='operationRegistrationFile'>
