@@ -255,7 +255,7 @@ export const SOptionBox = css`
     height: 110px;
 `;
 
-export const SLikeButton = css`
+export const SLikeButton = (isLike) => css`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -265,7 +265,8 @@ export const SLikeButton = css`
     padding: 0px;
     width: 60px;
     font-size: 13px;
-    background-color: white;
+    color: ${isLike ? "#7bbdff" : "black"};
+    /* background-color: ${isLike ? "#7bbdff" : "#fff"}; */
     cursor: pointer;
 `;
 

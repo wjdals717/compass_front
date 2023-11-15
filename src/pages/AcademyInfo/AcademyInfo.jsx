@@ -7,16 +7,70 @@ import { AiFillStar, AiOutlineCheck, AiFillHeart,AiOutlineHeart } from 'react-ic
 import { IoHomeSharp } from 'react-icons/io5'
 import { BsFillPeopleFill, BsBarChartLineFill, BsFillCalendar2CheckFill, BsFillBookFill, BsFillPencilFill, BsChatLeftTextFill } from 'react-icons/bs'
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 
 function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal")
+
     const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
     
     const location = useLocation();
+
+    const userId = principal?.data?.data?.userId
+    const [ academy, setAcademy ] = useState({});
+
+    const searchParams = new URLSearchParams(location.search);
+    const academyId = searchParams.get('ACADEMY_ID')
+
+    const getAcademy = useQuery(["getAcademy"], async () => {
+        try { 
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/academy/${userId}`, option);
+        } catch(error) {
+            console.log("잘넘어감?")
+        }
+    }, {
+        refetchOnWindowFocus: false,
+        
+        onSuccess: response => {
+            
+            // setAcademy(response.data)
+        }
+    })
+
+    const getLikeState = useQuery(["getLikeState"], async () => {
+        try {
+            return await instance.get(`/account/like/${academyId}/${userId}`)
+        } catch(error) {
+
+        }
+    }, {
+        refetchOnWindowFocus: false,
+        retry: 0
+    })
+
+    const handleLikeButtonClick = async () => {
+        try {
+            if(getLikeState?.data?.data) {
+                await instance.delete(`/account/like/${academyId}/${userId}`);
+            } else {
+                await instance.post(`/account/like/${academyId}/${userId}`);
+            }
+            getLikeState.refetch();
+            getAcademy.refetch();
+        } catch(error) {
+            console.log(error)
+        }
+    }
 
     // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
     const getAcademies = useQuery(["getAcademies"], async () => {
@@ -201,10 +255,15 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             </div>
             <div css={S.SSide}>
                 <div css={S.SOptionBox}>
-                    <button css={S.SLikeButton}>
-                        <AiOutlineHeart css={S.SLikeIcon}/>
-                        관심학원
-                    </button>
+                    {!getLikeState.isLoading &&
+                        <button disabled={!principal?.data?.data}
+                        css={S.SLikeButton(getLikeState?.data?.data)}
+                        onClick={handleLikeButtonClick}>
+                            <AiOutlineHeart css={S.SLikeIcon}/>
+                            관심학원
+                            <div>{getAcademy?.data?.data?.academyLikeCount}</div>
+                        </button>
+                    }
                     <button css={S.SinquiryButton}>
                         <BsChatLeftTextFill css={S.SinquiryIcon}/>
                         문의

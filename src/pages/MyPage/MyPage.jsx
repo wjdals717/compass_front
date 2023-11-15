@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 import MyPageSidebar from '../../components/MyPageSidebar/MyPageSidebar';
@@ -16,7 +17,8 @@ import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/Studen
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
 import { css } from '@emotion/react';
-import { useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
+import { instance } from '../../api/config/instance';
 /** @jsxImportSource @emotion/react */
 
 const SLayout = css`
@@ -35,6 +37,25 @@ function MyPage(props) {
 
     const [ roleId, setRoleId ] = useState(principal.roleId);
 
+    const userId = principal?.userId
+
+    const getLikeCountOfMypage = useQuery(["getLikeCountOfMypage"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/mypage/like/count/${userId}`, option);
+        }catch(error) {
+            console.error(error)
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+
     useEffect(() => {
         console.log(principal);
     }, [roleId])
@@ -47,11 +68,12 @@ function MyPage(props) {
             : roleId === 2
             ? <AcademySidebar />
             : null;
+        console.log(principal)
+
     return (
         <RootContainer>
             <div css={SLayout}>
-                {/* <MyPageSidebar/> */}
-                {sidebarComponent}
+                {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
 
                 <MypageContainer title={"title"}>
                     <Routes>
@@ -62,7 +84,7 @@ function MyPage(props) {
                         <Route path='/myacademy' element={<MyPageMyAcamedy />} />
                         <Route path='/adpayment' element={<MypageAdPayment />} />
                         <Route path='/consultation' element={<MyPageConsultation />} />
-                        <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
+                        <Route path='/academywaiting' element={<AcademyWaiting />} />
                         <Route path='/inquirylist' element={<InquiryList />} />
                     </Routes>
                 </MypageContainer>
