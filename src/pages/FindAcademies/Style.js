@@ -53,6 +53,7 @@ export const PageContainer = css`
 
 export const InfoBox = css`
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 20px 0;
 `;

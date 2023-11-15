@@ -5,9 +5,9 @@ import * as S from "./Style"
 import { instance } from '../../../api/config/instance';
 import { useQuery } from 'react-query';
 import ReactModal from 'react-modal';
-import { selectedCategoryState } from '../../../store/Modal';
+import { selectedCategoryState } from '../../../store/searchOptions';
 
-function CategoryModal({ modalIsOpen, setModalIsOpen }) {
+function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
     
     const [ categoryOptions, setCategoryOptions ] = useState([]); // 카테고리 목록
     const [ categoryOption, setCategoryOption ] = useState(""); // 선택된 카테고리
@@ -17,7 +17,7 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // api로 넘길 카테고리 정보
 
 
-
+    // 선택 버튼
     const closeModal = () => {
         // api로 넘길 카테고리 검색 정보
         setSelectedCategory({
@@ -26,7 +26,14 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
             le_crse_nm: categoryDetailOption
         })
         setModalIsOpen(false);
+        enableBodyScroll();
     };
+
+    // 초기화
+    const handleResetButton = () => {
+        setCategoryOption("");
+        setCategoryDetailOption("")
+    }
 
 
     const categoryOptionsState = useQuery(["categoryOptionsState"], async () => {
@@ -68,7 +75,7 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
 
     return (
         <ReactModal isOpen={modalIsOpen} onRequestClose={closeModal} css={S.SLayout}>
-            <div>카테고리 선택</div>
+            <div css={S.STitle}>카테고리 선택</div>
             <div css={S.SListContainer}>
                 <ul css={S.SCategoryList}>
                     {categoryOptions.map((option) => (
@@ -90,13 +97,22 @@ function CategoryModal({ modalIsOpen, setModalIsOpen }) {
                 <ul css={S.SCategoryDetailList(detailOptionShow)}>
                     {filteredCategoryDetailOptions.map((option) => (
                         <li key={option.categoryDetailValue} 
-                        onClick={() => {setCategoryDetailOption(option.categoryDetailValue)}}>
+                        onClick={() => {setCategoryDetailOption(option.categoryDetailValue)}}
+                        css={[
+                            S.SCategoryDetailListItem, // 기존 스타일을 포함
+                            option.categoryDetailValue === categoryDetailOption && S.SCategoryDetailListItemSelected // 선택된 li에 대한 스타일
+                        ]}
+                        >
                             {option.categoryDetailName}
                         </li>
                     ))}
                 </ul>
             </div>
-            <button onClick={closeModal}>선택</button>
+            <div css={S.ButtonContainer}>
+                <button onClick={handleResetButton}>초기화</button>
+                <button onClick={closeModal}>선택</button>
+            </div>
+            
         </ReactModal>
     );
 }
