@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 import MyPageSidebar from '../../components/MyPageSidebar/MyPageSidebar';
@@ -15,9 +16,14 @@ import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/Studen
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';
 import AcademySidebar from '../../components/MyPageSidebar/AcademySidebar/AcademySidebar';
 import { css } from '@emotion/react';
+<<<<<<< HEAD
 import { useQueryClient } from 'react-query';
 import MypageAppliedAcademy from '../../components/MyPageContainer/AcademyMypage/MypageAppliedAcademy/MypageAppliedAcademy';
 import MypageMyAcademy from '../../components/MyPageContainer/AcademyMypage/MypageMyAcademy/MypageMyAcademy';
+=======
+import { useQuery, useQueryClient } from 'react-query';
+import { instance } from '../../api/config/instance';
+>>>>>>> 좋아요버튼활성화됨
 /** @jsxImportSource @emotion/react */
 
 const SLayout = css`
@@ -35,6 +41,29 @@ function MyPage(props) {
 
     const [ roleId, setRoleId ] = useState(principal.roleId);
 
+    const userId = principal?.userId
+
+    const getLikeCountOfMypage = useQuery(["getLikeCountOfMypage"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/mypage/like/count/${userId}`, option);
+        }catch(error) {
+            console.error(error)
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+
+    useEffect(() => {
+        console.log(principal);
+    }, [roleId])
+
     const sidebarComponent =
         roleId === 0
             ? <WebMastesrSidebar/>
@@ -43,11 +72,20 @@ function MyPage(props) {
             : roleId === 2
             ? <AcademySidebar />
             : null;
+<<<<<<< HEAD
+=======
+        console.log(principal)
+>>>>>>> 좋아요버튼활성화됨
 
     return (
         <RootContainer>
             <div css={SLayout}>
+<<<<<<< HEAD
                 {sidebarComponent}
+=======
+                {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
+
+>>>>>>> 좋아요버튼활성화됨
                 <MypageContainer title={"title"}>
                     <Routes>
                         <Route path='/' element={<MypageLike />} />
@@ -58,7 +96,7 @@ function MyPage(props) {
                         <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />
                         <Route path='/adpayment' element={<MypageAdPayment />} />
                         <Route path='/consultation' element={<MyPageConsultation />} />
-                        <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
+                        <Route path='/academywaiting' element={<AcademyWaiting />} />
                         <Route path='/inquirylist' element={<InquiryList />} />
                     </Routes>
                 </MypageContainer>

@@ -10,7 +10,7 @@ function MyPageSidebar({ role, children }) {
     const principalState = queryClient.getQueryState("getPrincipal");
     const principal = principalState.data.data;
     const [ roleMypageSidebar, setRoleMypageSidebar ] = useState(null);
-
+    
     useEffect(() => {
         if (principal.roleId !== roleMypageSidebar) {
             setRoleMypageSidebar(principal.roleId);
