@@ -18,6 +18,8 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
+
+    const [ reviewData, setReviewData ] = useState();
     
     const location = useLocation();
 
@@ -41,6 +43,23 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         retry: 0
     })
 
+    const likeCountOfInfo = useQuery(["getLikeCountOfInfo"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/info/like/count/${academyId}`, option)
+        } catch(error) {
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+
+
     const handleLikeButtonClick = async () => {
         try {
             if(getLikeState?.data?.data) {
@@ -49,21 +68,24 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 await instance.post(`/account/like/${academyId}/${userId}`);
             }
             getLikeState.refetch();
+            likeCountOfInfo.refetch();
         } catch(error) {
             console.log(error)
         }
     }
 
-    // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
-    const getAcademies = useQuery(["getAcademies"], async () => {
-        try {
-            const searchParams = new URLSearchParams(location.search);
+    // const { ACADEMY_ID } = useParams();
 
+    // console.log(ACADEMY_ID);
+    
+    // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
+    const getAcademy = useQuery(["getAcademy"], async () => {
+        try {
             const options = {
                 params: {
                     pIndex: 1,
                     pSize: 1,
-                    ACADEMY_ID: searchParams.get('ACADEMY_ID')
+                    ACADEMY_ID: academyId
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
@@ -82,8 +104,34 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             setAcademyData(response?.data);
         }
     })
-
+    
     console.log(academyData);
+    console.log(academyId);
+
+    const getReviews = useQuery(["getReviews", academyId], async () => {
+        // api, options를 get 요청
+        try {
+            const options = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/academy/${academyId}/reviews`, options);
+        }catch(error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setReviewData(response.data.reviewList.map(data => {
+                return data;
+            }));
+        }
+    });
+
+    console.log(reviewData);
 
     useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {
@@ -100,8 +148,14 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         };
     }, []);
 
-    
+    const reviewSubmitButton = () => {
 
+    }
+
+    if(getAcademy.isLoading ) {    //undefined인 경우
+        return <></>
+    }
+    
     return (
         <RootContainer>
             <div css={S.SLayout}>
@@ -177,7 +231,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SConvenienceContainer} id='convenience'>
                         <h1 css={S.STitle}>시설 및 편의 사항</h1>
                         <div>
-                            {academyData?.convenienceInfo.map((convience) => {
+                            {getReviews.isLoading && academyData?.convenienceInfo.map((convience) => {
                                 return <span>
                                     <AiOutlineCheck/> {convience}
                                 </span>;
@@ -190,31 +244,24 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             <AiFillStar css={S.SStar}/> 5.0
                         </div>
                         <ul css={S.SReviewListContainer}>
-                            <li css={S.SReviewList}>
-                                <h1>닉네임</h1>
-                                <div>
-                                    <AiFillStar css={S.SStar}/> 5.0
-                                </div>
-                                <span>후기</span>
-                            </li>
-                            <li css={S.SReviewList}>
-                                <h1>닉네임</h1>
-                                <div>
-                                    <AiFillStar css={S.SStar}/> 5.0
-                                </div>
-                                <span>후기</span>
-                            </li>
+                            {reviewData?.map(data => {
+                                return (<li css={S.SReviewList}>
+                                    <h1>{data.nickname}</h1>
+                                    <div><AiFillStar css={S.SStar}/> {data.score}</div>
+                                    <span>{data.review_content}</span>
+                                </li>);
+                            })}
                         </ul>
                         <div>
                             <div css={S.SReviewInfo}>
                                 <div css={S.SReviewUserScoreContainer}>
-                                    <h1>닉네임</h1>
+                                    <h1>{principal?.data?.data.nickname}</h1>
                                     <div>
                                         <AiFillStar css={S.SStar}/>
                                         <input type="text" placeholder='별점'/>
                                     </div>
                                 </div>
-                                <button><BsFillPencilFill/>후기작성</button>
+                                <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
                             </div>
                             <textarea name="" id="" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.'/>
                         </div>
@@ -223,14 +270,23 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         <h1 css={S.STitle}>학원 수업 정보</h1>
                         <div>
                             <table css={S.STable}>
-                                <th>과정</th>
-                                <th>학원비</th>
-                                {academyData?.classInfo.map((classinfo) => {
-                                    return (<tr>
-                                        <td>{classinfo.class_name}</td>
-                                        <td>{classinfo.class_name}</td>
-                                    </tr>)
-                                })}
+                                <thead>
+                                    <tr>
+                                        <td>과정</td>
+                                        <td>학원비</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {!!academyData?.classInfo[0] ? 
+                                        academyData?.classInfo?.map((data) => {
+                                            return (<tr>
+                                                <td>{data?.class_name}</td>
+                                                <td>{data?.class_price}</td>
+                                            </tr>)
+                                        }) 
+                                        :  <tr><td colspan='2'>학원 수업 정보를 제공하지 않습니다.</td></tr>
+                                    }
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -240,11 +296,12 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 <div css={S.SOptionBox}>
                     {!getLikeState.isLoading &&
                         <button disabled={!principal?.data?.data}
-                        css={S.SLikeButton(getLikeState?.data?.data)}
+                        css={S.SLikeButton}
                         onClick={handleLikeButtonClick}>
-                            <AiOutlineHeart css={S.SLikeIcon}/>
+                            {getLikeState?.data?.data ? <AiFillHeart css={S.SLikeIcon(getLikeState?.data?.data)}/> :
+                            <AiOutlineHeart css={S.SLikeIcon(getLikeState?.data?.data)}/>}
                             관심학원
-                            <div>{getAcademies?.data?.data?.academyLikeCount}</div>
+                            <div>{getAcademy?.data?.data?.academyLikeCount}</div>
                         </button>
                     }
                     <button css={S.SinquiryButton}>
@@ -252,7 +309,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         문의
                     </button>
                 </div>
-                
             </div>
         </RootContainer>
     );

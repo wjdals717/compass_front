@@ -10,6 +10,10 @@ export const SLayout = css`
     background-color: white;
 `;
 
+export const STitle = css`
+    font-size: 20px;
+`;
+
 export const SListContainer = css`
     display: flex;
     margin: 20px auto;
@@ -17,25 +21,45 @@ export const SListContainer = css`
 `;
 
 export const SCategoryList = css`
-    margin-right: 30px;
-    white-space: normal;
-    cursor: pointer;
-`;
-
-export const SCategoryDetailList = (detailOptionShow) => css`
-    ${detailOptionShow ? "" : "display: none"};
-    margin-right: 30px;
-    height: 800px;
+    margin-right: 50px;
     cursor: pointer;
 `;
 
 export const SCategoryListItem = css`
     margin-bottom: 5px;
-    width: 70px;
-    height: 30px;
+    border-radius: 10px;
+    padding: 8px 10px;
+    width: 170px;
+    font-size: 18px;
+    color: #666;
 `;
 
 export const SCategoryListItemSelected = css`
-    // 선택된 li에 대한 스타일
-    // 예: backgroundColor: 'red',
+    background-color: #92C2F4;
+    color: white;
+    font-weight: bold;
+`;
+
+
+export const SCategoryDetailList = (detailOptionShow) => css`
+    ${detailOptionShow ? "" : "display: none"};
+    overflow-y: auto; /* 세로 스크롤이 필요한 경우만 스크롤을 보여줌 */
+    max-height: 700px;
+    cursor: pointer;
+`;
+
+export const SCategoryDetailListItem = css`
+    border-radius: 10px;
+    padding: 10px 10px;
+    color: #333;
+`;
+
+export const SCategoryDetailListItemSelected = css`
+    background-color: #92C2F4;
+    color: white;
+`;
+
+export const ButtonContainer = css`
+    display: flex;
+    justify-content: space-between;
 `;

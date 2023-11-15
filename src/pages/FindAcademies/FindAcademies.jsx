@@ -6,21 +6,25 @@ import * as S from "./Style"
 import FindAcademiesSidebar from '../../components/FindAcademiesSidebar/FindAcademiesSidebar';
 import defalutProfile from './고양이.jpg';
 import { RiAdvertisementFill } from 'react-icons/ri';
-import Modal from '../../components/Modal/LocationModal/Modal';
+import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { selectedCategoryState, selectedLocationState } from '../../store/Modal';
+import { selectedAgeState, selectedCategoryState, selectedContentState, selectedConvenienceState, selectedLocationState } from '../../store/searchOptions';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery } from 'react-query';
+import QueryString from 'qs';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
 
     const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
-    const [ selectedContent, setSelectedContent ] = useState(""); // 학원 이름
-    let aca_nm = "";
+    const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
+    const [ inputValue, setInputValue ] = useState(selectedContent);
+
+    const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
+    const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
 
     console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
     console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
@@ -31,47 +35,44 @@ function FindAcademies(props) {
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
 
+    // 모달이 열릴 때 스크롤 막기
+    const disableBodyScroll = () => {
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 모달이 닫힐 때 스크롤 복원
+    const enableBodyScroll = () => {
+        document.body.style.overflow = 'auto';
+    }
+
     const [ totalCount, setTotalCount ] = useState(0);
     const { page } = useParams();
     const [ academyList, setAcademyList] = useState([]);
-    
-    const getAcademyList = useQuery(["getAcademyList"], async () => {
+
+
+    const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
             const options = {
                 params: {
                     pIndex: page,
-                    pSize: 21
+                    pSize: 21,
+                    ATPT_OFCDC_SC_CODE: selectedLocation.atpt_ofcdc_sc_code,
+                    ADMST_ZONE_NM: selectedLocation.admst_zone_nm,
+                    REALM_SC_NM: selectedCategory.realm_sc_nm,
+                    LE_CRSE_NM: selectedCategory.le_crse_nm,
+                    ACA_NM: selectedContent,
+                    ageIds: selectedAgeOptions,
+                    countAgeId: selectedAgeOptions.length,
+                    convenienceIds: selectedConvenienceOptions,
+                    countConvenienceId: selectedConvenienceOptions.length
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            
-            // ATPT_OFCDC_SC_CODE가 selectedLocation에 존재하는지 확인
-            if (selectedLocation.atpt_ofcdc_sc_code) {
-                options.params.ATPT_OFCDC_SC_CODE = selectedLocation.atpt_ofcdc_sc_code;
-            }
-            
-            // ADMST_ZONE_NM이 selectedLocation에 존재하는지 확인
-            if (selectedLocation.admst_zone_nm) {
-                options.params.ADMST_ZONE_NM = selectedLocation.admst_zone_nm;
-            }
-
-            // selectedCategory.realm_sc_nm가 존재하는지 확인
-            if (selectedCategory.realm_sc_nm) {
-                options.params.REALM_SC_NM = selectedCategory.realm_sc_nm;
-            }
-            // selectedCategory.le_crse_nm가 존재하는지 확인
-            if (selectedCategory.le_crse_nm) {
-                options.params.LE_CRSE_NM = selectedCategory.le_crse_nm;
-            }
-
-            // selectedContent(ACA_NM)가 존재하는지 확인
-            if (selectedContent) {
-                options.params.ACA_NM = selectedContent;
+                },
+                paramsSerializer: params => QueryString.stringify(params, {arrayFormat: 'repeat'})
             }
     
-            // api, options를 get 요청
+            // options를 get 요청
             const response = await instance.get("/academies", options);
             console.log(response);
 
@@ -84,20 +85,51 @@ function FindAcademies(props) {
         } catch (error) {
             console.error(error);
         }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
     }) 
 
-    // 조건이 생길 때 학원목록 업데이트
+    // 조건이 생길 때 학원목록 업데이트, 1page로 이동
     useEffect(() => {
-        getAcademyList.refetch()
-    }, [page, selectedLocation, selectedCategory, selectedContent]);
+        navigate("/academy/find/1");
+        if(page === "1") {
+            getAcademyList.refetch();
+        }
+    }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length]);
     
+    useEffect(() => {
+        if(page === "1") {
+            setAcademyList([]);
+            setTotalCount(0);
+        }
+    }, [page])
+
 
     const handleInputOnChange = (e) => {
-        aca_nm = e.target.value
+        setInputValue(e.target.value);
     }
 
     const handleSelectContent = () => {
-        setSelectedContent(aca_nm);
+        setSelectedContent(inputValue);
+    }
+
+    // 전체 초기화
+    const allReset = () => {
+        setSelectedLocation({
+            ...selectedLocation,
+            atpt_ofcdc_sc_code: "",
+            admst_zone_nm: ""
+        });
+        setSelectedCategory({
+            ...selectedCategory,
+            realm_sc_nm: "",
+            le_crse_nm: ""
+        });
+        setSelectedContent("");
+        setSelectedAgeOptions([]);
+        setSelectedConvenienceOptions([]);
+        setInputValue("");
     }
 
     const pagenation = () => {
@@ -131,18 +163,18 @@ function FindAcademies(props) {
                     navigate(`/academy/find/${parseInt(page) + 1}`);
                 }}>&#62;</button>
             </>
-
         )
     }
 
     const openLocationModal = () => {
         setModalIsOpen(true);
+        disableBodyScroll();
     };
 
     const openCategoryModal = () => {
         setCategoryModalIsOpen(true);
+        disableBodyScroll();
     };
-    
 
 
     return (
@@ -156,7 +188,7 @@ function FindAcademies(props) {
                     <div onClick={openCategoryModal}>
                         <SelectBtn>카테고리 선택</SelectBtn>
                     </div>
-                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' onChange={handleInputOnChange}/>
+                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
                     <button onClick={handleSelectContent}>검색</button>
                 </div>
             </div>
@@ -165,6 +197,7 @@ function FindAcademies(props) {
                 <div css={S.PageContainer}>
                     <div css={S.InfoBox}>
                         <div>{totalCount}개의 학원이 있습니다.</div>
+                        <button onClick={allReset}>전체 초기화</button>
                     </div>
                     <div>
                         <div css={S.HeaderBox}>
@@ -216,13 +249,14 @@ function FindAcademies(props) {
             <div css={S.PageButtonContainer}>
                 {pagenation()}
             </div>
-            <Modal modalIsOpen={modalIsOpen} 
+            <LocationModal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
+                enableBodyScroll={enableBodyScroll}
                 setSelectedLocation={setSelectedLocation}/>
             <CategoryModal modalIsOpen={categoryModalIsOpen} 
                 setModalIsOpen={setCategoryModalIsOpen} 
+                enableBodyScroll={enableBodyScroll}
                 setSelectedCategory={setSelectedCategory}/>
-
         </RootContainer>
     );
 }
