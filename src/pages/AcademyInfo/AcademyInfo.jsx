@@ -56,11 +56,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     }
 
-    const queryClient = useQueryClient();
-    const principal = queryClient.getQueryState("getPrincipal");
-    
-    const searchParams = new URLSearchParams(location.search);
-    const academyId = searchParams.get('ACADEMY_ID');
     // const { ACADEMY_ID } = useParams();
 
     // console.log(ACADEMY_ID);
@@ -259,10 +254,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             <table css={S.STable}>
                                 <th>과정</th>
                                 <th>학원비</th>
-                                {academyData?.classInfo.map((classinfo) => {
+                                {academyData?.classInfo != null && academyData?.classInfo?.map((data) => {
                                     return (<tr>
-                                        <td>{classinfo.class_name}</td>
-                                        <td>{classinfo.class_price}</td>
+                                        <td>{data?.class_name}</td>
+                                        <td>{data?.class_price}</td>
                                     </tr>)
                                 })}
                             </table>
