@@ -252,14 +252,23 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         <h1 css={S.STitle}>학원 수업 정보</h1>
                         <div>
                             <table css={S.STable}>
-                                <th>과정</th>
-                                <th>학원비</th>
-                                {academyData?.classInfo != null && academyData?.classInfo?.map((data) => {
-                                    return (<tr>
-                                        <td>{data?.class_name}</td>
-                                        <td>{data?.class_price}</td>
-                                    </tr>)
-                                })}
+                                <thead>
+                                    <tr>
+                                        <td>과정</td>
+                                        <td>학원비</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {!!academyData?.classInfo[0] ? 
+                                        academyData?.classInfo?.map((data) => {
+                                            return (<tr>
+                                                <td>{data?.class_name}</td>
+                                                <td>{data?.class_price}</td>
+                                            </tr>)
+                                        }) 
+                                        :  <tr><td colspan='2'>학원 수업 정보를 제공하지 않습니다.</td></tr>
+                                    }
+                                </tbody>
                             </table>
                         </div>
                     </div>
