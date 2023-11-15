@@ -12,6 +12,8 @@ import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useRecoilState } from 'recoil';
 import { selectedCategoryState, selectedContentState, selectedLocationState } from '../../store/searchOptions';
 
+import HomeImg from "./school-building-vector-illustration_454371-247.jpg"
+
 function Home(props) {
 
     const navigate = useNavigate();
@@ -60,7 +62,7 @@ function Home(props) {
                     <h1>쉽고 빠르게 <b>원하는 학원을 찾아보세요.</b></h1>
                 </div>
                 <div css={S.SImgBox}>
-                    <img src="" alt="" />
+                    <img  css={S.SImgBox} src={academyImg} alt="" />
                 </div>
             </div>
             <div css={S.SSearchContainer}>
@@ -77,11 +79,19 @@ function Home(props) {
                     <button onClick={handleSearch}><AiOutlineSearch/></button>
                 </div>
             </div>
-            <div css={S.SRegistContainer}>
-                <img css={S.SImg} src={academyImg} alt="" />
-                <div css={S.SRegistTitle}>학원 관리자 등록하기</div>
-                <div>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
-                <button>등록하기</button>
+            <div css={S.SLinkContainer}>
+                <div css={S.SRegistContainer}>
+                    <img css={S.SImg} src={HomeImg} alt="" />
+                    <div css={S.SRegistTitle}>학원 관리자 등록하기</div>
+                    <div>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
+                    <button>등록하기</button>
+                </div>
+                <div css={S.SRegistContainer}>
+                    <img css={S.SImg} src={HomeImg} alt="" />
+                    <div css={S.SRegistTitle}>나의 관심 학원 보기</div>
+                    <div>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
+                    <button>등록하기</button>
+                </div>
             </div>
             <LocationModal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
