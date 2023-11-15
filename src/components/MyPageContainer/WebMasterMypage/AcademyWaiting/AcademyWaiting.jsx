@@ -26,28 +26,17 @@ function AcademyWaiting(props) {
             setSelectedAcademy(null);
         }
     })
-
-    const getAcademyCount = useQuery(["getAcademyCount", page], async () => {
-        const option = {
-            headers: {
-                Authorization: localStorage.getItem("accessToken")
-            }
-        }
-        return await instance.get(`/admin/academies/awaiting/count`, option);
-    }, {
-        refetchOnWindowFocus: false
-    })
     
     const handleAcademyOnClick = (academy) => {
         setSelectedAcademy(academy);
     }
 
     const pagination = () => {
-        if(getAcademyCount.isLoading) {
+        if(getAcademies.isLoading) {
             return <></>
         }
-        const totalAcademyCount = getAcademyCount.data.data;
-        const lastPage = getAcademyCount.data.data % 5 === 0 
+        const totalAcademyCount = getAcademies.data.data.listTotalCount;
+        const lastPage = getAcademies.data.data.listTotalCount % 5 === 0 
             ? totalAcademyCount / 5 
             : Math.floor(totalAcademyCount / 5) + 1
 
@@ -95,7 +84,7 @@ function AcademyWaiting(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {!getAcademies.isLoading && Array.isArray(getAcademies?.data?.data) && getAcademies?.data?.data.map(academy => {
+                        {!getAcademies.isLoading && Array.isArray(getAcademies?.data?.data.academyRegistrations) && getAcademies?.data?.data.academyRegistrations.map(academy => {
                             return  <tr key={academy.academyRegistrationId} 
                                         onClick={() => handleAcademyOnClick(academy)} 
                                         style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal' }}>

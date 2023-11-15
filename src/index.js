@@ -9,6 +9,7 @@ import { Reset } from 'styled-reset';
 import { Common } from './styles/Global/Common';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
+import ScrollToTop from './api/Scroll/ScrollToTop';
 
 const queryClient = new QueryClient();
 
@@ -17,14 +18,13 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <RecoilRoot>
       <BrowserRouter>
+      <ScrollToTop />
         <Global styles={Common} />
         <Reset />
         <App />
       </BrowserRouter>
     </RecoilRoot>
   </QueryClientProvider>
-  
-  
 );
 
 // If you want to start measuring performance in your app, pass a function

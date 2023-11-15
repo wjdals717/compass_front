@@ -13,7 +13,7 @@ export const SContainer = css`
     background-color: white;
 `;
 
-export const SContainerName = css`
+export const SName = css`
     margin-bottom: 20px;
     font-size: 20px;
     font-weight: 600;
@@ -72,29 +72,6 @@ export const SAcademyInfoBox = css`
         padding: 12px 10px;
         box-shadow: 1px 5px 5px 1px #eee;
     }
-`;
-
-export const SFileDownloadContainer = css`
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-    padding-bottom: 20px;
-    & > span {
-        font-weight: 600;
-    }
-`;
-
-export const SDownloadBox = css`
-    margin: 5px;
-    border: 1px solid #dbdbdb;
-    border-radius: 20px;
-    padding-top: 7px;
-    width: 100px;
-    height: 30px;
-    text-align: center;
-    background-color: white;
-    box-shadow: 1px 5px 5px 1px #eee;
-    cursor: pointer;
 `;
 
 export const SButtonBox = css`

@@ -8,11 +8,11 @@ export const UlBox = css`
     margin-bottom: 10px;
     overflow: auto;
 
-    li:nth-child(3n+2) {
+    li:nth-of-type(3n+2) {
         margin: 0 auto;
     }
 
-    li:nth-child(n) {
+    li:nth-of-type(n) {
         margin-bottom: 15px;
     }
 `;
@@ -25,6 +25,7 @@ export const LiBox = css`
     padding: 10px;
     background-color: white;
     font-size: 16px;
+    cursor: pointer;
 
     img {
         margin-bottom: 5px;
@@ -36,6 +37,8 @@ export const LiBox = css`
     strong {
         margin: 5px 0;
         font-weight: 600;
+        width: 230px;
+        word-wrap: break-word;
     }
 
     div {
