@@ -12,6 +12,9 @@ import { instance } from '../../api/config/instance';
 
 function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal")
+
     const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
@@ -24,6 +27,34 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const category = academyData?.academy.REALM_SC_NM ? academyData?.academy.REALM_SC_NM : academyData?.academy.LE_CRSE_LIST_NM;
     const str = category ? category.indexOf("(대)") : -1;
     const modifiedCategory = str !== -1 ? category.substring(0, str) : category;
+    const userId = principal?.data?.data?.userId
+
+    const searchParams = new URLSearchParams(location.search);
+    const academyId = searchParams.get('ACADEMY_ID')
+
+    const getLikeState = useQuery(["getLikeState"], async () => {
+        try {
+            return await instance.get(`/account/like/${academyId}/${userId}`)
+        } catch(error) {
+
+        }
+    }, {
+        refetchOnWindowFocus: false,
+        retry: 0
+    })
+
+    const handleLikeButtonClick = async () => {
+        try {
+            if(getLikeState?.data?.data) {
+                await instance.delete(`/account/like/${academyId}/${userId}`);
+            } else {
+                await instance.post(`/account/like/${academyId}/${userId}`);
+            }
+            getLikeState.refetch();
+        } catch(error) {
+            console.log(error)
+        }
+    }
 
     const queryClient = useQueryClient();
     const principal = queryClient.getQueryState("getPrincipal");
@@ -111,7 +142,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     if(getAcademy.isLoading ) {    //undefined인 경우
         return <></>
     }
-
+    
     return (
         <RootContainer>
             <div css={S.SLayout}>
@@ -241,10 +272,15 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             </div>
             <div css={S.SSide}>
                 <div css={S.SOptionBox}>
-                    <button css={S.SLikeButton}>
-                        <AiOutlineHeart css={S.SLikeIcon}/>
-                        관심학원
-                    </button>
+                    {!getLikeState.isLoading &&
+                        <button disabled={!principal?.data?.data}
+                        css={S.SLikeButton(getLikeState?.data?.data)}
+                        onClick={handleLikeButtonClick}>
+                            <AiOutlineHeart css={S.SLikeIcon}/>
+                            관심학원
+                            <div>{getAcademy?.data?.data?.academyLikeCount}</div>
+                        </button>
+                    }
                     <button css={S.SinquiryButton}>
                         <BsChatLeftTextFill css={S.SinquiryIcon}/>
                         문의
