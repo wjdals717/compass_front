@@ -73,13 +73,13 @@ function RegistAcademy(props) {
         setSelectedEducationOffice(option.value);
     }
 
-    const openModal = () => {
-        setIsModalOpen(true);
-    }
+    // const openModal = () => {
+    //     setIsModalOpen(true);
+    // }
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    }
+    // const closeModal = () => {
+    //     setIsModalOpen(false);
+    // }
     
     const handlesubmissionClick = async () => {
         try {
