@@ -259,7 +259,7 @@ export const SOptionBox = css`
     height: 110px;
 `;
 
-export const SLikeButton = (isLike) => css`
+export const SLikeButton =  css`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -269,16 +269,17 @@ export const SLikeButton = (isLike) => css`
     padding: 0px;
     width: 60px;
     font-size: 13px;
-    color: ${isLike ? "#7bbdff" : "black"};
-    /* background-color: ${isLike ? "#7bbdff" : "#fff"}; */
+    
+    background-color: #fff;
     cursor: pointer;
 `;
 
-export const SLikeIcon = css`
+export const SLikeIcon = (isLike) => css`
     display: flex;
     flex-direction: column;
     width: 60px;
     font-size: 30px;
+    color: ${isLike ? "red" : "black"};
 `;
 
 export const SinquiryButton = css`

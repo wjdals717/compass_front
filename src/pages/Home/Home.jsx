@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
@@ -7,10 +7,50 @@ import { AiOutlineDown, AiOutlineSearch } from 'react-icons/ai'
 import SelectBtn from '../../components/SelectBtn/SelectBtn';
 import academyImg from '../../assets/academy.jpg'
 import { useNavigate } from 'react-router-dom';
+import LocationModal from '../../components/Modal/LocationModal/LocationModal';
+import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
+import { useRecoilState } from 'recoil';
+import { selectedCategoryState, selectedContentState, selectedLocationState } from '../../store/searchOptions';
 
 function Home(props) {
 
     const navigate = useNavigate();
+
+    const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
+    const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
+    const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
+    let aca_nm = "";
+
+    const [ modalIsOpen, setModalIsOpen ] = useState(false);
+    const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
+
+    // 모달이 열릴 때 스크롤 막기
+    const disableBodyScroll = () => {
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 모달이 닫힐 때 스크롤 복원
+    const enableBodyScroll = () => {
+        document.body.style.overflow = 'auto';
+    }
+
+    const openLocationModal = () => {
+        setModalIsOpen(true);
+        disableBodyScroll();
+    };
+
+    const openCategoryModal = () => {
+        setCategoryModalIsOpen(true);
+        disableBodyScroll();
+    };
+
+    const handleInputOnChange = (e) => {
+        setSelectedContent(e.target.value);
+    }
+
+    const handleSearch = () => {
+        navigate("academy/find/1");
+    }
 
     return (
         <RootContainer>
@@ -25,12 +65,16 @@ function Home(props) {
             </div>
             <div css={S.SSearchContainer}>
                 <div css={S.SInputBox}>
-                    <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요'/>
+                    <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요' onChange={handleInputOnChange}/>
                 </div>
-                <SelectBtn>지역 선택</SelectBtn>
-                <SelectBtn>카테고리 선택</SelectBtn>
+                <div onClick={openLocationModal}>
+                        <SelectBtn>지역 선택</SelectBtn>
+                    </div>
+                    <div onClick={openCategoryModal}>
+                        <SelectBtn>카테고리 선택</SelectBtn>
+                    </div>
                 <div css={S.SSearchBtnBox}>
-                    <button><AiOutlineSearch/></button>
+                    <button onClick={handleSearch}><AiOutlineSearch/></button>
                 </div>
             </div>
             <div css={S.SRegistContainer}>
@@ -39,6 +83,14 @@ function Home(props) {
                 <div>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
                 <button>등록하기</button>
             </div>
+            <LocationModal modalIsOpen={modalIsOpen} 
+                setModalIsOpen={setModalIsOpen} 
+                enableBodyScroll={enableBodyScroll}
+                setSelectedLocation={setSelectedLocation}/>
+            <CategoryModal modalIsOpen={categoryModalIsOpen} 
+                setModalIsOpen={setCategoryModalIsOpen} 
+                enableBodyScroll={enableBodyScroll}
+                setSelectedCategory={setSelectedCategory}/>
         </RootContainer>
     );
 }
