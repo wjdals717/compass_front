@@ -81,18 +81,22 @@ function AcademyWaiting(props) {
                             <td>학원 번호</td>
                             <td>학원명</td>
                             <td>신청자</td>
+                            <td>학원 선택</td>
                         </tr>
                     </thead>
                     <tbody>
-                        {!getAcademies.isLoading && Array.isArray(getAcademies?.data?.data.academyRegistrations) && getAcademies?.data?.data.academyRegistrations.map(academy => {
-                            return  <tr key={academy.academyRegistrationId} 
-                                        onClick={() => handleAcademyOnClick(academy)} 
-                                        style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal' }}>
-                                        <td>{academy.acaAsnum}</td>
-                                        <td>{academy.acaNm}</td>
-                                        <td>{academy.name}</td>
-                                    </tr>
-                        })}
+                        {!getAcademies.isLoading && 
+                            Array.isArray(getAcademies?.data?.data.academyRegistrations) && 
+                            getAcademies?.data?.data.academyRegistrations.map(academy => {
+                                return  <tr key={academy.academyRegistrationId} 
+                                            style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal' }}>
+                                            <td>{academy.acaAsnum}</td>
+                                            <td>{academy.acaNm}</td>
+                                            <td>{academy.name}</td>
+                                            <td><button onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
+                                        </tr>
+                                })
+                        }
                     </tbody>
                 </table>
                 <div css={S.SPageNumbers}>
