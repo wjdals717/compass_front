@@ -147,6 +147,14 @@ export const SIntroduction = css`
 export const SConvenienceContainer = css`
     width: 100%;
     height: 200px;
+
+    div {
+        display: flex;
+        padding: 0 20px;
+    }
+    span {
+        margin-right: 20px;
+    }
 `;
 
 export const SReviewContainer = css`
@@ -255,7 +263,7 @@ export const SOptionBox = css`
     height: 110px;
 `;
 
-export const SLikeButton = css`
+export const SLikeButton = (isLike) => css`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -265,7 +273,8 @@ export const SLikeButton = css`
     padding: 0px;
     width: 60px;
     font-size: 13px;
-    background-color: white;
+    color: ${isLike ? "#7bbdff" : "black"};
+    /* background-color: ${isLike ? "#7bbdff" : "#fff"}; */
     cursor: pointer;
 `;
 

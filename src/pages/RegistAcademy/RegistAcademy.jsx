@@ -16,7 +16,7 @@ import FileUpload from '../../components/FileUpload/FileUpload';
 
 
 function RegistAcademy(props) {
-    const [ matchOption, setMatchOption ] = useState("true");
+    const [ matchOption, setMatchOption ] = useState(true);
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
 
@@ -73,6 +73,14 @@ function RegistAcademy(props) {
         setSelectedEducationOffice(option.value);
     }
 
+    // const openModal = () => {
+    //     setIsModalOpen(true);
+    // }
+
+    // const closeModal = () => {
+    //     setIsModalOpen(false);
+    // }
+    
     const handlesubmissionClick = async () => {
         try {
             const option = {
@@ -94,21 +102,21 @@ function RegistAcademy(props) {
                 
                 if (!AllFilesAttached) {
                     alert("서류를 첨부하세요");
-                } else {
-                    console.log(academyContent);
-
-                    //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
-                    if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
-                        if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
-                            await instance.post("/academy", academyContent, option);
-                        } else {
-                            alert("업로드 중입니다. 잠시만 기다려주세요.");
-                        }
-                    } else {
-                        alert("업로드 중입니다. 잠시만 기다려주세요.");
-                    }
-                    alert("등록되었습니다. 신청은 3일 이내 확인됩니다.");
+                    return;
                 }
+                console.log(academyContent);
+
+                //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
+                if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
+                    if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
+                        await instance.post("/academy", academyContent, option);
+                    }
+                    alert("업로드 중입니다. 잠시만 기다려주세요.");
+                    return;
+                } else {
+                    alert("업로드 중입니다. 잠시만 기다려주세요.");
+                }
+                alert("등록되었습니다. 신청은 3일 이내 확인됩니다.");
             }
         } catch (error) {
             alert(error.response.data.sendFail);
