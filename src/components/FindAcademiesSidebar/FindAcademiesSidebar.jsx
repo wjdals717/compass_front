@@ -13,14 +13,8 @@ function FindAcademiesSidebar(props) {
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState);
 
     const reset = () => {
-        setSelectedAgeOptions({
-            AgeCount: 0,
-            list: []
-        });
-        setSelectedConvenienceOptions({
-            convenienceCount: 0,
-            list: []
-        });
+        setSelectedAgeOptions([]);
+        setSelectedConvenienceOptions([]);
     }
 
     console.log(selectedAgeOptions);    

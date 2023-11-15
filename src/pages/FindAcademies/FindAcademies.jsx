@@ -13,6 +13,7 @@ import { useRecoilState } from 'recoil';
 import { selectedAgeState, selectedCategoryState, selectedConvenienceState, selectedLocationState } from '../../store/searchOptions';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery } from 'react-query';
+import QueryString from 'qs';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
@@ -25,11 +26,11 @@ function FindAcademies(props) {
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
 
-    console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
-    console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
-    console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
-    console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
-    console.log("selectedContent:" + selectedContent);
+    // console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
+    // console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
+    // console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
+    // console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
+    // console.log("selectedContent:" + selectedContent);
 
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
@@ -37,9 +38,9 @@ function FindAcademies(props) {
     const [ totalCount, setTotalCount ] = useState(0);
     const { page } = useParams();
     const [ academyList, setAcademyList] = useState([]);
-    
 
-    const getAcademyList = useQuery(["getAcademyList"], async () => {
+
+    const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
             const options = {
                 params: {
@@ -50,12 +51,15 @@ function FindAcademies(props) {
                     REALM_SC_NM: selectedCategory.realm_sc_nm,
                     LE_CRSE_NM: selectedCategory.le_crse_nm,
                     ACA_NM: selectedContent,
-                    ageIds: selectedAgeOptions.join(","),
-                    convenienceIds: selectedConvenienceOptions.join(",")
+                    ageIds: selectedAgeOptions,
+                    countAgeId: selectedAgeOptions.length,
+                    convenienceIds: selectedConvenienceOptions,
+                    countConvenienceId: selectedConvenienceOptions.length
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
-                }
+                },
+                paramsSerializer: params => QueryString.stringify(params, {arrayFormat: 'repeat'})
             }
     
             // options를 get 요청
@@ -71,14 +75,27 @@ function FindAcademies(props) {
         } catch (error) {
             console.error(error);
         }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
     }) 
 
     // 조건이 생길 때 학원목록 업데이트
     useEffect(() => {
-        getAcademyList.refetch();
-        console.log("다시불러오기 되나?")
-    }, [page, selectedLocation, selectedCategory, selectedContent, selectedAgeOptions, selectedConvenienceOptions]);
+        navigate("/academy/find/1");
+        if(page === "1") {
+            getAcademyList.refetch();
+        }
+    }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length]);
     
+    useEffect(() => {
+        if(page === "1") {
+            console.log("test")
+            setAcademyList([]);
+            setTotalCount(0);
+        }
+    }, [page])
+
 
     const handleInputOnChange = (e) => {
         aca_nm = e.target.value

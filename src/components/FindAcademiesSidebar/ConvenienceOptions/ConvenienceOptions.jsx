@@ -43,7 +43,7 @@ function ConvenienceOptions(props) {
     return (
         <div css={S.FilterContainer}>
             <h3>시설 및 편의사항</h3>
-            {convenienceOptions.map((option) => (
+            {convenienceOptions?.map((option) => (
                 <div key={option.value}>
                     <input
                         type="checkbox"

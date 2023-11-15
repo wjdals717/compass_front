@@ -42,7 +42,7 @@ function AgeOptions(props) {
     return (
         <div css={S.FilterContainer}>
             <h3>수강 연령</h3>
-            {ageOptions.map((option) => (
+            {ageOptions?.map((option) => (
                 <div key={option.value}>
                     <input
                         type="checkbox"
