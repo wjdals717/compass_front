@@ -24,8 +24,11 @@ function AcademySidebar(props) {
                 </Link>
             </div>
             <div css={S.RoleContainer}>
-                <Link to='/account/mypage/myacademy'>
+                <Link to='/account/mypage/myacademy/1'>
                     <div>🎒 나의 학원</div>
+                </Link>
+                <Link to='/account/mypage/appliedacademy/1'>
+                    <div>🗒️ 학원 신청 목록</div>
                 </Link>
                 <Link to='/account/mypage/adpayment'>
                     <div>💸 광고 결제</div>
