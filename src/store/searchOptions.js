@@ -16,6 +16,11 @@ export const selectedCategoryState = atom({
     }
 });
 
+export const selectedContentState = atom({
+    key: 'selectedContentState',
+    default: ""
+});
+
 export const selectedAgeState = atom({
     key: 'selectedAgeState',
     default: []

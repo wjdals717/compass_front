@@ -10,7 +10,7 @@ import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { selectedAgeState, selectedCategoryState, selectedConvenienceState, selectedLocationState } from '../../store/searchOptions';
+import { selectedAgeState, selectedCategoryState, selectedContentState, selectedConvenienceState, selectedLocationState } from '../../store/searchOptions';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery } from 'react-query';
 import QueryString from 'qs';
@@ -20,17 +20,17 @@ function FindAcademies(props) {
 
     const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
-    const [ selectedContent, setSelectedContent ] = useState(""); // 학원 이름
-    let aca_nm = "";
+    const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
+    const [ inputValue, setInputValue ] = useState(selectedContent);
 
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
 
-    // console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
-    // console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
-    // console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
-    // console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
-    // console.log("selectedContent:" + selectedContent);
+    console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
+    console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
+    console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
+    console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
+    console.log("selectedContent:" + selectedContent);
 
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
@@ -107,11 +107,29 @@ function FindAcademies(props) {
 
 
     const handleInputOnChange = (e) => {
-        aca_nm = e.target.value
+        setInputValue(e.target.value);
     }
 
     const handleSelectContent = () => {
-        setSelectedContent(aca_nm);
+        setSelectedContent(inputValue);
+    }
+
+    // 전체 초기화
+    const allReset = () => {
+        setSelectedLocation({
+            ...selectedLocation,
+            atpt_ofcdc_sc_code: "",
+            admst_zone_nm: ""
+        });
+        setSelectedCategory({
+            ...selectedCategory,
+            realm_sc_nm: "",
+            le_crse_nm: ""
+        });
+        setSelectedContent("");
+        setSelectedAgeOptions([]);
+        setSelectedConvenienceOptions([]);
+        setInputValue("");
     }
 
     const pagenation = () => {
@@ -170,7 +188,7 @@ function FindAcademies(props) {
                     <div onClick={openCategoryModal}>
                         <SelectBtn>카테고리 선택</SelectBtn>
                     </div>
-                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' onChange={handleInputOnChange}/>
+                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
                     <button onClick={handleSelectContent}>검색</button>
                 </div>
             </div>
@@ -179,6 +197,7 @@ function FindAcademies(props) {
                 <div css={S.PageContainer}>
                     <div css={S.InfoBox}>
                         <div>{totalCount}개의 학원이 있습니다.</div>
+                        <button onClick={allReset}>전체 초기화</button>
                     </div>
                     <div>
                         <div css={S.HeaderBox}>
