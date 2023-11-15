@@ -43,6 +43,23 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         retry: 0
     })
 
+    const likeCountOfInfo = useQuery(["getLikeCountOfInfo"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/info/like/count/${academyId}`, option)
+        } catch(error) {
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+
+
     const handleLikeButtonClick = async () => {
         try {
             if(getLikeState?.data?.data) {
@@ -51,6 +68,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 await instance.post(`/account/like/${academyId}/${userId}`);
             }
             getLikeState.refetch();
+            likeCountOfInfo.refetch();
         } catch(error) {
             console.log(error)
         }
@@ -278,9 +296,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 <div css={S.SOptionBox}>
                     {!getLikeState.isLoading &&
                         <button disabled={!principal?.data?.data}
-                        css={S.SLikeButton(getLikeState?.data?.data)}
+                        css={S.SLikeButton}
                         onClick={handleLikeButtonClick}>
-                            <AiOutlineHeart css={S.SLikeIcon}/>
+                            {getLikeState?.data?.data ? <AiFillHeart css={S.SLikeIcon(getLikeState?.data?.data)}/> :
+                            <AiOutlineHeart css={S.SLikeIcon(getLikeState?.data?.data)}/>}
                             관심학원
                             <div>{getAcademy?.data?.data?.academyLikeCount}</div>
                         </button>
