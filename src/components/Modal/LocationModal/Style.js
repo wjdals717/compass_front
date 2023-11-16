@@ -36,8 +36,8 @@ export const SCategoryListItemSelected = css`
     font-weight: bold;
 `;
 
-export const SDistrictOptionList = (districtOptionShow) => css`
-    ${districtOptionShow ? "" : "display: none"};
+export const SDistrictOptionList = (isDistrictOptionShow) => css`
+    ${isDistrictOptionShow ? "" : "display: none"};
     overflow-y: auto; /* 세로 스크롤이 필요한 경우만 스크롤을 보여줌 */
     max-height: 700px;
     cursor: pointer;

@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai'
 import HeaderLogo from "../../assets/HeaderLogo.png"
+import { useRecoilState } from 'recoil';
+import { selectedCategoryState, selectedContentState, selectedLocationState } from '../../store/searchOptions';
 
 function Header(props) {
 
@@ -27,13 +29,24 @@ function Header(props) {
         }
     }
 
+    const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
+    const [selectedCategory, setSelectedCategory] = useRecoilState(selectedCategoryState);
+    const [selectedContent, setSelectedContent] = useRecoilState(selectedContentState);
+
+    // Recoil 상태 초기화 함수
+    const resetRecoilState = () => {
+        setSelectedLocation({ atpt_ofcdc_sc_code: "", admst_zone_nm: "", si_do_name: "" });
+        setSelectedCategory({ realm_sc_nm: "", category_nm: "", le_crse_nm: "", category_detail_nm: "" });
+        setSelectedContent("");
+    };
+
     return (
         <div css={S.SLayout}>
             <div css={S.SContainer}>
-                <Link to={"/"}><img src={HeaderLogo} css={S.SLogoButton} /></Link>
+                <Link to={"/"}><img src={HeaderLogo} css={S.SLogoButton} onClick={resetRecoilState}/></Link>
                 <div css={S.SButtonBox}>
-                    <Link to={"/academy/find/1"}>학원 찾기</Link>
-                    <Link to={"/academy/regist"}>학원 등록</Link>
+                    <Link to={"/academy/find/1"} onClick={resetRecoilState}>학원 찾기</Link>
+                    <Link to={"/academy/regist"} onClick={resetRecoilState}>학원 등록</Link>
                 </div>
             </div>
             <div css={S.SLoginButtonBox}>

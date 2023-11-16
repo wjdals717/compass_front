@@ -9,12 +9,15 @@ import { selectedLocationState } from '../../../store/searchOptions';
 
 function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
 
-    const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]); // 교육청 목록
-    const [ educationOfficeOption, setEducationOfficeOption ] = useState(""); // 선택된 교육청
-    const [ districtOptionShow, setDistrictOptionShow ] = useState(false); // 교육청이 선택 됐을 때 행정구역 정보
-    const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]); // 행정구역 목록
-    const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState(""); // 선택된 행정구역
+    const appElement = document.getElementById('root');
+    ReactModal.setAppElement(appElement);
+
     const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // 선택된 교육청, 행정구역 정보
+    const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]); // 교육청 목록
+    const [ educationOfficeOption, setEducationOfficeOption ] = useState(selectedLocation.atpt_ofcdc_sc_code); // 선택된 교육청
+    const [ siDoName, setSiDoName ] = useState(selectedLocation.si_do_name);
+    const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]); // 행정구역 목록
+    const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState(selectedLocation.admst_zone_nm); // 선택된 행정구역
 
     // 선택 버튼
     const closeModal = () => {
@@ -22,6 +25,7 @@ function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
         setSelectedLocation({
             ...selectedLocation,
             atpt_ofcdc_sc_code: educationOfficeOption,
+            si_do_name: siDoName,
             admst_zone_nm: administrativeDistrictOption
         })
         setModalIsOpen(false);
@@ -32,7 +36,13 @@ function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
     const handleResetButton = () => {
         setEducationOfficeOption("");
         setAdministrativeDistrictOption("");
+        setSelectedLocation({
+            atpt_ofcdc_sc_code: "",
+            si_do_name: "",
+            admst_zone_nm: ""
+        })
     }
+
 
     const educationOfficeOptionsState = useQuery(["educationOfficeOptionsState"], async () => {
         try {
@@ -66,6 +76,9 @@ function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
         }
     });
 
+    // educationOfficeOption이 선택되었거나 administrativeDistrictOption이 존재하는 경우에만 districtOptionShow를 true로 설정
+    const isDistrictOptionShow = !!educationOfficeOption || !!administrativeDistrictOption;
+
     // educationOfficeOption과 일치하는 administrativeDistrictOptions 필터링
     const filteredAdministrativeDistrictOptions = administrativeDistrictOptions.filter(option => {
         return option.educationOfficeCode === educationOfficeOption;
@@ -80,8 +93,8 @@ function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
                     {educationOfficeOptions.map((option) => (
                         <li key={option.value} onClick={() => {
                             setEducationOfficeOption(option.value);
-                            setDistrictOptionShow(true);
                             setAdministrativeDistrictOption("");
+                            setSiDoName(option.label);
                             }}
                             css={[
                                 S.SEducationOfficeListItem, // 기존 스타일을 포함
@@ -92,7 +105,7 @@ function LocationModal({ modalIsOpen, setModalIsOpen, enableBodyScroll}) {
                         </li>
                     ))}
                 </ul>
-                <ul css={S.SDistrictOptionList(districtOptionShow)}>
+                <ul css={S.SDistrictOptionList(isDistrictOptionShow)}>
                     {filteredAdministrativeDistrictOptions.map((option) => (
                         <li key={option.administrativeDistrictId} 
                         onClick={() => {setAdministrativeDistrictOption(option.administrativeDistrictName)}}

@@ -21,7 +21,6 @@ function Home(props) {
     const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
     const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
-    let aca_nm = "";
 
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
@@ -70,10 +69,20 @@ function Home(props) {
                     <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요' onChange={handleInputOnChange}/>
                 </div>
                 <div onClick={openLocationModal}>
-                        <SelectBtn>지역 선택</SelectBtn>
+                        <SelectBtn>
+                            {selectedLocation.atpt_ofcdc_sc_code
+                                ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
+                                : "지역 선택"
+                            }   
+                        </SelectBtn>
                     </div>
                     <div onClick={openCategoryModal}>
-                        <SelectBtn>카테고리 선택</SelectBtn>
+                        <SelectBtn>
+                            {selectedCategory.realm_sc_nm
+                                ? `${selectedCategory.category_nm} ${selectedCategory.le_crse_nm}`
+                                : "카테고리 선택"
+                            }
+                        </SelectBtn>
                     </div>
                 <div css={S.SSearchBtnBox}>
                     <button onClick={handleSearch}><AiOutlineSearch/></button>
