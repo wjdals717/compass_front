@@ -99,8 +99,10 @@ export const LiBox = css`
     flex-direction: column;
     border: 1px solid #dbdbdb;
     border-radius: 5px;
+    
     padding: 10px;
     width: 272px;
+    cursor: pointer;
 
     img {
         border-radius: 10px;
@@ -120,4 +122,17 @@ export const Span = (hasOptions) => css`
     color: #aaa;
 `;
 
-
+export const SRandomImg = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    border-radius: 10px;
+    width: 230px;
+    height: 200px;/* 원하는 크기 설정 */
+    & span {
+        font-size: 50px;
+        font-weight: 600;
+        color: #fff;
+    }
+`;

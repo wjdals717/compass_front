@@ -5,6 +5,7 @@ import * as S from "./Style"
 import { Link } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai'
+import HeaderLogo from "../../assets/HeaderLogo.png"
 
 function Header(props) {
 
@@ -29,7 +30,7 @@ function Header(props) {
     return (
         <div css={S.SLayout}>
             <div css={S.SContainer}>
-                <Link to={"/"}><h1 css={S.SLogoButton}>학습 나침반</h1></Link>
+                <Link to={"/"}><img src={HeaderLogo} css={S.SLogoButton} /></Link>
                 <div css={S.SButtonBox}>
                     <Link to={"/academy/find/1"}>학원 찾기</Link>
                     <Link to={"/academy/regist"}>학원 등록</Link>
