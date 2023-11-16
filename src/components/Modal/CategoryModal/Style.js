@@ -41,8 +41,8 @@ export const SCategoryListItemSelected = css`
 `;
 
 
-export const SCategoryDetailList = (detailOptionShow) => css`
-    ${detailOptionShow ? "" : "display: none"};
+export const SCategoryDetailList = (isDetailOptionShow) => css`
+    ${isDetailOptionShow ? "" : "display: none"};
     overflow-y: auto; /* 세로 스크롤이 필요한 경우만 스크롤을 보여줌 */
     max-height: 700px;
     cursor: pointer;
