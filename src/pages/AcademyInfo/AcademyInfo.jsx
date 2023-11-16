@@ -280,7 +280,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SConvenienceContainer} id='convenience'>
                         <h1 css={S.STitle}>시설 및 편의 사항</h1>
                         <div>
-                            {getReviews.isLoading && academyData?.convenienceInfo.map((convience) => {
+                            {academyData?.convenienceInfo.map((convience) => {
                                 return <span>
                                     <AiOutlineCheck/> {convience}
                                 </span>;
