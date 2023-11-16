@@ -1,6 +1,11 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
+export const SComment = css`
+    margin: 30px 20px 10px;
+    font-size: 16px;
+`;
+
 export const STable = css`
     margin: 0 20px;
     width: 740px;
@@ -16,10 +21,7 @@ export const STable = css`
         vertical-align: middle;
         text-align: center;
         overflow: auto;
-    }
-
-    tbody > tr {
-        cursor: pointer;
+        cursor: default;
     }
 `;
 

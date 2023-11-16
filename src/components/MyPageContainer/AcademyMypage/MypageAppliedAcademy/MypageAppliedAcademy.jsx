@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
+import * as GS from '../../../../styles/Global/Common';
 import { useNavigate, useParams } from 'react-router-dom';
 import { instance } from '../../../../api/config/instance';
 import { useQuery } from 'react-query';
@@ -17,13 +18,13 @@ function MypageAppliedAcademy(props) {
     
     const [ selectedAcademy, setSelectedAcademy ] = useState(null);
 
-    const getMyAcademies = useQuery(["getAppliedAcademy", page], async () => {
+    const getAppliedAcademies = useQuery(["getAppliedAcademy", page], async () => {
         const option = {
             headers: {
                 Authorization: localStorage.getItem("accessToken")
             }
         }
-        return await instance.get(`/academies/${principal.data.data.userId}/${page}`, option);
+        return await instance.get(`/academies/applied/${principal.data.data.userId}/${page}`, option);
     }, {
         refetchOnWindowFocus: false,
         onSuccess: () => {
@@ -36,11 +37,11 @@ function MypageAppliedAcademy(props) {
     }
 
     const pagination = () => {
-        if(getMyAcademies.isLoading) {
+        if(getAppliedAcademies.isLoading) {
             return <></>
         }
-        const totalAcademyCount = getMyAcademies.data.data.listTotalCount;
-        const lastPage = getMyAcademies.data.data.listTotalCount % 5 === 0 
+        const totalAcademyCount = getAppliedAcademies.data.data.listTotalCount;
+        const lastPage = getAppliedAcademies.data.data.listTotalCount % 5 === 0 
             ? totalAcademyCount / 5 
             : Math.floor(totalAcademyCount / 5) + 1;
 
@@ -56,20 +57,20 @@ function MypageAppliedAcademy(props) {
         return (
             <>
                 <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/account/mypage/appliedacademy/${parseInt(page) - 1}`);
+                    navigate(`/academies/applied/${principal.data.data.userId}/${parseInt(page) - 1}`);
                 }}>&#60;</button>
 
                 {pageNumbers.map(num => {
                     return <button  className={parseInt(page) === num ? 'selected' : ''}
                                     onClick={() => {
-                                        navigate(`/account/mypage/appliedacademy/${num}`);
+                                        navigate(`/academies/applied/${principal.data.data.userId}/${num}`);
                                     }} 
                                 key={num}>{num}
                             </button>
                 })}
 
                 <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/account/mypage/appliedacademy/${parseInt(page) + 1}`);
+                    navigate(`/academies/applied/${principal.data.data.userId}/${parseInt(page) + 1}`);
                 }}>&#62;</button>
             </>
         )
@@ -79,24 +80,29 @@ function MypageAppliedAcademy(props) {
         <div>
             <h2>🗒️ 학원 신청 목록</h2>
             <div>
+                <div css={S.SComment}>학원 승인 여부를 확인하고 재신청 해보세요!</div>
                 <table css={S.STable}>
                     <thead>
                         <tr>
                             <td>학원 번호</td>
                             <td>학원명</td>
                             <td>승인 여부</td>
+                            <td>학원 선택</td>
                         </tr>
                     </thead>
                     <tbody>
-                        {!getMyAcademies.isLoading && Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && getMyAcademies?.data?.data.academyRegistrations.map(academy => {
+                        {!getAppliedAcademies.isLoading && 
+                            Array.isArray(getAppliedAcademies?.data?.data.academyRegistrations) && 
+                            getAppliedAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
-                                            onClick={() => handleAcademyOnClick(academy)} 
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>
                                             <td>{academy.acaAsnum}</td>
                                             <td>{academy.acaNm}</td>
                                             <td>{academy.approvalStatus === 0 ? "승인 대기" : "승인 거절"}</td>
+                                            <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
                                         </tr>
-                            })}
+                            })
+                        }
                     </tbody>
                 </table>
                 <div css={S.SPageNumbers}>
