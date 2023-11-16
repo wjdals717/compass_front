@@ -57,20 +57,20 @@ function MypageAppliedAcademy(props) {
         return (
             <>
                 <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/account/mypage/appliedacademy/${parseInt(page) - 1}`);
+                    navigate(`/academies/applied/${principal.data.data.userId}/${parseInt(page) - 1}`);
                 }}>&#60;</button>
 
                 {pageNumbers.map(num => {
                     return <button  className={parseInt(page) === num ? 'selected' : ''}
                                     onClick={() => {
-                                        navigate(`/account/mypage/appliedacademy/${num}`);
+                                        navigate(`/academies/applied/${principal.data.data.userId}/${num}`);
                                     }} 
                                 key={num}>{num}
                             </button>
                 })}
 
                 <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/account/mypage/appliedacademy/${parseInt(page) + 1}`);
+                    navigate(`/academies/applied/${principal.data.data.userId}/${parseInt(page) + 1}`);
                 }}>&#62;</button>
             </>
         )

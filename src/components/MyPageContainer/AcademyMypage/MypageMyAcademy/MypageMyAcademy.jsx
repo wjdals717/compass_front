@@ -6,6 +6,7 @@ import * as GS from '../../../../styles/Global/Common';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
+import DetailMyAcademy from './DetailMyAcademy/DetailMyAcademy';
 
 function MypageMyAcademy(props) {
 
@@ -33,6 +34,46 @@ function MypageMyAcademy(props) {
 
     const handleAcademyOnClick = (academy) => {
         setSelectedAcademy(academy);
+    }
+
+    const pagination = () => {
+        if(getMyAcademies.isLoading) {
+            return <></>
+        }
+        const totalAcademyCount = getMyAcademies.data.data.listTotalCount;
+        const lastPage = getMyAcademies.data.data.listTotalCount % 5 === 0 
+            ? totalAcademyCount / 5 
+            : Math.floor(totalAcademyCount / 5) + 1;
+
+        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
+        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
+
+        const pageNumbers = [];
+        
+        for(let i = startIndex; i <= endIndex; i++) {
+            pageNumbers.push(i);
+        }
+
+        return (
+            <>
+                <button disabled={parseInt(page) === 1} onClick={() => {
+                    navigate(`/academies/${principal.data.data.userId}/${parseInt(page) - 1}`);
+                }}>&#60;</button>
+
+                {pageNumbers.map(num => {
+                    return <button  className={parseInt(page) === num ? 'selected' : ''}
+                                    onClick={() => {
+                                        navigate(`/academies/${principal.data.data.userId}/${num}`);
+                                    }} 
+                                key={num}>{num}
+                            </button>
+                })}
+
+                <button disabled={parseInt(page) === lastPage} onClick={() => {
+                    navigate(`/academies/${principal.data.data.userId}/${parseInt(page) + 1}`);
+                }}>&#62;</button>
+            </>
+        )
     }
 
     return (
@@ -63,7 +104,10 @@ function MypageMyAcademy(props) {
                     </tbody>
                 </table>
                 <div css={S.SPageNumbers}>
-                    {/* {pagination()} */}
+                    {pagination()}
+                </div>
+                <div>
+                    {!!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
                 </div>
             </div>
         </div>

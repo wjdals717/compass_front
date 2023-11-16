@@ -24,7 +24,7 @@ function FileUpload({ academyContent, setAcademyContent, uploadeFile, setUploade
         }
 
         //firebase에 저장
-        const storageRef = ref(storage, `files/${e.target.name}/${academyContent.atptOfcdcScCode}/${academyContent.acaAsnum}_${files[0].name}`);    // 해당 파일의 이름으로 firebase의 storage에 저장됨
+        const storageRef = ref(storage, `files/${e.target.name}/${academyContent.academyId}/${files[0].name}`);    // 해당 파일의 이름으로 firebase의 storage에 저장됨
         const uploadTask = uploadBytesResumable(storageRef, files[0]);        // 파일 업로드가 실행됨
 
         uploadTask.on(          //업로드가 시작되면

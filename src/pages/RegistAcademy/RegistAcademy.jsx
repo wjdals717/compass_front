@@ -106,11 +106,10 @@ function RegistAcademy(props) {
                 }
 
                 //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
-                if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
-                    if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
+                if((uploadeFile.businessRegistrationFile && uploadeFile.idFile)){
+                    if(academyContent.match || (!academyContent.match && uploadeFile.operationRegistrationFile)) {
                         await instance.post("/academy", academyContent, option);
                     }
-                    alert("업로드 중입니다. 잠시만 기다려주세요.");
                     return;
                 } else {
                     alert("업로드 중입니다. 잠시만 기다려주세요.");
