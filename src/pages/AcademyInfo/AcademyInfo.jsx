@@ -6,9 +6,10 @@ import { FaLocationDot } from 'react-icons/fa6'
 import { AiFillStar, AiOutlineCheck, AiFillHeart,AiOutlineHeart } from 'react-icons/ai'
 import { IoHomeSharp } from 'react-icons/io5'
 import { BsFillPeopleFill, BsBarChartLineFill, BsFillCalendar2CheckFill, BsFillBookFill, BsFillPencilFill, BsChatLeftTextFill } from 'react-icons/bs'
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
+import Horoscope from '../../components/Horoscope/Horoscope';
 
     
 
@@ -21,7 +22,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
-
+  
     const [ color, setColor ] = useState();
     
     // 분야명의 "(대)" 문자열 자르기
@@ -33,6 +34,13 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const academyId = searchParams.get('ACADEMY_ID')
+    
+    const [ reviewWriteData, setReviewWriteData] = useState({
+        academyId: parseInt(academyId),
+        userId: userId,
+        score: 0,
+        reviewContent: ""
+    })
 
     // 랜덤 색상을 생성하는 함수
     const getRandomColor = () => {
@@ -41,7 +49,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         setColor(randomColor)
     };
 
-    //좋아요 기능
     const getLikeState = useQuery(["getLikeState"], async () => {
         try {
             return await instance.get(`/account/like/${academyId}/${userId}`)
@@ -129,9 +136,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         retry: 0,
         refetchOnWindowFocus: false,
         onSuccess: response => {
-            setReviewData(response.data.reviewList.map(data => {
-                return data;
-            }));
+            setReviewData(response.data);
         }
     });
 
@@ -151,13 +156,39 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     }, []);
 
-    const reviewSubmitButton = () => {
-
+    const reviewSubmitButton = async () => {
+        try{
+            const options = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            await instance.post("/review", reviewWriteData, options);
+            return getReviews.refetch();
+        } catch(error) {
+            alert(error.response.data.message);
+        }
     }
 
-    if(getAcademy.isLoading ) {    //undefined인 경우
+    if(getAcademy.isLoading) {    //undefined인 경우
         return <></>
     }
+
+    const reviewContentChange = (e) => {
+        setReviewWriteData({
+            ...reviewWriteData,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const horoscopeChange = (e) => {
+        setReviewWriteData({
+            ...reviewWriteData,
+            [e.target.name]: parseInt(e.target.value)
+        })
+    }
+
+    console.log(reviewWriteData);
     
     return (
         <RootContainer>
@@ -174,9 +205,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         <div css={S.SAcademyInfo}>
                             <div css={S.SAcademyName}>{academyData?.academy.ACA_NM}</div>
                             <div css={S.SAcademyLocation}><FaLocationDot/>{academyData?.academy.FA_RDNMA}</div>
+                            <div>📞 {academyData?.academy.FA_TELNO}</div>
                             <div css={S.SScoreAndReviewContainer}>
                                 <AiFillStar css={S.SAcademyStar}/> 
-                                별점 5 · 학원후기(n개)
+                                별점 {reviewData?.reviewCount?.score_avg} · 학원후기({reviewData?.reviewCount?.review_count}개)
                             </div>
                         </div>
                     </div>
@@ -203,31 +235,41 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SIntroductionContainer} id='introduction'>
                         <h1 css={S.STitle}>학원소개</h1>
                         <div css={S.SIntroductions}>
-                            <div css={S.SIntroduction}>
-                                <div><BsFillPeopleFill/><span>수강인원</span></div>
-                                <span>{academyData?.academyInfo?.class_size}</span>
-                            </div>
-                            <div css={S.SIntroduction}>
-                                <div><BsBarChartLineFill/><span>수강연령</span></div>
-                                <span>
-                                    {academyData?.ageRange?.map((age) => {return age})}</span>
-                            </div>
-                            <div css={S.SIntroduction}>
-                                <div><BsFillCalendar2CheckFill/><span>수강기간</span></div>
-                                <span>{academyData?.academyInfo?.course_period}</span>
-                            </div>
+                            {academyData?.academyInfo?.class_size &&
+                                <div css={S.SIntroduction}>
+                                    <div><BsFillPeopleFill/><span>수강인원</span></div>
+                                    <span>{academyData?.academyInfo?.class_size}</span>
+                                </div>
+                            }
+                            {!!academyData?.ageRange[0] && 
+                                <div css={S.SIntroduction}>
+                                    <div><BsBarChartLineFill/><span>수강연령</span></div>
+                                    <span>
+                                        {academyData?.ageRange?.map((age) => {return age})}</span>
+                                </div>
+                            }
+                            {!!academyData?.academyInfo?.course_period &&
+                                <div css={S.SIntroduction}>
+                                    <div><BsFillCalendar2CheckFill/><span>수강기간</span></div>
+                                    <span>{academyData?.academyInfo?.course_period}</span>
+                                </div>
+                            }
                             <div css={S.SIntroduction}>
                                 <div><BsFillBookFill/><span>수강과목</span></div>
                                 <span>{modifiedCategory}</span>
                             </div>
-                            <div css={S.SIntroduction}>
-                                <div><BsFillPencilFill/><span>수강목적</span></div>
-                                <span>{academyData?.academyInfo?.purpose}</span>
-                            </div>
-                            <div css={S.SIntroduction}>
-                                <div><IoHomeSharp/><span>홈페이지</span></div>
-                                <span>{academyData?.academyInfo?.home_page}</span>
-                            </div>
+                            {!!academyData?.academyInfo?.purpose &&
+                                <div css={S.SIntroduction}>
+                                    <div><BsFillPencilFill/><span>수강목적</span></div>
+                                    <span>{academyData?.academyInfo?.purpose}</span>
+                                </div>
+                            }
+                            {!!academyData?.academyInfo?.home_page &&
+                                <div css={S.SIntroduction}>
+                                    <div><IoHomeSharp/><span>홈페이지</span></div>
+                                    <span>{academyData?.academyInfo?.home_page}</span>
+                                </div>
+                            }
                             <div css={S.SIntroduction}>
                                 <div><FaLocationDot/><span>위치</span></div>
                                 <span>{academyData?.academy.FA_RDNMA + academyData?.academy.FA_RDNDA}</span>
@@ -251,7 +293,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             <AiFillStar css={S.SStar}/> 5.0
                         </div>
                         <ul css={S.SReviewListContainer}>
-                            {reviewData?.map(data => {
+                            {reviewData?.reviewList.map(data => {
                                 return (<li css={S.SReviewList} key={reviewData.review_id}>
                                     <h1>{data.nickname}</h1>
                                     <div><AiFillStar css={S.SStar}/> {data.score}</div>
@@ -264,13 +306,12 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                 <div css={S.SReviewUserScoreContainer}>
                                     <h1>{principal?.data?.data.nickname}</h1>
                                     <div>
-                                        <AiFillStar css={S.SStar}/>
-                                        <input type="text" placeholder='별점'/>
+                                        <AiFillStar css={S.SStar}/> <input type="text" name="score" placeholder='별점' onChange={horoscopeChange}/>
                                     </div>
                                 </div>
                                 <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
                             </div>
-                            <textarea name="review" id="review" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.'/>
+                            <textarea css={S.SReviewBox} name="reviewContent" id="review" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' onChange={reviewContentChange}/>
                         </div>
                     </div>
                     <div css={S.SClassInfo} id='classinfo'>
@@ -311,10 +352,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             <div>{likeCountOfInfo?.data?.data}</div>
                         </button>
                     }
-                    <button css={S.SinquiryButton}>
+                    <Link to={"/academy/inquiry"} css={S.SinquiryButton}>
                         <BsChatLeftTextFill css={S.SinquiryIcon}/>
                         문의
-                    </button>
+                    </Link>
                 </div>
             </div>
         </RootContainer>

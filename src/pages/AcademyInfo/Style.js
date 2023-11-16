@@ -228,6 +228,11 @@ export const SReviewInfo = css`
     }
 `;
 
+export const SReviewBox = css`
+    width: 100%;
+    height: 120px;
+`;
+
 export const SReviewUserScoreContainer = css`
     display: flex;
     & > h1 {
@@ -303,6 +308,8 @@ export const SinquiryButton = css`
     border: none;
     padding: 0px;
     width: 60px;
+    text-decoration: none;
+    color: black;
     font-size: 13px;
     background-color: white;
     cursor: pointer;
