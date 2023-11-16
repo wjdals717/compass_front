@@ -235,17 +235,9 @@ function FindAcademies(props) {
                         </div>
                         <ul css={S.UlBox}>
                             {academyList.map((academy) => {
-                                    const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
-                                    const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
-                                    const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
-                                    return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                    {academy.logo_img ? (
-                                        <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
-                                    ): (
-                                        <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
-                                            <span>{firstTwoKoreanChars}</span>
-                                        </div>
-                                    )}
+                                const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
+                                const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
+                                const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
                                 const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
                                 const realm =
                                     academy.REALM_SC_NM === '국제화'
@@ -253,9 +245,14 @@ function FindAcademies(props) {
                                         : academy.REALM_SC_NM === '정보'
                                         ? 'IT'
                                         : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-
-                                return <li key={academy.ACADEMY_ID} css={S.LiBox} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                    <img src={defalutProfile} alt="" />
+                                return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+                                    {academy.logo_img ? (
+                                        <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
+                                    ): (
+                                        <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
+                                            <span>{firstTwoKoreanChars}</span>
+                                        </div>
+                                    )}
                                     <strong>{academy.ACA_NM}</strong>
                                     <div>{address}</div>
                                     <div>{realm}</div>
