@@ -17,21 +17,20 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
 
-    const [ academyData, setAcademyData ] = useState();   // 학원 정보를 저장하는 상태 변수
-
-    const [ reviewData, setReviewData ] = useState();
+    const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
+    const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
     
-    const location = useLocation();
-
     // 분야명의 "(대)" 문자열 자르기
     const category = academyData?.academy.REALM_SC_NM ? academyData?.academy.REALM_SC_NM : academyData?.academy.LE_CRSE_LIST_NM;
     const str = category ? category.indexOf("(대)") : -1;
     const modifiedCategory = str !== -1 ? category.substring(0, str) : category;
     const userId = principal?.data?.data?.userId
-
+    
+    const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const academyId = searchParams.get('ACADEMY_ID')
 
+    //좋아요 기능
     const getLikeState = useQuery(["getLikeState"], async () => {
         try {
             return await instance.get(`/account/like/${academyId}/${userId}`)
@@ -59,7 +58,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         refetchOnWindowFocus: false
     })
 
-
     const handleLikeButtonClick = async () => {
         try {
             if(getLikeState?.data?.data) {
@@ -74,7 +72,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     }
     
-    // React Query를 사용하여 학원 정보를 가져오는 쿼리 설정
+    // 학원 정보 가져오기
     const getAcademy = useQuery(["getAcademy"], async () => {
         try {
             const options = {
@@ -101,6 +99,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     })
 
+    //리뷰 가져오기
     const getReviews = useQuery(["getReviews", academyId], async () => {
         // api, options를 get 요청
         try {
@@ -254,7 +253,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                 </div>
                                 <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
                             </div>
-                            <textarea name="" id="" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.'/>
+                            <textarea name="review" id="review" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.'/>
                         </div>
                     </div>
                     <div css={S.SClassInfo} id='classinfo'>
