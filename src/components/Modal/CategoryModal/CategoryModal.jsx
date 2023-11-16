@@ -9,13 +9,15 @@ import { selectedCategoryState } from '../../../store/searchOptions';
 
 function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
     
+    const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 선택된 카테고리, 상세 카테고리 정보
+    
     const [ categoryOptions, setCategoryOptions ] = useState([]); // 카테고리 목록
-    const [ categoryOption, setCategoryOption ] = useState(""); // 선택된 카테고리
-    const [ detailOptionShow, setDetailOptionShow ] = useState(false); // 교육청이 선택 됐을 때 행정구역 정보
+    const [ categoryOption, setCategoryOption ] = useState(selectedCategory.realm_sc_nm); // 선택된 카테고리
+    const [ categoryNm, setCategoryNm ] = useState(selectedCategory.category_nm);
+    
     const [ categoryDetailOptions, setCategoryDetailOptions ] = useState([]); // 상세 카테고리 목록
-    const [ categoryDetailOption, setCategoryDetailOption ] = useState(""); // 선택된 상세 카테고리 
-    const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // api로 넘길 카테고리 정보
-
+    const [ categoryDetailOption, setCategoryDetailOption ] = useState(selectedCategory.le_crse_nm); // 선택된 상세 카테고리 
+    const [ categoryDetailNm, setCategoryDetailNm ] = useState(selectedCategory.category_detail_nm);
 
     // 선택 버튼
     const closeModal = () => {
@@ -23,7 +25,9 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
         setSelectedCategory({
             ...selectedCategory,
             realm_sc_nm: categoryOption,
-            le_crse_nm: categoryDetailOption
+            category_nm: categoryNm,
+            le_crse_nm: categoryDetailOption,
+            category_detail_nm: categoryDetailNm
         })
         setModalIsOpen(false);
         enableBodyScroll();
@@ -32,7 +36,12 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
     // 초기화
     const handleResetButton = () => {
         setCategoryOption("");
-        setCategoryDetailOption("")
+        setCategoryDetailOption("");
+        setSelectedCategory({
+            realm_sc_nm: "",
+            category_nm: "",
+            le_crse_nm: ""
+        });
     }
 
 
@@ -68,6 +77,9 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
         }
     });
 
+    // educationOfficeOption이 선택되었거나 administrativeDistrictOption이 존재하는 경우에만 districtOptionShow를 true로 설정
+    const isDetailOptionShow = !!categoryOption || !!categoryDetailOption;
+
     // categoryOption 일치하는 categoryDetailOptions 필터링
     const filteredCategoryDetailOptions = categoryDetailOptions.filter(option => {
         return option.categoryValue === categoryOption;
@@ -82,8 +94,8 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
                         <li key={option.value} 
                             onClick={() => {
                                 setCategoryOption(option.value);
-                                setDetailOptionShow(true);
                                 setCategoryDetailOption("");
+                                setCategoryNm(option.label);
                             }}
                             css={[
                                 S.SCategoryListItem, // 기존 스타일을 포함
@@ -94,10 +106,14 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
                         </li>
                     ))}
                 </ul>
-                <ul css={S.SCategoryDetailList(detailOptionShow)}>
+                <ul css={S.SCategoryDetailList(isDetailOptionShow)}>
                     {filteredCategoryDetailOptions.map((option) => (
                         <li key={option.categoryDetailValue} 
-                        onClick={() => {setCategoryDetailOption(option.categoryDetailValue)}}
+                        onClick={() => {
+                            setCategoryDetailOption(option.categoryDetailValue);
+                            setCategoryDetailNm(option.categoryDetailName);
+                            }
+                        }
                         css={[
                             S.SCategoryDetailListItem, // 기존 스타일을 포함
                             option.categoryDetailValue === categoryDetailOption && S.SCategoryDetailListItemSelected // 선택된 li에 대한 스타일

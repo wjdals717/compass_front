@@ -21,13 +21,14 @@ function FindAcademies(props) {
     const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
     const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
-    const [ inputValue, setInputValue ] = useState(selectedContent);
+    const [ inputValue, setInputValue ] = useState(selectedContent); // 학원이름 검색창 
 
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
 
     console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
     console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
+    console.log("siDoName:" + selectedLocation.si_do_name);
     console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
     console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
     console.log("selectedContent:" + selectedContent);
@@ -97,13 +98,6 @@ function FindAcademies(props) {
             getAcademyList.refetch();
         }
     }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length]);
-    
-    useEffect(() => {
-        if(page === "1") {
-            setAcademyList([]);
-            setTotalCount(0);
-        }
-    }, [page])
 
 
     const handleInputOnChange = (e) => {
@@ -114,23 +108,6 @@ function FindAcademies(props) {
         setSelectedContent(inputValue);
     }
 
-    // 전체 초기화
-    const allReset = () => {
-        setSelectedLocation({
-            ...selectedLocation,
-            atpt_ofcdc_sc_code: "",
-            admst_zone_nm: ""
-        });
-        setSelectedCategory({
-            ...selectedCategory,
-            realm_sc_nm: "",
-            le_crse_nm: ""
-        });
-        setSelectedContent("");
-        setSelectedAgeOptions([]);
-        setSelectedConvenienceOptions([]);
-        setInputValue("");
-    }
 
     const pagenation = () => {
         const totalAcademyCount = totalCount;
@@ -183,10 +160,25 @@ function FindAcademies(props) {
                 <h1>학원찾기</h1>
                 <div css={S.SearchContainer}>
                     <div onClick={openLocationModal}>
-                        <SelectBtn>지역 선택</SelectBtn>
+                        <SelectBtn>
+                            {selectedLocation.atpt_ofcdc_sc_code
+                                ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
+                                : "지역 선택"
+                            }   
+                        </SelectBtn>
                     </div>
                     <div onClick={openCategoryModal}>
-                        <SelectBtn>카테고리 선택</SelectBtn>
+                        <SelectBtn>
+                            {selectedCategory.realm_sc_nm
+                                ? `${selectedCategory.realm_sc_nm === '국제화'
+                                ? '외국어'
+                                : selectedCategory.realm_sc_nm === '정보'
+                                ? 'IT'
+                                : selectedCategory.realm_sc_nm.replace(/\(대\)/g, '').trim()} 
+                                ${selectedCategory.le_crse_nm.includes("전체") ? "" : selectedCategory.le_crse_nm}`
+                                : "카테고리 선택"
+                            }
+                        </SelectBtn>
                     </div>
                     <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
                     <button onClick={handleSelectContent}>검색</button>
@@ -197,7 +189,6 @@ function FindAcademies(props) {
                 <div css={S.PageContainer}>
                     <div css={S.InfoBox}>
                         <div>{totalCount}개의 학원이 있습니다.</div>
-                        <button onClick={allReset}>전체 초기화</button>
                     </div>
                     <div>
                         <div css={S.HeaderBox}>
@@ -236,10 +227,19 @@ function FindAcademies(props) {
                         </div>
                         <ul css={S.UlBox}>
                             {academyList.map((academy) => {
+                                const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
+                                const realm =
+                                    academy.REALM_SC_NM === '국제화'
+                                        ? '외국어'
+                                        : academy.REALM_SC_NM === '정보'
+                                        ? 'IT'
+                                        : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
+
                                 return <li key={academy.ACADEMY_ID} css={S.LiBox} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
                                     <img src={defalutProfile} alt="" />
                                     <strong>{academy.ACA_NM}</strong>
-                                    <div>{academy.FA_RDNMA}</div>
+                                    <div>{address}</div>
+                                    <div>{realm}</div>
                                 </li>
                             })}
                         </ul>
@@ -251,12 +251,10 @@ function FindAcademies(props) {
             </div>
             <LocationModal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 
-                enableBodyScroll={enableBodyScroll}
-                setSelectedLocation={setSelectedLocation}/>
+                enableBodyScroll={enableBodyScroll}/>
             <CategoryModal modalIsOpen={categoryModalIsOpen} 
                 setModalIsOpen={setCategoryModalIsOpen} 
-                enableBodyScroll={enableBodyScroll}
-                setSelectedCategory={setSelectedCategory}/>
+                enableBodyScroll={enableBodyScroll}/>
         </RootContainer>
     );
 }

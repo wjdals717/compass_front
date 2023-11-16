@@ -1,12 +1,15 @@
-import { atom, useRecoilState } from 'recoil';
+import { atom } from 'recoil';
+
 
 export const selectedLocationState = atom({
     key: 'selectedLocationState',
     default: {
         atpt_ofcdc_sc_code: "",
+        si_do_name:"",
         admst_zone_nm: ""
     }
 });
+
 
 export const selectedCategoryState = atom({
     key: 'selectedCategoryState',
