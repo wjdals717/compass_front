@@ -56,10 +56,6 @@ function MyPage(props) {
         refetchOnWindowFocus: false
     })
 
-    useEffect(() => {
-        console.log(principal);
-    }, [roleId])
-
     const sidebarComponent =
         roleId === 0
             ? <WebMastesrSidebar/>
@@ -68,7 +64,6 @@ function MyPage(props) {
             : roleId === 2
             ? <AcademySidebar />
             : null;
-        console.log(principal)
 
     return (
         <RootContainer>

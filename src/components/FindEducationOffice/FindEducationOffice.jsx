@@ -73,7 +73,6 @@ function FindEducationOffice({ educationOfficeCode }) {
         retry: 0,
         refetchOnWindowFocus: false,
         onSuccess: response => {
-            console.log(response);
             setAcademyData({
                 totalCount: response?.data?.list_total_count, 
                 list: [...academyData.list].concat(response?.data?.academies)

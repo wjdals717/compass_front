@@ -18,7 +18,6 @@ function StudentSidebar(props) {
     const likeCountOfMypage = queryClient.getQueryState("getLikeCountOfMypage");
     const { likeId } = useParams();
 
-console.log(likeCountOfMypage.data)
     return (
         <MyPageSidebar role={'학생'}>
             <div css={S.IconContainer}>

@@ -17,9 +17,6 @@ function FindAcademiesSidebar(props) {
         setSelectedConvenienceOptions([]);
     }
 
-    console.log(selectedAgeOptions);    
-    console.log(selectedConvenienceOptions);
-
     return (
         <div css={S.FilterLayout}>
             <div css={S.InitialContainer}>
