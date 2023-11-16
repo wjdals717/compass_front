@@ -11,6 +11,8 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 import Horoscope from '../../components/Horoscope/Horoscope';
 
+    
+
 function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -20,7 +22,9 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
-
+  
+    const [ color, setColor ] = useState();
+    
     // 분야명의 "(대)" 문자열 자르기
     const category = academyData?.academy.REALM_SC_NM ? academyData?.academy.REALM_SC_NM : academyData?.academy.LE_CRSE_LIST_NM;
     const str = category ? category.indexOf("(대)") : -1;
@@ -37,8 +41,14 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         score: 0,
         reviewContent: ""
     })
-    
-    //좋아요 기능
+
+    // 랜덤 색상을 생성하는 함수
+    const getRandomColor = () => {
+        // 0부터 255 사이의 랜덤한 RGB 값 생성
+        const randomColor = `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
+        setColor(randomColor)
+    };
+
     const getLikeState = useQuery(["getLikeState"], async () => {
         try {
             return await instance.get(`/account/like/${academyId}/${userId}`)
@@ -104,6 +114,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         refetchOnWindowFocus: false,
         onSuccess: response => {
             setAcademyData(response?.data);
+            getRandomColor();
         }
     })
 
@@ -142,6 +153,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
     }, []);
 
     const reviewSubmitButton = async () => {
@@ -183,9 +195,13 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             <div css={S.SLayout}>
                 <div css={S.SHead}>
                     <div css={S.SAcademyInfoContainer}>
-                        <div>
-                            <div css={S.SAcademtLogo}></div>
-                        </div>
+                            <div css={[S.SAcademtLogo, { backgroundColor: color}]}>
+                                <span> {academyData?.academy.ACA_NM.replace(/\([^)]*\)/g, '') // 괄호와 그 안의 내용을 빈 문자열로 대체
+                                .match(/[ㄱ-ㅎ가-힣]/g) // 문자열에서 한글만 추출
+                                ?.slice(0, 2) // 추출한 한글 중 첫 두 글자 선택
+                                .join('')}
+                                </span>
+                            </div>
                         <div css={S.SAcademyInfo}>
                             <div css={S.SAcademyName}>{academyData?.academy.ACA_NM}</div>
                             <div css={S.SAcademyLocation}><FaLocationDot/>{academyData?.academy.FA_RDNMA}</div>
