@@ -33,31 +33,15 @@ function RetryMyAcademy({ type, selectedAcademy }) {
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
                 }
-            };
-            const filesInputs = document.querySelectorAll('input[type="file"]');
-            let AllFilesAttached = true;
-    
-            filesInputs.forEach((fileInput) => {
-                if (fileInput.files.length === 0) {
-                    AllFilesAttached = false;
-                }
-            });
+            }
             
-            if (!AllFilesAttached) {
-                alert("서류를 첨부하세요");
-            } else {
-                //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
-                if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
-                    if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
-                        await instance.put(`/academy/${selectedAcademy.academyRegistrationId}`, academyContent, option);
-                    } else {
-                        alert("업로드 중입니다. 잠시만 기다려주세요.");
-                    }
-                } else {
-                    alert("업로드 중입니다. 잠시만 기다려주세요.");
+            if(uploadeFile.idFile){
+                if(matchOption === 'false' && uploadeFile.operationRegistrationFile === 0) {
+                    alert("아직 업로드 중입니다! 잠시후 시도해주세요.");
+                    return;
                 }
-                alert("재등록되었습니다. 학원 승인은 3일 이내 완료됩니다.");
-                queryClient.refetchQueries(["getAppliedAcademy"]);
+                await instance.post("/academy", academyContent, option);
+                alert("업로드가 완료되었습니다. 신청은 3일 이내 확인됩니다.");
             }
         } catch (error) {
             alert(error.response.data.sendFail);

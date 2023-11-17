@@ -88,8 +88,7 @@ function RegistAcademy(props) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            console.log(matchOption)
-            console.log(uploadeFile)
+            
             if(uploadeFile.idFile){
                 if(matchOption === 'false' && uploadeFile.operationRegistrationFile === 0) {
                     alert("아직 업로드 중입니다! 잠시후 시도해주세요.");
