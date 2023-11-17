@@ -11,16 +11,20 @@ import ConvenienceOptions from '../../../../FindAcademiesSidebar/ConvenienceOpti
 function DetailMyAcademy({ type, selectedAcademy }) {
 
     const queryClient = useQueryClient();
+    
+        const [ academyInfo, setAcademyInfo ] = useState({
+            "academyInfo": "",
+            "ageRange": [],
+            "convenienceInfo": [],
+            "classInfo": []
+        });
 
     const [ newAcademyInfo, setNewAcademyInfo ] = useState({
-        "academy": "",
         "academyInfo": "",
         "ageRange": [],
         "convenienceInfo": [],
         "classInfo": []
     })
-
-    const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
 
     const [tableData, setTableData] = useState([
         { id: 1, courseName: '', price: '' }, // 초기에 하나의 행을 가진 배열로 시작
@@ -62,21 +66,20 @@ function DetailMyAcademy({ type, selectedAcademy }) {
         retry: 0,
         refetchOnWindowFocus: false,
         onSuccess: response => {
-            setAcademyData(response?.data);
-            setNewAcademyInfo({
-                "academy": response.data.academy,
+            setAcademyInfo({
                 "academyInfo": response.data.academyInfo,
                 "ageRange": response.data.ageRange,
                 "convenienceInfo": response.data.convenienceInfo,
                 "classInfo": response.data.classInfo
-            })
+            });
+            setNewAcademyInfo(academyInfo);
             setSelectedAgeOptions(response.data.ageRange);
             setSelectedConvenienceOptions(response.data.convenienceInfo);
             setTableData(
                 response.data.classInfo.map((classItem, index) => ({
                     id: index + 1,
-                    courseName: classItem.class_name,
-                    price: classItem.class_price
+                    courseName: classItem.className,
+                    price: classItem.classPrice
                 }))
             );
         }
@@ -166,8 +169,8 @@ function DetailMyAcademy({ type, selectedAcademy }) {
     const handleEditBtnClick = async () => {
         try {
             const updatedClassInfo = tableData.map((row) => ({
-                class_name: row.courseName,
-                class_price: row.price,
+                className: row.courseName,
+                classPrice: row.price,
             }));
     
             setNewAcademyInfo((prev) => ({
@@ -181,9 +184,15 @@ function DetailMyAcademy({ type, selectedAcademy }) {
                 }
             }
 
-            await instance.put("/academy", newAcademyInfo, option);
+            if(academyInfo?.academyInfo?.academyInfoId === null) {   // academyInfotb에 저장되지 않은 경우 insert 해줘야 함.
+                await instance.post("/academyInfo", newAcademyInfo, option);
+            } else {
+                if(JSON.stringify(newAcademyInfo) !== JSON.stringify(academyInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
+                    await instance.put("/academy", newAcademyInfo, option);
+                }
+            }
 
-            console.log(academyData)
+            console.log(academyInfo)
             console.log(newAcademyInfo)
             console.log(ageOptions)
         } catch (error) {
@@ -217,10 +226,10 @@ function DetailMyAcademy({ type, selectedAcademy }) {
                         </div>
                         
                         <div>로고 이미지<input type="file" /></div>
-                        <div>수강 인원<input type="text" name="class_size" value={newAcademyInfo?.academyInfo?.class_size} onChange={handleInfoInputChange}/></div>
-                        <div>수강 기간<input type="text" name="course_period" value={newAcademyInfo?.academyInfo?.course_period} onChange={handleInfoInputChange}/></div>
+                        <div>수강 인원<input type="text" name="classSize" value={newAcademyInfo?.academyInfo?.classSize} onChange={handleInfoInputChange}/></div>
+                        <div>수강 기간<input type="text" name="coursePeriod" value={newAcademyInfo?.academyInfo?.coursePeriod} onChange={handleInfoInputChange}/></div>
                         <div>수강 목적<input type="text" name="purpose" value={newAcademyInfo?.academyInfo?.purpose} onChange={handleInfoInputChange}/></div>
-                        <div>홈페이지<input type="text" name="home_page" value={newAcademyInfo?.academyInfo?.home_page} onChange={handleInfoInputChange}/></div>
+                        <div>홈페이지<input type="text" name="homePage" value={newAcademyInfo?.academyInfo?.homePage} onChange={handleInfoInputChange}/></div>
                         <div>학원 전화번호<input type="text" name="phone" value={newAcademyInfo?.academyInfo?.phone} onChange={handleInfoInputChange}/></div>
                     </div>
                     <div>
