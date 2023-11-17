@@ -19,6 +19,8 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
+
+    const [ isAcademyRegistered, setIsAcademyRegistered ] = useState(false);    // 학원 관리자 등록 여부
     
     // 분야명의 "(대)" 문자열 자르기
     const category = academyData?.academy.REALM_SC_NM ? academyData?.academy.REALM_SC_NM : academyData?.academy.LE_CRSE_LIST_NM;
@@ -123,6 +125,21 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     });
 
+    // 학원 관리자가 등록된 학원인지 확인
+    const isAcademyAdminRegistered = useQuery(["isAcademyAdminRegistered"], async () => {
+        try {
+            return await instance.get(`academy/check/${academyId}`)
+        } catch (error) {
+            console.error(error);
+        }
+    },{
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setIsAcademyRegistered(response.data);
+        }
+    });
+
     useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {
             if (window.scrollY > 200) {
@@ -141,6 +158,11 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const reviewSubmitButton = () => {
 
     }
+
+    const handleinquiryButton = () => {
+        navigate(`/academy/inquiry?academyId=${academyId}`);
+    }
+
 
     if(getAcademy.isLoading ) {    //undefined인 경우
         return <></>
@@ -294,7 +316,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             <div>{likeCountOfInfo?.data?.data}</div>
                         </button>
                     }
-                    <button css={S.SinquiryButton}>
+                    <button css={S.SinquiryButton(isAcademyRegistered)} onClick={handleinquiryButton}>
                         <BsChatLeftTextFill css={S.SinquiryIcon}/>
                         문의
                     </button>
