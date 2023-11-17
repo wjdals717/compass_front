@@ -5,7 +5,7 @@ import * as S from "./Style"
 import { Link } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai'
-import HeaderLogo from "../../assets/HeaderLogo.png"
+import HeaderLogo from "../../assets/Header-ver1.png"
 import { useRecoilState } from 'recoil';
 import { selectedCategoryState, selectedContentState, selectedLocationState } from '../../store/searchOptions';
 
