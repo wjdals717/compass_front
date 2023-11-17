@@ -60,13 +60,11 @@ export const SNaverLoginBtn = css`
 `;
 
 export const SKakaoBtn = css`
-    width: 200px;
-    height: auto;
+    height: 50px;
 `
 
 export const SNaverBtn = css`
-    width: 200px;
-    height: auto;
+    height: 50px;
 `;
 
 // 회원가입 페이지 이동
