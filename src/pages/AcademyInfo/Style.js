@@ -275,6 +275,9 @@ export const SOptionBox = css`
     top: 180px;
     width: 60px;
     height: 110px;
+    & * {
+        background-color: transparent;
+    }
 `;
 
 export const SLikeButton =  css`

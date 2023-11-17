@@ -22,7 +22,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
-  
+
     const [ color, setColor ] = useState();
     
     // 분야명의 "(대)" 문자열 자르기
@@ -187,8 +187,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             [e.target.name]: parseInt(e.target.value)
         })
     }
-
-    console.log(reviewWriteData);
     
     return (
         <RootContainer>
