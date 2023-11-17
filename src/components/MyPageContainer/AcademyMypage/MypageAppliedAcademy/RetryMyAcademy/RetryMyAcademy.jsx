@@ -34,9 +34,9 @@ function RetryMyAcademy({ type, selectedAcademy }) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            
+
             if(uploadeFile.idFile){
-                if(matchOption === 'false' && uploadeFile.operationRegistrationFile === 0) {
+                if(academyContent.match === 'false' && uploadeFile.operationRegistrationFile === 0) {
                     alert("아직 업로드 중입니다! 잠시후 시도해주세요.");
                     return;
                 }
