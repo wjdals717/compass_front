@@ -34,13 +34,6 @@ function FindAcademies(props) {
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
 
-    console.log("atpt_ofcdc_sc_code:" + selectedLocation.atpt_ofcdc_sc_code);
-    console.log("admst_zone_nm:" + selectedLocation.admst_zone_nm);
-    console.log("siDoName:" + selectedLocation.si_do_name);
-    console.log("realm_sc_nm:" + selectedCategory.realm_sc_nm);
-    console.log("le_crse_nm:" + selectedCategory.le_crse_nm);
-    console.log("selectedContent:" + selectedContent);
-
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
 
@@ -83,7 +76,6 @@ function FindAcademies(props) {
     
             // options를 get 요청
             const response = await instance.get("/academies", options);
-            console.log(response);
 
             // Update academyList with the data from the response
             setAcademyList(response.data.academies);
