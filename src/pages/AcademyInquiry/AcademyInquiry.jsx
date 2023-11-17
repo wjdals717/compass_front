@@ -19,8 +19,7 @@ function AcademyInquiry(props) {
         userId: "",
         academyId: "",
         inquiryTitle: "",
-        inquiryContent: "",
-        answer: ""
+        inquiryContent: ""
     });
 
 
@@ -71,6 +70,13 @@ function AcademyInquiry(props) {
     
 
     const InquiryButtonClick = async() => {
+        // inquiryTitle과 inquiryContent가 빈값이나 null인지 확인
+        if (!inquiryData.inquiryTitle || !inquiryData.inquiryContent) {
+            // 필수 입력값이 비어있는 경우 처리
+            alert("제목과 내용을 모두 입력해주세요.");
+            return;
+        }
+
         const confirmed = window.confirm(`학원명: ${academyData.ACA_NM}\n에 문의하시겠습니까?`);
         if (confirmed) {
             setInquiryData({
@@ -78,14 +84,17 @@ function AcademyInquiry(props) {
                 userId: principal.data.data.userId,
                 academyId: academyId
             })
-
             const option = {
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
                 }
-            };
-
-            await instance.post()
+            }
+            try {
+                await instance.post("/inquiry", inquiryData, option);
+            } catch (error) {
+                console.error(error);
+            }
+            
         } else {
             return;
         }
