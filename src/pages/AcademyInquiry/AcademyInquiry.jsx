@@ -19,7 +19,8 @@ function AcademyInquiry(props) {
         userId: "",
         academyId: "",
         inquiryTitle: "",
-        inquiryContent: ""
+        inquiryContent: "",
+        answerChecked: 0
     });
 
 
