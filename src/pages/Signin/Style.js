@@ -36,7 +36,7 @@ export const SLoginBox = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 400px;
+    height: 300px;
 `;
 
 // 로그인
@@ -45,6 +45,7 @@ export const SkakaoLoginBtn = css`
     justify-content: center;
     margin-bottom: 10px;
     border-radius: 5px;
+    margin-top: 10px;
     width: 300px;
     background-color: #FEE500;
     cursor: pointer;
@@ -88,3 +89,10 @@ export const SSignupBtn = css`
     cursor: pointer;
 `;
 
+export const SMainLogo = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: auto;
+`;

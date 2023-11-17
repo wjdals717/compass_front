@@ -217,11 +217,11 @@ function DetailMyAcademy({ type, selectedAcademy }) {
                         </div>
                         
                         <div>로고 이미지<input type="file" /></div>
-                        <div>수강 인원<input type="text" name="class_size" value={newAcademyInfo.academyInfo.class_size} onChange={handleInfoInputChange}/></div>
-                        <div>수강 기간<input type="text" name="course_period" value={newAcademyInfo.academyInfo.course_period} onChange={handleInfoInputChange}/></div>
-                        <div>수강 목적<input type="text" name="purpose" value={newAcademyInfo.academyInfo.purpose} onChange={handleInfoInputChange}/></div>
-                        <div>홈페이지<input type="text" name="home_page" value={newAcademyInfo.academyInfo.home_page} onChange={handleInfoInputChange}/></div>
-                        <div>학원 전화번호<input type="text" name="phone" value={newAcademyInfo.academyInfo.phone} onChange={handleInfoInputChange}/></div>
+                        <div>수강 인원<input type="text" name="class_size" value={newAcademyInfo?.academyInfo?.class_size} onChange={handleInfoInputChange}/></div>
+                        <div>수강 기간<input type="text" name="course_period" value={newAcademyInfo?.academyInfo?.course_period} onChange={handleInfoInputChange}/></div>
+                        <div>수강 목적<input type="text" name="purpose" value={newAcademyInfo?.academyInfo?.purpose} onChange={handleInfoInputChange}/></div>
+                        <div>홈페이지<input type="text" name="home_page" value={newAcademyInfo?.academyInfo?.home_page} onChange={handleInfoInputChange}/></div>
+                        <div>학원 전화번호<input type="text" name="phone" value={newAcademyInfo?.academyInfo?.phone} onChange={handleInfoInputChange}/></div>
                     </div>
                     <div>
                         <div css={S.STitleBox}>

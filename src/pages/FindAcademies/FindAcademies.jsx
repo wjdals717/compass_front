@@ -15,6 +15,8 @@ import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery } from 'react-query';
 import QueryString from 'qs';
 
+import importTeacher from "../../assets/junhangilteacher.jpg"
+
 
     // 랜덤 색상을 생성하는 함수
     const getRandomColor = () => {
@@ -205,7 +207,7 @@ function FindAcademies(props) {
                                 <div>학원 위치</div>
                             </li>
                             <li css={S.LiBox} className='recent'>
-                                <img src={defalutProfile} alt="" />
+                                <img src={importTeacher} alt="" />
                                 <strong>학원 이름</strong>
                                 <div>학원 위치</div>
                             </li>

@@ -21,8 +21,9 @@ export const SContainer = css`
 `;
 
 export const SLogoButton = css`
+    margin-left: 30px;
     width: auto;
-    height: 80px;
+    height: 60px;
 `;
 
 export const SButtonBox = css`
