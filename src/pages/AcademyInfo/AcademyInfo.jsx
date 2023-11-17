@@ -234,23 +234,24 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SIntroductionContainer} id='introduction'>
                         <h1 css={S.STitle}>학원소개</h1>
                         <div css={S.SIntroductions}>
-                            {academyData?.academyInfo?.class_size &&
+                            {academyData?.academyInfo?.classSize &&
                                 <div css={S.SIntroduction}>
                                     <div><BsFillPeopleFill/><span>수강인원</span></div>
-                                    <span>{academyData?.academyInfo?.class_size}</span>
+                                    <span>{academyData?.academyInfo?.classSize}</span>
                                 </div>
                             }
-                            {!!academyData?.ageRange[0] && 
+                            {!!academyData?.age && 
                                 <div css={S.SIntroduction}>
                                     <div><BsBarChartLineFill/><span>수강연령</span></div>
-                                    <span>
-                                        {academyData?.ageRange?.map((age) => {return age})}</span>
+                                    {academyData?.age?.map((age) => {
+                                        return (age.ageRange + " ")
+                                    })}
                                 </div>
                             }
-                            {!!academyData?.academyInfo?.course_period &&
+                            {!!academyData?.academyInfo?.coursePeriod &&
                                 <div css={S.SIntroduction}>
                                     <div><BsFillCalendar2CheckFill/><span>수강기간</span></div>
-                                    <span>{academyData?.academyInfo?.course_period}</span>
+                                    <span>{academyData?.academyInfo?.coursePeriod}</span>
                                 </div>
                             }
                             <div css={S.SIntroduction}>
@@ -263,10 +264,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                     <span>{academyData?.academyInfo?.purpose}</span>
                                 </div>
                             }
-                            {!!academyData?.academyInfo?.home_page &&
+                            {!!academyData?.academyInfo?.homePage &&
                                 <div css={S.SIntroduction}>
                                     <div><IoHomeSharp/><span>홈페이지</span></div>
-                                    <span>{academyData?.academyInfo?.home_page}</span>
+                                    <span>{academyData?.academyInfo?.homePage}</span>
                                 </div>
                             }
                             <div css={S.SIntroduction}>
@@ -279,9 +280,9 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SConvenienceContainer} id='convenience'>
                         <h1 css={S.STitle}>시설 및 편의 사항</h1>
                         <div>
-                            {academyData?.convenienceInfo.map((convience) => {
+                            {academyData?.convenience.map((con) => {
                                 return <span>
-                                    <AiOutlineCheck/> {convience}
+                                    <AiOutlineCheck/> {con.convenienceName}
                                 </span>;
                             })}
                         </div>
