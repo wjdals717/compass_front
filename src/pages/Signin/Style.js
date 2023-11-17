@@ -41,17 +41,30 @@ export const SLoginBox = css`
 
 // 로그인
 export const SkakaoLoginBtn = css`
+    display: flex;
+    justify-content: center;
     margin-bottom: 10px;
+    border-radius: 5px;
+    width: 300px;
+    background-color: #FEE500;
     cursor: pointer;
 `;
 
 export const SNaverLoginBtn = css`
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+    width: 300px;
+    background-color: #03c75a;
     cursor: pointer;
 `;
 
+export const SKakaoBtn = css`
+    height: 50px;
+`
+
 export const SNaverBtn = css`
-    width: 300px;
-    height: 45px;
+    height: 50px;
 `;
 
 // 회원가입 페이지 이동

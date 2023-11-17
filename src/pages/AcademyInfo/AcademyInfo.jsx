@@ -164,6 +164,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 }
             }
             await instance.post("/review", reviewWriteData, options);
+            document.getElementById("reviewContent").value='';
             return getReviews.refetch();
         } catch(error) {
             alert(error.response.data.message);
@@ -309,7 +310,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                 </div>
                                 <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
                             </div>
-                            <textarea css={S.SReviewBox} name="reviewContent" id="review" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' onChange={reviewContentChange}/>
+                            <textarea css={S.SReviewBox} name="reviewContent" id="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' onChange={reviewContentChange}/>
                         </div>
                     </div>
                     <div css={S.SClassInfo} id='classinfo'>

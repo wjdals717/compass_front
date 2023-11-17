@@ -45,7 +45,7 @@ export const SDropLayout = css`
 
 export const SDropDown = css`
     position: absolute;
-    top: 65px;
+    top: 80px;
     border: 1px solid #dbdbdb;
     box-shadow: 0px 4px 10px 0px #dbdbdb;
     background-color: white;
