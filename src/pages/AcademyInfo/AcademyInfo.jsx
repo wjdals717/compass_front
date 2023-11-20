@@ -230,7 +230,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         </label>
                     </div>
                 </div>
-                <div>
+                <div css={S.SBody}>
                     <div css={S.SIntroductionContainer} id='introduction'>
                         <h1 css={S.STitle}>학원소개</h1>
                         <div css={S.SIntroductions}>
@@ -317,25 +317,23 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SClassInfo} id='classinfo'>
                         <h1 css={S.STitle}>학원 수업 정보</h1>
                         <div>
+                            {!!!academyData?.classInfo[0] ? <div css={S.SEmpty}>학원 수업 정보가 등록되지 않았습니다.</div> : 
                             <table css={S.STable}>
                                 <thead>
                                     <tr>
-                                        <td>과정</td>
-                                        <td>학원비</td>
+                                        <td>과정명</td>
+                                        <td>가격</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {!!academyData?.classInfo[0] ? 
-                                        academyData?.classInfo?.map((data) => {
-                                            return (<tr>
-                                                <td>{data?.class_name}</td>
-                                                <td>{data?.class_price}</td>
-                                            </tr>)
-                                        }) 
-                                        :  <tr><td colSpan='2'>학원 수업 정보를 제공하지 않습니다.</td></tr>
-                                    }
+                                    {academyData?.classInfo?.map((data) => {
+                                        return (<tr>
+                                            <td>{data?.className}</td>
+                                            <td>{data?.classPrice}</td>
+                                        </tr>)
+                                    })}
                                 </tbody>
-                            </table>
+                            </table>}
                         </div>
                     </div>
                 </div>

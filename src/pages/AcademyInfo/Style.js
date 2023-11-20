@@ -14,6 +14,10 @@ export const SHead = css`
     z-index: 100;
 `;
 
+export const SBody = css`
+    padding: 0 70px;
+`;
+
 export const SAcademyInfoContainer = css`
     display: flex;
     justify-content: center;
@@ -133,6 +137,7 @@ export const SIntroductionContainer  = css`
 export const STitle = css`
     margin-bottom: 30px;
     font-size: 23px;
+    font-weight: 600;
 `;
 
 export const SIntroductions = css`
@@ -256,8 +261,13 @@ export const STable = css`
     border-collapse: collapse;
     border: 1px solid #dbdbdb;
 
+    & thead {
+        background-color: #eee;
+    }
+
     & thead, tr, th, td {
         border: 1px solid #999;
+        line-height: 30px;
         height: 30px;
         text-align: center;
     }
@@ -323,4 +333,12 @@ export const SinquiryIcon = css`
     flex-direction: column;
     width: 60px;
     font-size: 30px;
+`;
+
+export const SEmpty = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
 `;
