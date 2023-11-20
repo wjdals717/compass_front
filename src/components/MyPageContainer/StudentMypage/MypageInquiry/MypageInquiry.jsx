@@ -23,7 +23,7 @@ function MypageInquiry(props) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            return await instance.get(`/${principal.data.data.userId}/inquiries/${page}`,option) 
+            return await instance.get(`/student/inquiries/${principal.data.data.userId}/${page}`,option) 
         } catch (error) {
             console.error(error);
         }
