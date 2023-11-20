@@ -10,15 +10,6 @@ export const SContainer = css`
     width: 740px;
     box-shadow: 4px 4px 10px 4px #dbdbdb;
     background-color: white;
-
-    & > span { 
-        font-size: 20px;
-    }
-    & > p { 
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-
 `;
 
 export const SNameContainer= css`
@@ -32,3 +23,32 @@ export const SName = css`
     font-weight: 600;
 `;
 
+export const SAnswerStatusColor = (answer) => css`
+    color: ${answer !== null ? 'blue' : 'red'};
+`;
+
+export const SInfoContainer = css`
+    display: flex;
+    margin-bottom: 10px;
+    width: 660px;
+    align-items: center;
+
+    span {
+        width: 100px;
+        font-size: 18px;
+        overflow-wrap: break-word;
+    }
+
+    div {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 10px;
+        width: 560px;
+        background-color: #eee;
+        overflow-wrap: break-word;
+    }
+`;
+
+export const SInquiryAnswer = css`
+
+`;
