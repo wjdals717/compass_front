@@ -94,7 +94,7 @@ function MypageMyAcademy(props) {
                             Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
                             getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
-                                            style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>
+                                            style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                             <td>{academy.acaAsnum}</td>
                                             <td>{academy.acaNm}</td>
                                             <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
