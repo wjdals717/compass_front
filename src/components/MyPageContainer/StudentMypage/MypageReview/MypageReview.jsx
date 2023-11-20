@@ -1,9 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "../../Style"
+import { useQuery, useQueryClient } from 'react-query';
+import { instance } from '../../../../api/config/instance';
 
 function MypageReview(props) {
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal");
+
+    const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
+
+    //리뷰 가져오기
+    const getUserReviews = useQuery(["getUserReviews"], async () => {
+        // api, options를 get 요청
+        try {
+            const options = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/academy/${principal?.data?.data?.userId}/reviews`, options);
+        }catch(error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        // onSuccess: response => {
+        //     setReviewData(response.data);
+        // }
+    });
+
     return (
         <div>
             <h2>📜 작성한 후기</h2>

@@ -7,7 +7,7 @@ export const SLayout = css`
     align-items: center;
 
     width: 100%;
-    height: 65px;
+    height: 80px;
     background-color: #92C2F4;
 
     & a { // & : 자신, a : 하위요소
@@ -18,15 +18,12 @@ export const SLayout = css`
 export const SContainer = css`
     display: flex;
     align-items: center;
-    
-    
 `;
 
 export const SLogoButton = css`
-    color: #dbdbdb;
-    padding: 0px 20px 0px 100px;
-    font-size: 30px;
-    
+    margin-left: 30px;
+    width: auto;
+    height: 60px;
 `;
 
 export const SButtonBox = css`
@@ -49,7 +46,7 @@ export const SDropLayout = css`
 
 export const SDropDown = css`
     position: absolute;
-    top: 65px;
+    top: 80px;
     border: 1px solid #dbdbdb;
     box-shadow: 0px 4px 10px 0px #dbdbdb;
     background-color: white;

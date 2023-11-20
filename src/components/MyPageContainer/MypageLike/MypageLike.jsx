@@ -9,11 +9,16 @@ import { instance } from '../../../api/config/instance';
 import { useNavigate } from 'react-router-dom';
 
 
+    // 랜덤 색상을 생성하는 함수
+    const getRandomColor = () => {
+    // 0부터 255 사이의 랜덤한 RGB 값 생성
+    const randomColor = `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
+    return randomColor;
+    };
+
 function MypageLike(props) {
 
     const navigate = useNavigate();
-
-    const [ LikeAcademies, setLikeAcademies ] = useState([]);
 
     const queryClient = useQueryClient();
     const principalState = queryClient.getQueryState("getPrincipal")
@@ -36,8 +41,6 @@ function MypageLike(props) {
         retry: 0,
         refetchOnWindowFocus: false
     });
-
-    const likeAcademiesData = getLikeAcademiesQuery?.data;
     
     return (
         <div>
@@ -45,15 +48,23 @@ function MypageLike(props) {
             <div>
                 <ul css={S.UlBox}>
                     {!getLikeAcademiesQuery.isLoading && Array.isArray(getLikeAcademiesQuery?.data?.data) && getLikeAcademiesQuery?.data?.data.map(academy => {
+                        const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
+                        const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
+                        const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
                         return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                    <img src={defalutProfile} alt="" />
+                            {academy.logo_img ? (
+                                <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
+                            ): (
+                                <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
+                                    <span>{firstTwoKoreanChars}</span>
+                                </div>
+                            )}
                                     <strong>{academy.ACA_NM}</strong>
                                     <div>학원 설명</div>
                                 </li> 
                     })}
                 </ul>
             </div>
-
         </div>
     );
 }

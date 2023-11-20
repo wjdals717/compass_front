@@ -45,3 +45,21 @@ export const LiBox = css`
         margin: 5px 0;
     }
 `;
+
+export const SRandomImg = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    width: 230px;
+    height: 200px;/* 원하는 크기 설정 */
+    & span {
+        font-size: 50px;
+        font-weight: 600;
+        color: #fff;
+    }
+`;
+
+export const STitleName = css`
+    
+`;

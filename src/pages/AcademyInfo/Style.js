@@ -27,9 +27,21 @@ export const SAcademtLogo = css`
     margin-right: 10px;
     border: 1px solid #888;
     border-radius: 50%;
+    background-color: wheat;
     width: 150px;
     height: 150px;
     overflow: hidden;
+    
+    & span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
+        font-weight: 600;
+        color: #fff;
+        width: 150px;
+        height: 150px;
+    }
 `;
 
 export const SAcademyInfo = css`
@@ -45,6 +57,8 @@ export const SAcademyName = css`
     font-size: 24px;
     font-weight: 600;
     line-height: 32px;
+    width: 340px;
+    word-wrap: break-word;
 `;
 
 export const SAcademyLocation = css`
@@ -214,6 +228,11 @@ export const SReviewInfo = css`
     }
 `;
 
+export const SReviewBox = css`
+    width: 100%;
+    height: 120px;
+`;
+
 export const SReviewUserScoreContainer = css`
     display: flex;
     & > h1 {
@@ -245,18 +264,20 @@ export const STable = css`
 `;
 
 export const SSide = css`
-    position: absolute;
-    top: 65px;
+    position: fixed;
+    top: 200px;
     right: 110px;
     width: 60px;
     height: 100%;
 `;
 
 export const SOptionBox = css`
-    position: sticky;
     top: 180px;
     width: 60px;
     height: 110px;
+    & * {
+        background-color: transparent;
+    }
 `;
 
 export const SLikeButton =  css`
@@ -290,6 +311,8 @@ export const SinquiryButton = (isAcademyRegistered) => css`
     border: none;
     padding: 0px;
     width: 60px;
+    text-decoration: none;
+    color: black;
     font-size: 13px;
     background-color: white;
     cursor: pointer;

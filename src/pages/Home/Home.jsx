@@ -13,6 +13,8 @@ import { useRecoilState } from 'recoil';
 import { selectedCategoryState, selectedContentState, selectedLocationState } from '../../store/searchOptions';
 
 import HomeImg from "./school-building-vector-illustration_454371-247.jpg"
+import teacher from "../../assets/선생.png"
+import student from "../../assets/학생.jpg"
 
 function Home(props) {
 
@@ -90,13 +92,13 @@ function Home(props) {
             </div>
             <div css={S.SLinkContainer}>
                 <div css={S.SRegistContainer}>
-                    <img css={S.SImg} src={HomeImg} alt="" />
+                    <img css={S.SImg} src={teacher} alt="" />
                     <div css={S.SRegistTitle}>학원 관리자 등록하기</div>
                     <div>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
                     <button>등록하기</button>
                 </div>
                 <div css={S.SRegistContainer}>
-                    <img css={S.SImg} src={HomeImg} alt="" />
+                    <img css={S.SImg} src={student} alt="" />
                     <div css={S.SRegistTitle}>나의 관심 학원 보기</div>
                     <div>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
                     <button>등록하기</button>

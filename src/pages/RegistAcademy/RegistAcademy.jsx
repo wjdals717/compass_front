@@ -87,35 +87,15 @@ function RegistAcademy(props) {
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
                 }
-            };
-            if (!selectedEducationOffice) {
-                alert("학원을 선택해주세요");
-            } else {
-                const filesInputs = document.querySelectorAll('input[type="file"]');
-                let AllFilesAttached = true;
-        
-                filesInputs.forEach((fileInput) => {
-                    if (fileInput.files.length === 0) {
-                        AllFilesAttached = false;
-                    }
-                });
-                
-                if (!AllFilesAttached) {
-                    alert("서류를 첨부하세요");
+            }
+            
+            if(uploadeFile.idFile){
+                if(matchOption === 'false' && uploadeFile.operationRegistrationFile === 0) {
+                    alert("아직 업로드 중입니다! 잠시후 시도해주세요.");
                     return;
                 }
-
-                //firebase에 파일이 업로드 됐는지 확인하고 DB에 저장
-                if((uploadeFile.businessRegistrationFile == 1 && uploadeFile.idFile == 1)){
-                    if(academyContent.match == 'true' || (academyContent.match == 'false' && uploadeFile.operationRegistrationFile == 1)) {
-                        await instance.post("/academy", academyContent, option);
-                    }
-                    alert("업로드 중입니다. 잠시만 기다려주세요.");
-                    return;
-                } else {
-                    alert("업로드 중입니다. 잠시만 기다려주세요.");
-                }
-                alert("등록되었습니다. 신청은 3일 이내 확인됩니다.");
+                await instance.post("/academy", academyContent, option);
+                alert("업로드가 완료되었습니다. 신청은 3일 이내 확인됩니다.");
             }
         } catch (error) {
             alert(error.response.data.sendFail);
@@ -158,40 +138,45 @@ function RegistAcademy(props) {
                     <FindEducationOffice educationOfficeCode={selectedEducationOffice}/>
                 </div>
             </div>
-            <div css={S.SContainer}>
-                <div css={S.SNameContainer}>
-                    <span css={S.SContainerName}>사전확인서류 제출*</span>
-                    {/* <div>
-                        <p>사전확인 서류란?</p>
-                        <button css={S.SModalBtn} onClick={openModal}><BsInfoCircleFill /></button>
-                        {isModalOpen && (
-                            <div css={`${S.SModalContainer}`}>
-                                <div css={S.SModalContent}>
-                                    <ul css={S.SModalDocument}>사전확인서류란?</ul>
-                                    <li>학원 정보 관리 서비스를 사용하시기 전 학원 관리자님의 정보 확인을 위해 제출받는 서류입니다.<br></br>
-                                        신뢰성 있는 서비스를 제공하기 위해 사전확인서류로 학원 관리자임을 확인하고 있습니다.<br></br> 
-                                        학원명과 관리자 확인이 불가능한 경우 추가적인 확인 절차가 있을 수 있습니다.
-                                    </li>
-                                    <button css={S.SModalClosebtn} onClick={closeModal}>닫기</button>
-                                </div>
-                            </div>
-                        )}
-                    </div> */}
-                    <p>사전확인 서류란?<BsInfoCircleFill /></p>
-                </div>
-                <FileUpload academyContent={academyContent} setAcademyContent={setAcademyContent}
-                    uploadeFile={uploadeFile} setUploadeFile={setUploadeFile}/>
-            </div>
+            {selectedAcademy.length != 0 &&
+                <>
+                    <div css={S.SContainer}>
+                        <div css={S.SNameContainer}>
+                            <span css={S.SContainerName}>사전확인서류 제출*</span>
+                            {/* <div>
+                                <p>사전확인 서류란?</p>
+                                <button css={S.SModalBtn} onClick={openModal}><BsInfoCircleFill /></button>
+                                {isModalOpen && (
+                                    <div css={`${S.SModalContainer}`}>
+                                        <div css={S.SModalContent}>
+                                            <ul css={S.SModalDocument}>사전확인서류란?</ul>
+                                            <li>학원 정보 관리 서비스를 사용하시기 전 학원 관리자님의 정보 확인을 위해 제출받는 서류입니다.<br></br>
+                                                신뢰성 있는 서비스를 제공하기 위해 사전확인서류로 학원 관리자임을 확인하고 있습니다.<br></br> 
+                                                학원명과 관리자 확인이 불가능한 경우 추가적인 확인 절차가 있을 수 있습니다.
+                                            </li>
+                                            <button css={S.SModalClosebtn} onClick={closeModal}>닫기</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div> */}
+                            <p>사전확인 서류란?<BsInfoCircleFill /></p>
+                        </div>
+                        <FileUpload academyContent={academyContent} setAcademyContent={setAcademyContent}
+                            uploadeFile={uploadeFile} setUploadeFile={setUploadeFile}/>
+                    </div>
 
-            <div css={S.SImgContainer}>
-                <img css={S.SImg} src={uploadPrecautionsImg} alt="" />
-            </div>
-            <div css={S.SSpanContainer}>
-                <span>학원 등록은 3일 이내로 완료되며 그 전까지 학원 관리를 제외한 모든 기능을 정상적으로 이용하실 수 있습니다.</span>
-            </div>
-            <div css={S.SButtonContainer}>
-                <button css={S.SSubmitButton} onClick={handlesubmissionClick}>제출</button>
-            </div>
+                    <div css={S.SImgContainer}>
+                        <img css={S.SImg} src={uploadPrecautionsImg} alt="" />
+                    </div>
+                    <div css={S.SSpanContainer}>
+                        <span>학원 등록은 3일 이내로 완료되며 그 전까지 학원 관리를 제외한 모든 기능을 정상적으로 이용하실 수 있습니다.</span>
+                    </div>
+                    <div css={S.SButtonContainer}>
+                        <button css={S.SSubmitButton} onClick={handlesubmissionClick}>제출</button>
+                    </div>
+                </>
+            }
+            
         </RootContainer>
     );
 }
