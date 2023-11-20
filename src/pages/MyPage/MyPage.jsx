@@ -74,7 +74,7 @@ function MyPage(props) {
                     <Routes>
                         <Route path='/' element={<MypageLike />} />
                         <Route path='/user' element={<MypageUser />} />
-                        <Route path='/inquiry' element={<MyPageInquiry />} />
+                        <Route path='/inquiry/:page' element={<MyPageInquiry />} />
                         <Route path='/review' element={<MypageReview />} />
                         <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
                         <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />

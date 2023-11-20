@@ -38,7 +38,7 @@ function StudentSidebar(props) {
                 <Link to='/account/mypage/appliedacademy/1'>
                     <div>🗒️ 학원 신청 목록</div>
                 </Link>
-                <Link to='/account/mypage/inquiry'>
+                <Link to='/account/mypage/inquiry/1'>
                     <div>📞 나의 학원 문의</div>
                 </Link>
                 <Link to='/account/mypage/review'>
