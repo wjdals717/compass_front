@@ -136,7 +136,7 @@ function MypageAdPayment(props) {
                     }
                 }
                 instance.post("/purchase", purchaseDate, option).then(response => {
-                    alert("포인트 충전이 완료되었습니다.")
+                    alert("광고결제가 완료되었습니다.")
                     quertClient.refetchQueries(["getPrincipal"])
                 })
             } else {
