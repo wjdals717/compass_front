@@ -90,7 +90,7 @@ function Home(props) {
                             </SelectBtn>
                         </div>
                     <div css={S.SSearchBtnBox}>
-                        <button onClick={handleSearch}><AiOutlineSearch/></button>
+                        <button className='btn-hover color-9' onClick={handleSearch}><AiOutlineSearch/></button>
                     </div>
                 </div>
                 <div css={S.SLinkContainer}>

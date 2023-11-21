@@ -9,7 +9,8 @@ export const SLayout = css`
     width: 100%;
     height: 80px;
     background-color: white;
-    font-size: 20px;
+    font-size: 18px;
+    font-weight: 500;
 
     & a { // & : 자신, a : 하위요소
         text-decoration: none;
@@ -36,7 +37,7 @@ export const SButtonBox = css`
         color: black;
         width: 200px;
         &:hover {
-            font-size: 22px;
+            font-size: 20px;
         }
     }
 `;
