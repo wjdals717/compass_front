@@ -50,12 +50,12 @@ function MypageLike(props) {
                         const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
                         const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
                         const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
-                                    const realm =
-                                        academy.REALM_SC_NM === '국제화'
-                                            ? '외국어'
-                                            : academy.REALM_SC_NM === '정보'
-                                            ? 'IT'
-                                            : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
+                        const realm =
+                            academy.REALM_SC_NM === '국제화'
+                                ? '외국어'
+                                : academy.REALM_SC_NM === '정보'
+                                ? 'IT'
+                                : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
                         return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
                             {academy.logoImg ? (
                                 <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
