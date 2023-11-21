@@ -24,6 +24,7 @@ export const STextContainer = css`
     width: 550px;
     height: 100%;
     font-size: 32px;
+    cursor: default;
     & b {
         font-size: 35px;
         font-weight: 700;
@@ -85,16 +86,45 @@ export const SSearchBtnBox = css`
         display: flex;
         justify-content: center;
         align-items: center;
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        width: 100px;
-        height: 100%;
-        background-color: #5FA8D3;
         cursor: pointer;
     }
     & > button > svg {
         color: white;
         font-size: 25px;
+    }
+    .btn-hover {
+        width: 100px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        height: 100%;
+        text-align:center;
+        border: none;
+        background-size: 300% 100%;
+
+        border-radius: 5px;
+        moz-transition: all .4s ease-in-out;
+        -o-transition: all .4s ease-in-out;
+        -webkit-transition: all .4s ease-in-out;
+        transition: all .4s ease-in-out;
+    }
+
+    .btn-hover:hover {
+        background-position: 100% 0;
+        moz-transition: all .4s ease-in-out;
+        -o-transition: all .4s ease-in-out;
+        -webkit-transition: all .4s ease-in-out;
+        transition: all .4s ease-in-out;
+    }
+
+    .btn-hover:focus {
+        outline: none;
+    }
+
+    .btn-hover.color-9 {
+        background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+        /* box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75); */
     }
 `
 
@@ -125,7 +155,7 @@ export const SImgCover = css`
         height: 350px;
         background-color: #708C9F;
         opacity: 0.5;
-        z-index: 1;
+        z-index: 0;
     }
 `;
 
@@ -142,13 +172,14 @@ export const SImg = css`
 
 export const SCommentContainer = css`
     position: absolute;
-    z-index: 100;
+    z-index: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 100%;
     height: 100%;
+    cursor: default;
 
     .button_container {
         width: 200px;
@@ -166,7 +197,7 @@ export const SCommentContainer = css`
         position: relative;
         color: #fff;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 16px;
         background-color: #1B4965;
         padding: 17px 60px;
         margin: 0 auto;
