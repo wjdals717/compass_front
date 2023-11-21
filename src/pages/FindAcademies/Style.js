@@ -163,13 +163,13 @@ export const SRandomImg = css`
 export const SAcademiesContainer = css`
     display: flex;
     flex-direction: column;
-    margin-bottom: 50px;
-`
+    `
 
 export const SPageNumbers = css`
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 20px;
     width: 100%;
 
     & button {

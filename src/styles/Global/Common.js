@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 export const Common = css`
     * {
         box-sizing: border-box;
-        
+        font-family: 'IBM Plex Sans KR', sans-serif !important;
     }
 `;
 
