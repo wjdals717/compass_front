@@ -31,10 +31,16 @@ export const SAcademtLogo = css`
     margin-right: 10px;
     border: 1px solid #888;
     border-radius: 50%;
-    background-color: wheat;
     width: 150px;
     height: 150px;
     overflow: hidden;
+
+    & img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
     
     & span {
         display: flex;

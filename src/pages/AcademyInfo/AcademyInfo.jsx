@@ -188,19 +188,21 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             [e.target.name]: parseInt(e.target.value)
         })
     }
-    
+
     return (
         <RootContainer>
             <div css={S.SLayout}>
                 <div css={S.SHead}>
                     <div css={S.SAcademyInfoContainer}>
-                            <div css={[S.SAcademtLogo, { backgroundColor: color}]}>
-                                <span> {academyData?.academy.ACA_NM.replace(/\([^)]*\)/g, '') // 괄호와 그 안의 내용을 빈 문자열로 대체
-                                .match(/[ㄱ-ㅎ가-힣]/g) // 문자열에서 한글만 추출
-                                ?.slice(0, 2) // 추출한 한글 중 첫 두 글자 선택
-                                .join('')}
-                                </span>
-                            </div>
+                        {!getAcademy.isLoading && !!academyData?.academyInfo?.logoImg ? 
+                        <img css={S.SAcademtLogo} src={academyData?.academyInfo?.logoImg} alt="" /> : 
+                        <div css={[S.SAcademtLogo, { backgroundColor: color}]}>
+                            <span> {academyData?.academy.ACA_NM.replace(/\([^)]*\)/g, '') // 괄호와 그 안의 내용을 빈 문자열로 대체
+                            .match(/[ㄱ-ㅎ가-힣]/g) // 문자열에서 한글만 추출
+                            ?.slice(0, 2) // 추출한 한글 중 첫 두 글자 선택
+                            .join('')}
+                            </span>
+                        </div>}
                         <div css={S.SAcademyInfo}>
                             <div css={S.SAcademyName}>{academyData?.academy.ACA_NM}</div>
                             <div css={S.SAcademyLocation}><FaLocationDot/>{academyData?.academy.FA_RDNMA}</div>

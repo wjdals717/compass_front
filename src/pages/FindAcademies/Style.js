@@ -80,7 +80,6 @@ export const ClassifyBox = css`
 export const UlBox = css`
     position: relative;
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
     padding-bottom: 10px;
     overflow: auto;
