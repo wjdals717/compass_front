@@ -78,7 +78,7 @@ function MyPage(props) {
                         <Route path='/review' element={<MypageReview />} />
                         <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
                         <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />
-                        <Route path='/adpayment' element={<MypageAdPayment />} />
+                        <Route path='/adpayment/:page' element={<MypageAdPayment />} />
                         <Route path='/consultation' element={<MyPageConsultation />} />
                         <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
                         <Route path='/inquirylist' element={<InquiryList />} />
