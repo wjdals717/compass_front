@@ -52,7 +52,7 @@ function Header(props) {
             <div css={S.SLoginButtonBox}>
                 {!!principalState?.data?.data ? (
                     <div css={S.SDropLayout} onClick={() => {setView(!view)}}>
-                        반가워요, {principalState.data.data.nickname} 님!{" "}
+                        <span>반가워요, {principalState.data.data.nickname}님!{" "}</span>
                         {view ? <AiOutlineUp/> : <AiOutlineDown/>}
                         {view && <ul css={S.SDropDown}>
                             <li><Link to="/account/mypage">마이페이지</Link></li>

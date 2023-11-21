@@ -3,16 +3,29 @@ import { css } from '@emotion/react';
 
 export const SMainLayout = css`
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
+    align-items: end;
+    height: 360px;
+    background: rgb(202,233,255);
+    background: linear-gradient(0deg, rgba(202,233,255,1) 0%, rgba(255,255,255,1) 100%);
+`;
+
+export const SMainContainer = css`
+    display: flex;
+    justify-content: space-around;
     align-items: center;
-    padding: 15px;
-    height: 400px;
+    width: 1200px;
 `;
 
 export const STextContainer = css`
-    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 550px;
+    height: 100%;
+    font-size: 32px;
     & b {
-        font-size: 32px;
+        font-size: 35px;
         font-weight: 700;
     }
     & h1 {
@@ -21,21 +34,21 @@ export const STextContainer = css`
 `;
 
 export const SImgBox = css`
-    width: 450px;
-    height: 100%;
+    width: auto;
+    height: 330px;
 `;
 
 export const SSearchContainer = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 30px 0;
+    margin: 50px 0;
     height: 50px;
     & > div {
         height: 100%;
     }
     & * {
-        font-size: 15px;
+        font-size: 17px;
     }
 `;
 
@@ -69,11 +82,14 @@ export const SSelectBox = css`
 
 export const SSearchBtnBox = css`
     & > button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border: 1px solid #dbdbdb;
         border-radius: 5px;
         width: 100px;
         height: 100%;
-        background-color: #35AFCC;
+        background-color: #5FA8D3;
         cursor: pointer;
     }
     & > button > svg {
@@ -82,13 +98,35 @@ export const SSearchBtnBox = css`
     }
 `
 
+export const SLinkContainer = css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
 export const SRegistContainer = css`
     position: relative;
-    margin: 0px 50px;
+    /* margin: 0px 50px; */
     border-radius: 20px;
-    padding: 30px;
-    width: 100%;
+    width: 580px;
     height: 380px;
+    color: white;
+`;
+
+export const SImgCover = css`
+    position: absolute;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 5px;
+        width: 580px;
+        height: 350px;
+        background-color: #708C9F;
+        opacity: 0.5;
+        z-index: 1;
+    }
 `;
 
 export const SImg = css`
@@ -97,18 +135,84 @@ export const SImg = css`
     left: 0;
     z-index: -1;
     object-fit: cover;
-    width: 500px;
-    height: 330px;
+    padding: 20px;
+    width: 580px;
+    height: 350px;
+`;
+
+export const SCommentContainer = css`
+    position: absolute;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    .button_container {
+        width: 200px;
+    }
+
+    .btn {
+        border: none;
+        display: block;
+        text-align: center;
+        cursor: pointer;
+        text-transform: uppercase;
+        text-decoration: none;
+        outline: none;
+        overflow: hidden;
+        position: relative;
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+        background-color: #1B4965;
+        padding: 17px 60px;
+        margin: 0 auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.20);
+    }
+
+    .btn span {
+        position: relative; 
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn span svg {
+        margin-left: 5px;
+    }
+
+    .btn:after {
+    content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 490%;
+        width: 140%;
+        background: #5FA8D3;
+        -webkit-transition: all .5s ease-in-out;
+        transition: all .5s ease-in-out;
+        -webkit-transform: translateX(-98%) translateY(-25%) rotate(45deg);
+        transform: translateX(-98%) translateY(-25%) rotate(45deg);
+    }
+
+    .btn:hover:after {
+        -webkit-transform: translateX(-9%) translateY(-25%) rotate(45deg);
+        transform: translateX(-9%) translateY(-25%) rotate(45deg);
+    }
 `;
 
 export const SRegistTitle = css`
-    margin-bottom: 10px;
-    font-size: 24px;
-    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 30px;
+    font-weight: 700;
 `;
 
-export const SLinkContainer = css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+export const SRegistComment = css`
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 500;
 `;

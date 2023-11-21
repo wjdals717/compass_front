@@ -188,19 +188,21 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
             [e.target.name]: parseInt(e.target.value)
         })
     }
-    
+
     return (
         <RootContainer>
             <div css={S.SLayout}>
                 <div css={S.SHead}>
                     <div css={S.SAcademyInfoContainer}>
-                            <div css={[S.SAcademtLogo, { backgroundColor: color}]}>
-                                <span> {academyData?.academy.ACA_NM.replace(/\([^)]*\)/g, '') // 괄호와 그 안의 내용을 빈 문자열로 대체
-                                .match(/[ㄱ-ㅎ가-힣]/g) // 문자열에서 한글만 추출
-                                ?.slice(0, 2) // 추출한 한글 중 첫 두 글자 선택
-                                .join('')}
-                                </span>
-                            </div>
+                        {!getAcademy.isLoading && !!academyData?.academyInfo?.logoImg ? 
+                        <img css={S.SAcademtLogo} src={academyData?.academyInfo?.logoImg} alt="" /> : 
+                        <div css={[S.SAcademtLogo, { backgroundColor: color}]}>
+                            <span> {academyData?.academy.ACA_NM.replace(/\([^)]*\)/g, '') // 괄호와 그 안의 내용을 빈 문자열로 대체
+                            .match(/[ㄱ-ㅎ가-힣]/g) // 문자열에서 한글만 추출
+                            ?.slice(0, 2) // 추출한 한글 중 첫 두 글자 선택
+                            .join('')}
+                            </span>
+                        </div>}
                         <div css={S.SAcademyInfo}>
                             <div css={S.SAcademyName}>{academyData?.academy.ACA_NM}</div>
                             <div css={S.SAcademyLocation}><FaLocationDot/>{academyData?.academy.FA_RDNMA}</div>
@@ -230,27 +232,28 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         </label>
                     </div>
                 </div>
-                <div>
+                <div css={S.SBody}>
                     <div css={S.SIntroductionContainer} id='introduction'>
                         <h1 css={S.STitle}>학원소개</h1>
                         <div css={S.SIntroductions}>
-                            {academyData?.academyInfo?.class_size &&
+                            {academyData?.academyInfo?.classSize &&
                                 <div css={S.SIntroduction}>
                                     <div><BsFillPeopleFill/><span>수강인원</span></div>
-                                    <span>{academyData?.academyInfo?.class_size}</span>
+                                    <span>{academyData?.academyInfo?.classSize}</span>
                                 </div>
                             }
-                            {!!academyData?.ageRange[0] && 
+                            {!!academyData?.age && 
                                 <div css={S.SIntroduction}>
                                     <div><BsBarChartLineFill/><span>수강연령</span></div>
-                                    <span>
-                                        {academyData?.ageRange?.map((age) => {return age})}</span>
+                                    {academyData?.age?.map((age) => {
+                                        return (age.ageRange + " ")
+                                    })}
                                 </div>
                             }
-                            {!!academyData?.academyInfo?.course_period &&
+                            {!!academyData?.academyInfo?.coursePeriod &&
                                 <div css={S.SIntroduction}>
                                     <div><BsFillCalendar2CheckFill/><span>수강기간</span></div>
-                                    <span>{academyData?.academyInfo?.course_period}</span>
+                                    <span>{academyData?.academyInfo?.coursePeriod}</span>
                                 </div>
                             }
                             <div css={S.SIntroduction}>
@@ -263,10 +266,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                     <span>{academyData?.academyInfo?.purpose}</span>
                                 </div>
                             }
-                            {!!academyData?.academyInfo?.home_page &&
+                            {!!academyData?.academyInfo?.homePage &&
                                 <div css={S.SIntroduction}>
                                     <div><IoHomeSharp/><span>홈페이지</span></div>
-                                    <span>{academyData?.academyInfo?.home_page}</span>
+                                    <span>{academyData?.academyInfo?.homePage}</span>
                                 </div>
                             }
                             <div css={S.SIntroduction}>
@@ -279,9 +282,9 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SConvenienceContainer} id='convenience'>
                         <h1 css={S.STitle}>시설 및 편의 사항</h1>
                         <div>
-                            {academyData?.convenienceInfo.map((convience) => {
+                            {academyData?.convenience.map((con) => {
                                 return <span>
-                                    <AiOutlineCheck/> {convience}
+                                    <AiOutlineCheck/> {con.convenienceName}
                                 </span>;
                             })}
                         </div>
@@ -316,25 +319,23 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <div css={S.SClassInfo} id='classinfo'>
                         <h1 css={S.STitle}>학원 수업 정보</h1>
                         <div>
+                            {!!!academyData?.classInfo[0] ? <div css={S.SEmpty}>학원 수업 정보가 등록되지 않았습니다.</div> : 
                             <table css={S.STable}>
                                 <thead>
                                     <tr>
-                                        <td>과정</td>
-                                        <td>학원비</td>
+                                        <td>과정명</td>
+                                        <td>가격</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {!!academyData?.classInfo[0] ? 
-                                        academyData?.classInfo?.map((data) => {
-                                            return (<tr>
-                                                <td>{data?.class_name}</td>
-                                                <td>{data?.class_price}</td>
-                                            </tr>)
-                                        }) 
-                                        :  <tr><td colSpan='2'>학원 수업 정보를 제공하지 않습니다.</td></tr>
-                                    }
+                                    {academyData?.classInfo?.map((data) => {
+                                        return (<tr>
+                                            <td>{data?.className}</td>
+                                            <td>{data?.classPrice}</td>
+                                        </tr>)
+                                    })}
                                 </tbody>
-                            </table>
+                            </table>}
                         </div>
                     </div>
                 </div>

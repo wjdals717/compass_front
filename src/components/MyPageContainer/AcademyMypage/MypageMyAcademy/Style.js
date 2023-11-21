@@ -21,19 +21,7 @@ export const STable = css`
         vertical-align: middle;
         text-align: center;
         overflow: auto;
-        cursor: default;
     }
-
-    /* button {
-        border: 1px solid #aaa;
-        border-radius: 5px;
-        background-color: #eee;
-        padding: 5px 8px;
-        cursor: pointer;
-        :active {
-            background-color: #ddd;
-        }
-    } */
 `;
 
 export const SPageNumbers = css`
@@ -65,4 +53,8 @@ export const SPageNumbers = css`
             background-color: #92c2f4;
         }
     }
+`;
+
+export const SAcaNm = css`
+    cursor: pointer;
 `;

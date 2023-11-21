@@ -80,7 +80,7 @@ function MypageMyAcademy(props) {
         <div>
             <h2>🎒 나의 학원</h2>
             <div>
-                <div css={S.SComment}>나의 학원 정보를 수정해보세요!</div>
+                <div css={S.SComment}>나의 학원 정보를 수정해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
                 <table css={S.STable}>
                     <thead>
                         <tr>
@@ -94,9 +94,9 @@ function MypageMyAcademy(props) {
                             Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
                             getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
-                                            style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>
+                                            style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                             <td>{academy.acaAsnum}</td>
-                                            <td>{academy.acaNm}</td>
+                                            <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
                                             <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
                                         </tr>
                             })
