@@ -237,13 +237,13 @@ export const SCommentContainer = css`
 `;
 
 export const SRegistTitle = css`
-    margin-bottom: 20px;
-    font-size: 30px;
+    margin-bottom: 10px;
+    font-size: 28px;
     font-weight: 700;
 `;
 
 export const SRegistComment = css`
     margin-bottom: 20px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
 `;

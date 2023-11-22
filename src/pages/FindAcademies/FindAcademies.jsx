@@ -4,8 +4,8 @@ import SelectBtn from '../../components/SelectBtn/SelectBtn';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
 import FindAcademiesSidebar from '../../components/FindAcademiesSidebar/FindAcademiesSidebar';
-import defalutProfile from './고양이.jpg';
 import { RiAdvertisementFill } from 'react-icons/ri';
+import { AiOutlineSearch } from 'react-icons/ai'
 import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,27 +14,28 @@ import { selectedAgeState, selectedCategoryState, selectedContentState, selected
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery, useQueryClient } from 'react-query';
 import QueryString from 'qs';
-
-    // 랜덤 색상을 생성하는 함수
-    const getRandomColor = () => {
-    // 0부터 255 사이의 랜덤한 RGB 값 생성
-    const randomColor = `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
-    return randomColor;
-    };
+import { FaLocationDot } from "react-icons/fa6";
 
 function FindAcademies(props) {
     const navigate = useNavigate();
-
+    
     const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
     const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
     const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
     const [ inputValue, setInputValue ] = useState(selectedContent); // 학원이름 검색창 
-
+    
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
-
+    
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
+    
+    // 랜덤 색상을 생성하는 함수
+    const getRandomColor = () => {
+        // 0부터 255 사이의 랜덤한 RGB 값 생성
+        const randomColor = `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
+        return randomColor;
+    };
 
     // 모달이 열릴 때 스크롤 막기
     const disableBodyScroll = () => {
@@ -198,8 +199,12 @@ function FindAcademies(props) {
                             }
                         </SelectBtn>
                     </div>
-                    <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
-                    <button onClick={handleSelectContent}>검색</button>
+                    <div>
+                        <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
+                    </div>
+                    <div css={S.SSearchBtnBox}>
+                        <button className='btn-hover color-9' onClick={handleSelectContent}><AiOutlineSearch/></button>
+                    </div>
                 </div>
             </div>
             <div css={S.PageLayout}>
@@ -207,7 +212,7 @@ function FindAcademies(props) {
                 <div css={S.SAcademiesContainer}>
                     <div css={S.PageContainer}>
                         <div css={S.InfoBox}>
-                            <div>{totalCount}개의 학원이 있습니다.</div>
+                            <div>{totalCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}개의 학원이 있습니다.</div>
                         </div>
                         <div>
                             <div css={S.HeaderBox}>
@@ -219,31 +224,31 @@ function FindAcademies(props) {
                             </div>
                             <ul css={S.UlBox}>
                             {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
-                            const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
-                            const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
-                            const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
-                            const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
-                                    const realm =
-                                        academy.REALM_SC_NM === '국제화'
-                                            ? '외국어'
-                                            : academy.REALM_SC_NM === '정보'
-                                            ? 'IT'
-                                            : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-                                    return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                        {academy.logo_img ? (
-                                            <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
-                                        ): (
-                                            <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
-                                                <span>{firstTwoKoreanChars}</span>
-                                            </div>
-                                        )}
-                                        <strong>{academy.ACA_NM}</strong>
-                                        <div>{address}</div>
-                                        <div>{realm}</div>
-                                    </li>
-                        })}
-                        </ul>
-                    </div>
+                                const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
+                                const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
+                                const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
+                                const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
+                                const realm =
+                                    academy.REALM_SC_NM === '국제화'
+                                        ? '외국어'
+                                        : academy.REALM_SC_NM === '정보'
+                                        ? 'IT'
+                                        : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
+                                return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+                                    {academy.logo_img ? (
+                                        <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
+                                    ): (
+                                        <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
+                                            <span>{firstTwoKoreanChars}</span>
+                                        </div>
+                                    )}
+                                    <strong>{academy.ACA_NM}</strong>
+                                    <div css={S.SAddress}><FaLocationDot />{address}</div>
+                                    <div>{realm}</div>
+                                </li>
+                            })}
+                            </ul>
+                        </div>
                         <div>
                             <div css={S.HeaderBox}>
                                 <h3>검색된 정보</h3>
@@ -274,7 +279,7 @@ function FindAcademies(props) {
                                             </div>
                                         )}
                                         <strong>{academy.ACA_NM}</strong>
-                                        <div>{address}</div>
+                                        <div css={S.SAddress}><FaLocationDot />{address}</div>
                                         <div>{realm}</div>
                                     </li>
                                 })}

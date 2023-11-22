@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
-import { AiOutlineDown, AiOutlineSearch } from 'react-icons/ai'
+import { AiOutlineSearch } from 'react-icons/ai'
 import SelectBtn from '../../components/SelectBtn/SelectBtn';
 import academyImg from '../../assets/academy.jpg'
 import { Link, useNavigate } from 'react-router-dom';

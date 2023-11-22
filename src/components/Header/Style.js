@@ -20,6 +20,8 @@ export const SLayout = css`
 export const SContainer = css`
     display: flex;
     align-items: center;
+    border-bottom: 1px solid #dbdbdb;
+    height: 80px;
 `;
 
 export const SLogoButton = css`
@@ -30,14 +32,23 @@ export const SLogoButton = css`
 `;
 
 export const SButtonBox = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-left: 30px;
+    width: 330px;
     & a {
         transition: all ease 0.3s;
-        padding: 25px 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 20px;
         color: black;
-        width: 200px;
+        width: 165px;
+        height: 80px;
         &:hover {
             font-size: 20px;
+            background-color: #E9F6FF;
         }
     }
 `;
@@ -49,7 +60,7 @@ export const SLoginButtonBox = css`
     align-items: center;
     height: 80px;
     padding: 25px 40px;
-    font-size: 18px;
+    font-size: 16px;
     & * {
         color: black;
     }
@@ -71,16 +82,17 @@ export const SDropDown = css`
     left: 50%;
     transform: translate(-50%, 0);
     border: 1px solid #dbdbdb;
+    border-top: 0;
     box-shadow: 0px 4px 10px 0px #dbdbdb;
     background-color: white;
     width: 180px;
     z-index: 1;
-    font-size: 18px;
+    font-size: 16px;
     & :hover{
         & * {
             color: white;
         }
-        background-color: #B1CCDF;
+        background-color: #5FA8D3;
     }
     & > li > * {
         display: flex;
