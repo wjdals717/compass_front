@@ -12,11 +12,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedAgeState, selectedCategoryState, selectedContentState, selectedConvenienceState, selectedLocationState } from '../../store/searchOptions';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import QueryString from 'qs';
-
-import importTeacher from "../../assets/junhangilteacher.jpg"
-
 
     // 랜덤 색상을 생성하는 함수
     const getRandomColor = () => {
@@ -53,13 +50,32 @@ function FindAcademies(props) {
     const { page } = useParams();
     const [ academyList, setAcademyList] = useState([]);
 
+    const queryClient = useQueryClient();
+    const principalState = queryClient.getQueryState("getPrincipal")
+    const principal = principalState?.data?.data;
+
+    const getPurchaseAcademyList = useQuery(["getPurchaseAcademyList"], async () => {
+        try{
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/purchase`, option)
+        } catch(error) {
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
 
     const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
             const options = {
                 params: {
                     pIndex: page,
-                    pSize: 21,
+                    pSize: 15,
                     ATPT_OFCDC_SC_CODE: selectedLocation.atpt_ofcdc_sc_code,
                     ADMST_ZONE_NM: selectedLocation.admst_zone_nm,
                     REALM_SC_NM: selectedCategory.realm_sc_nm,
@@ -113,10 +129,10 @@ function FindAcademies(props) {
 
     const pagenation = () => {
         const totalAcademyCount = totalCount;
-        const lastPage = totalAcademyCount % 21 === 0 
-            ? totalAcademyCount / 21
+        const lastPage = totalAcademyCount % 15 === 0 
+            ? totalAcademyCount / 15
             // Math.floor(): 절삭 = 나머지 버림
-            : Math.floor(totalAcademyCount / 21) + 1
+            : Math.floor(totalAcademyCount / 15) + 1
 
         const startIndex = parseInt(page) % 5 === 0 ? parseInt(page) - 4 : parseInt(page) - (parseInt(page) % 5) + 1;
         const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
@@ -133,7 +149,7 @@ function FindAcademies(props) {
                 }}>&#60;</button>
 
                 {pageNumbers.map(num => {
-                    return <button key={num} onClick={() => {
+                    return <button className={parseInt(page) === num ? 'selected' : ''} key={num} onClick={() => {
                         navigate(`/academy/find/${num}`)
                     }}>{num}</button>
                 })}
@@ -188,76 +204,87 @@ function FindAcademies(props) {
             </div>
             <div css={S.PageLayout}>
                 <FindAcademiesSidebar />
-                <div css={S.PageContainer}>
-                    <div css={S.InfoBox}>
-                        <div>{totalCount}개의 학원이 있습니다.</div>
-                    </div>
-                    <div>
-                        <div css={S.HeaderBox}>
-                            <h3>이런 학원은 어떠세요?</h3>
-                            <div>
-                                <span>광고</span>
-                                <RiAdvertisementFill size={22}/>
+                <div css={S.SAcademiesContainer}>
+                    <div css={S.PageContainer}>
+                        <div css={S.InfoBox}>
+                            <div>{totalCount}개의 학원이 있습니다.</div>
+                        </div>
+                        <div>
+                            <div css={S.HeaderBox}>
+                                <h3>이런 학원은 어떠세요?</h3>
+                                <div>
+                                    <span>광고</span>
+                                    <RiAdvertisementFill size={22}/>
+                                </div>
                             </div>
-                        </div>
-                        <ul css={S.UlBox}>
-                            <li css={S.LiBox} className='recent'>
-                                <img src={defalutProfile} alt="" />
-                                <strong>학원 이름</strong>
-                                <div>학원 위치</div>
-                            </li>
-                            <li css={S.LiBox} className='recent'>
-                                <img src={importTeacher} alt="" />
-                                <strong>학원 이름</strong>
-                                <div>학원 위치</div>
-                            </li>
-                            <li css={S.LiBox} className='recent'>
-                                <img src={defalutProfile} alt="" />
-                                <strong>학원 이름</strong>
-                                <div>학원 위치</div>
-                            </li>
+                            <ul css={S.UlBox}>
+                            {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
+                            const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
+                            const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
+                            const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
+                            const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
+                                    const realm =
+                                        academy.REALM_SC_NM === '국제화'
+                                            ? '외국어'
+                                            : academy.REALM_SC_NM === '정보'
+                                            ? 'IT'
+                                            : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
+                                    return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+                                        {academy.logo_img ? (
+                                            <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
+                                        ): (
+                                            <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
+                                                <span>{firstTwoKoreanChars}</span>
+                                            </div>
+                                        )}
+                                        <strong>{academy.ACA_NM}</strong>
+                                        <div>{address}</div>
+                                        <div>{realm}</div>
+                                    </li>
+                        })}
                         </ul>
                     </div>
-                    <div>
-                        <div css={S.HeaderBox}>
-                            <h3>검색된 정보</h3>
-                            <select css={S.ClassifyBox} name="classifyBox" id="">
-                                <option value="최신순">최신순</option>
-                                <option value="인기순">인기순</option>
-                                <option value="좋아요순">좋아요순</option>
-                            </select>
+                        <div>
+                            <div css={S.HeaderBox}>
+                                <h3>검색된 정보</h3>
+                                <select css={S.ClassifyBox} name="classifyBox" id="">
+                                    <option value="최신순">최신순</option>
+                                    <option value="인기순">인기순</option>
+                                    <option value="좋아요순">좋아요순</option>
+                                </select>
+                            </div>
+                            <ul css={S.UlBox}>
+                                {academyList.map((academy) => {
+                                    const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
+                                    const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
+                                    const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
+                                    const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
+                                    const realm =
+                                        academy.REALM_SC_NM === '국제화'
+                                            ? '외국어'
+                                            : academy.REALM_SC_NM === '정보'
+                                            ? 'IT'
+                                            : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
+                                    return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+                                        {academy.logoImg ? (
+                                            <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
+                                        ): (
+                                            <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
+                                                <span>{firstTwoKoreanChars}</span>
+                                            </div>
+                                        )}
+                                        <strong>{academy.ACA_NM}</strong>
+                                        <div>{address}</div>
+                                        <div>{realm}</div>
+                                    </li>
+                                })}
+                            </ul>
                         </div>
-                        <ul css={S.UlBox}>
-                            {academyList.map((academy) => {
-                                const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
-                                const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
-                                const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
-                                const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
-                                const realm =
-                                    academy.REALM_SC_NM === '국제화'
-                                        ? '외국어'
-                                        : academy.REALM_SC_NM === '정보'
-                                        ? 'IT'
-                                        : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-                                return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                    {academy.logo_img ? (
-                                        <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
-                                    ): (
-                                        <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
-                                            <span>{firstTwoKoreanChars}</span>
-                                        </div>
-                                    )}
-                                    <strong>{academy.ACA_NM}</strong>
-                                    <div>{address}</div>
-                                    <div>{realm}</div>
-                                </li>
-                            })}
-                        </ul>
+                    </div>
+                    <div css={S.SPageNumbers}>
+                        {pagenation()}
                     </div>
                 </div>
-            </div>
-            <div css={S.PageButtonContainer}>
-                {pagenation()}
             </div>
             <LocationModal modalIsOpen={modalIsOpen} 
                 setModalIsOpen={setModalIsOpen} 

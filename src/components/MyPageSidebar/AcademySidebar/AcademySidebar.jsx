@@ -37,7 +37,7 @@ function AcademySidebar(props) {
                 <Link to='/account/mypage/appliedacademy/1'>
                     <div>🗒️ 학원 신청 목록</div>
                 </Link>
-                <Link to='/account/mypage/adpayment'>
+                <Link to='/account/mypage/adpayment/1'>
                     <div>💸 광고 결제</div>
                 </Link>
                 <Link to='/account/mypage/consultation/1'>
