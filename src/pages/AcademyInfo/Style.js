@@ -319,8 +319,8 @@ export const SLikeIcon = (isLike) => css`
     color: ${isLike ? "red" : "black"};
 `;
 
-export const SinquiryButton = css`
-    display: flex;
+export const SinquiryButton = (isAcademyRegistered) => css`
+    display: ${isAcademyRegistered ? "flex" : "none"};
     flex-direction: column;
     justify-content: center;
     align-items: center;
