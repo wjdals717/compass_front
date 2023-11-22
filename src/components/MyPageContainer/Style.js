@@ -85,3 +85,15 @@ export const SPageNumbers = css`
         }
     }
 `;
+
+export const SOptionBox = css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 760px;
+`;
+
+export const SSelect = css`
+    margin-left: 20px;
+    width: 200px;
+`;

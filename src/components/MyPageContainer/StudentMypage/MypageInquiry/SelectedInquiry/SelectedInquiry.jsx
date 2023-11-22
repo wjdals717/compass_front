@@ -1,9 +1,15 @@
 import React from 'react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
+import { useQueryClient } from 'react-query';
 
-function SelectedInquiry({ selectedInquiry }) {
-    
+function SelectedInquiry({ selectedInquiry, setSelectedInquiry, page }) {
+    const queryClient = useQueryClient(); // useQueryClient 훅을 사용하여 queryClient 가져오기
+
+    const handleCheckButton = () => {
+        setSelectedInquiry(null);
+        queryClient.invalidateQueries(['getUserInquiryList', page]);
+    }
     
     return (
         <div css={S.SContainer}>
@@ -30,6 +36,7 @@ function SelectedInquiry({ selectedInquiry }) {
                     <span>답변</span>
                     <div>{selectedInquiry.answer}</div>
                 </div>}
+            <button onClick={handleCheckButton}>확인</button>
         </div>
     );
 }

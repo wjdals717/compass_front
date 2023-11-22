@@ -37,6 +37,8 @@ function MyPage(props) {
 
     const [ roleId, setRoleId ] = useState(principal.roleId);
 
+    const [ uncheckedAnswerCount, setUncheckedAnswerCount ] = useState();
+
     const userId = principal?.userId
 
     const getLikeCountOfMypage = useQuery(["getLikeCountOfMypage"], async () => {
@@ -60,7 +62,10 @@ function MyPage(props) {
         roleId === 0
             ? <WebMastesrSidebar/>
             : roleId === 1
-            ? <StudentSidebar />
+            ? <StudentSidebar 
+                uncheckedAnswerCount={uncheckedAnswerCount}
+                setUncheckedAnswerCount={setUncheckedAnswerCount}
+            />
             : roleId === 2
             ? <AcademySidebar />
             : null;
@@ -74,7 +79,7 @@ function MyPage(props) {
                     <Routes>
                         <Route path='/' element={<MypageLike />} />
                         <Route path='/user' element={<MypageUser />} />
-                        <Route path='/inquiry/:page' element={<MyPageInquiry />} />
+                        <Route path='/inquiry/:page' element={<MyPageInquiry setUncheckedAnswerCount={setUncheckedAnswerCount}/>} />
                         <Route path='/review' element={<MypageReview />} />
                         <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
                         <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />
