@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import RootContainer from '../../components/RootContainer/RootContainer';
 import MypageContainer from '../../components/MyPageContainer/MypageContainer';
-import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import MypageUser from '../../components/MyPageContainer/MypageUser/MypageUser';
 import MyPageInquiry from '../../components/MyPageContainer/StudentMypage/MypageInquiry/MypageInquiry';
 import MypageReview from '../../components/MyPageContainer/StudentMypage/MypageReview/MypageReview';
@@ -24,33 +23,26 @@ import { instance } from '../../api/config/instance';
 import * as S from "./Style"
 
 function MyPage(props) {
-    // 사용자 정의 인증 확인 훅 사용
-    const isAuthenticated = useAuth();
 
-    const navigate = useNavigate();
-    const useAuth = () => {
     const navigate = useNavigate();
     const isAuthenticated = !!localStorage.getItem("accessToken");
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-        // 인증되지 않았다면 로그인 페이지로 리디렉션
-        alert("로그인 후 이용해주세요");
-        navigate('/auth/signin');
-        }
-    }, [isAuthenticated, navigate]);
-
-    return isAuthenticated;
-    };
-
+    
     const queryClient = useQueryClient();
     const principalState = queryClient.getQueryState("getPrincipal");
     const principal = principalState?.data?.data;
-
+    
     // principal이나 principal.roleId가 없을 경우 기본값을 설정
-    const [roleId, setRoleId] = useState(principal?.roleId || null);
+    const [roleId, setRoleId] = useState(principal?.roleId);
     const [uncheckedAnswerCount, setUncheckedAnswerCount] = useState();
     const userId = principal?.userId;
+    
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // 인증되지 않았다면 로그인 페이지로 리디렉션
+            alert("로그인 후 이용해주세요");
+            navigate('/auth/signin');
+        }
+    }, [isAuthenticated, navigate]);
 
     const getLikeCountOfMypage = useQuery(["getLikeCountOfMypage"], async () => {
     try {
@@ -64,27 +56,27 @@ function MyPage(props) {
         console.error(error);
     }
     }, {
-    retry: 0,
-    refetchOnWindowFocus: false
+        retry: 0,
+        refetchOnWindowFocus: false
     });
-
-    if (!isAuthenticated) {
-    // 인증 확인 훅이 리디렉션을 처리하므로 여기서는 null을 반환하여 나머지 컴포넌트를 렌더링하지 않습니다.
-    return null;
-    }
     
     // principal.roleId가 없을 경우 기본값을 설정
     const sidebarComponent =
-    roleId === 0
+        roleId === 0
         ? <WebMastesrSidebar />
         : roleId === 1
         ? <StudentSidebar
-            uncheckedAnswerCount={uncheckedAnswerCount}
-            setUncheckedAnswerCount={setUncheckedAnswerCount}
+        uncheckedAnswerCount={uncheckedAnswerCount}
+        setUncheckedAnswerCount={setUncheckedAnswerCount}
         />
         : roleId === 2
         ? <AcademySidebar />
         : null;
+
+    if (!isAuthenticated) {
+        // 인증 확인 훅이 리디렉션을 처리하므로 여기서는 null을 반환하여 나머지 컴포넌트를 렌더링하지 않습니다.
+        return null;
+    }
 
     return (
         <RootContainer>

@@ -11,7 +11,7 @@ function WebMastesrSidebar(props) {
         <MyPageSidebar role={'마스터'}>
             <div css={S.RoleContainer}>
                 <NavLink to='/account/mypage/academywaiting/1' activeClassName='active'>
-                    <div>📜 학원 등록 대기목록</div>
+                    📜 학원 등록 대기목록
                 </NavLink>
             </div>
         </MyPageSidebar>
