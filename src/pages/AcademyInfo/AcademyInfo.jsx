@@ -142,21 +142,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         return <></>
     }
 
-    const reviewSubmitButton = async () => {
-        try{
-            const options = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            await instance.post("/review", reviewWriteData, options);
-            document.getElementById("reviewContent").value='';
-            return getReviews.refetch();
-        } catch(error) {
-            alert(error.response.data.message);
-        }
-    }
-
     const handleinquiryButton = () => {
         // 로그인이 안된것
         if (!principal.data) {
