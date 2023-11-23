@@ -2,14 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
+import * as GS from "../../styles/Global/Common"
 import { FaLocationDot } from 'react-icons/fa6'
 import { AiFillStar, AiOutlineCheck, AiFillHeart,AiOutlineHeart } from 'react-icons/ai'
 import { IoHomeSharp } from 'react-icons/io5'
 import { BsFillPeopleFill, BsBarChartLineFill, BsFillCalendar2CheckFill, BsFillBookFill, BsFillPencilFill, BsChatLeftTextFill } from 'react-icons/bs'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useQuery, useQueryClient } from 'react-query';
+import { setLogger, useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 import Horoscope from '../../components/Horoscope/Horoscope';
+import AcademyInfoReviews from '../../components/AcademyInfoReviews/AcademyInfoReviews';
 
     
 
@@ -17,11 +19,13 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const principal = queryClient.getQueryState("getPrincipal")
+    const userId = principal?.data?.data?.userId
 
-    const [isHeaderFixed, setIsHeaderFixed] = useState(false);      // 좋아요, 문의 fixed
+    const [ isHeaderFixed, setIsHeaderFixed ] = useState(false);      // 좋아요, 문의 fixed
 
     const [ academyData, setAcademyData ] = useState();   // 학원 정보 저장하는 상태 변수
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
+    const [ modifyButtonState, setModifyButtonState ] = useState(false);
 
     const [ color, setColor ] = useState();
     
@@ -29,16 +33,15 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const category = academyData?.academy.REALM_SC_NM ? academyData?.academy.REALM_SC_NM : academyData?.academy.LE_CRSE_LIST_NM;
     const str = category ? category.indexOf("(대)") : -1;
     const modifiedCategory = str !== -1 ? category.substring(0, str) : category;
-    const userId = principal?.data?.data?.userId
     
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const academyId = searchParams.get('ACADEMY_ID')
     
     const [ reviewWriteData, setReviewWriteData] = useState({
-        academyId: parseInt(academyId),
+        ACADEMY_ID: parseInt(academyId),
         userId: userId,
-        score: 0,
+        score: "",
         reviewContent: ""
     })
 
@@ -118,28 +121,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     })
 
-    //리뷰 가져오기
-    const getReviews = useQuery(["getReviews", academyId], async () => {
-        // api, options를 get 요청
-        try {
-            const options = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            return await instance.get(`/academy/${academyId}/reviews`, options);
-        }catch(error) {
-            console.error(error);
-        }
-    },
-    {
-        retry: 0,
-        refetchOnWindowFocus: false,
-        onSuccess: response => {
-            setReviewData(response.data);
-        }
-    });
-
     useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {
             if (window.scrollY > 200) {
@@ -156,39 +137,10 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
 
     }, []);
 
-    const reviewSubmitButton = async () => {
-        try{
-            const options = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            await instance.post("/review", reviewWriteData, options);
-            document.getElementById("reviewContent").value='';
-            return getReviews.refetch();
-        } catch(error) {
-            alert(error.response.data.message);
-        }
-    }
-
     if(getAcademy.isLoading) {    //undefined인 경우
         return <></>
     }
 
-    const reviewContentChange = (e) => {
-        setReviewWriteData({
-            ...reviewWriteData,
-            [e.target.name]: e.target.value
-        })
-    }
-
-    const horoscopeChange = (e) => {
-        setReviewWriteData({
-            ...reviewWriteData,
-            [e.target.name]: parseInt(e.target.value)
-        })
-    }
-    
     return (
         <RootContainer>
             <div css={S.SLayout}>
@@ -240,7 +192,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                     <span>{academyData?.academyInfo?.classSize}</span>
                                 </div>
                             }
-                            {!!academyData?.age && 
+                            {!!academyData?.age[0] && 
                                 <div css={S.SIntroduction}>
                                     <div><BsBarChartLineFill/><span>수강연령</span></div>
                                     {academyData?.age?.map((age) => {
@@ -287,33 +239,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             })}
                         </div>
                     </div>
-                    <div css={S.SReviewContainer} id='review'>
-                        <h1 css={S.STitle}>수강후기</h1>
-                        <div css={S.SReviewScore}>
-                            <AiFillStar css={S.SStar}/> 5.0
-                        </div>
-                        <ul css={S.SReviewListContainer}>
-                            {reviewData?.reviewList.map(data => {
-                                return (<li css={S.SReviewList} key={reviewData.review_id}>
-                                    <h1>{data.nickname}</h1>
-                                    <div><AiFillStar css={S.SStar}/> {data.score}</div>
-                                    <span>{data.review_content}</span>
-                                </li>);
-                            })}
-                        </ul>
-                        <div>
-                            <div css={S.SReviewInfo}>
-                                <div css={S.SReviewUserScoreContainer}>
-                                    <h1>{principal?.data?.data.nickname}</h1>
-                                    <div>
-                                        <AiFillStar css={S.SStar}/> <input type="text" name="score" placeholder='별점' onChange={horoscopeChange}/>
-                                    </div>
-                                </div>
-                                <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
-                            </div>
-                            <textarea css={S.SReviewBox} name="reviewContent" id="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' onChange={reviewContentChange}/>
-                        </div>
-                    </div>
+                    <AcademyInfoReviews academyId={academyId} userId={userId} principal={principal}/>
                     <div css={S.SClassInfo} id='classinfo'>
                         <h1 css={S.STitle}>학원 수업 정보</h1>
                         <div>
@@ -328,8 +254,8 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                     {!!academyData?.classInfo[0] ? 
                                         academyData?.classInfo?.map((data) => {
                                             return (<tr>
-                                                <td>{data?.class_name}</td>
-                                                <td>{data?.class_price}</td>
+                                                <td>{data?.className}</td>
+                                                <td>{data?.classPrice}</td>
                                             </tr>)
                                         }) 
                                         :  <tr><td colSpan='2'>학원 수업 정보를 제공하지 않습니다.</td></tr>

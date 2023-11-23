@@ -231,10 +231,12 @@ export const SReviewInfo = css`
 export const SReviewBox = css`
     width: 100%;
     height: 120px;
+    resize: none;
 `;
 
 export const SReviewUserScoreContainer = css`
     display: flex;
+
     & > h1 {
         font-size: 18px;
         margin-right: 10px;
