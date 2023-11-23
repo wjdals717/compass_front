@@ -19,6 +19,13 @@ function MypageAdPayment(props) {
     const quertClient = useQueryClient();
     const principalState = quertClient.getQueryState("getPrincipal");
     const principal = principalState?.data?.data;
+    const [ refetchGetPaidList, setRefetchGetPaidList ] = useState(false);
+
+    const [ isAcademyPaid, setIsAcademyPaid ] = useState(false);
+    const [ products, setProducts ] = useState([]);
+
+    const [ isPaymentInfoOpen, setIsPaymentInfoOpen ] = useState(false);
+    const [ selectedTarget, setSelectedTarget ] = useState(null);
 
     // 나의학원 리스트
     const getMyAcademies = useQuery(["getMyAcademies", page], async () => {
@@ -27,16 +34,58 @@ function MypageAdPayment(props) {
                 Authorization: localStorage.getItem("accessToken")
             }
         }
-        return await instance.get(`/academies/${principalState?.data?.data?.userId}/${page}`, option);
+        return await instance.get(`/academies/${principal?.userId}/${page}`, option);
     }, {
+        retry: 0,
         refetchOnWindowFocus: false,
         onSuccess: () => {
             setSelectedAcademy(null);
         }
     })
 
-    const handleAcademyOnClick = (academy) => {
+    const ispurchase = useQuery(["ispurchase"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                },
+                params: {
+                    userId: principal.userId,
+                    academyId: selectedAcademy.academyId
+                }
+            }
+            return await instance.get(`/purchase/check`, option)
+        } catch (error) {
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        enabled: refetchGetPaidList && !!selectedAcademy,
+        onSuccess: (response) => {
+            setIsAcademyPaid(response?.data);
+            setRefetchGetPaidList(false);
+        }
+    })
+
+    useEffect(() => {
+        setRefetchGetPaidList(true);
+    }, [selectedAcademy]);
+
+    useEffect(() => {
+        if(!isPaymentInfoOpen) {
+            setSelectedAcademy(null)
+        }
+    }, [isPaymentInfoOpen])
+
+    const handleAcademyOnClick = (e, academy) => {
         setSelectedAcademy(academy);
+        if(selectedTarget === e.target) {
+            setIsPaymentInfoOpen((prevIsOpen) => !prevIsOpen);
+            return;
+        }
+        setSelectedTarget(e.target);
+        setIsPaymentInfoOpen(true);
     }
 
     const pagination = () => {
@@ -93,7 +142,10 @@ function MypageAdPayment(props) {
         }
     }, {
         retry: 0,
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
+        onSuccess: (response) => {
+            setProducts(response.data);
+        }
     })
 
     useEffect(() => {
@@ -144,6 +196,7 @@ function MypageAdPayment(props) {
             }
         })
     }
+    console.log(isAcademyPaid);
     
     return (
         <div>
@@ -161,10 +214,14 @@ function MypageAdPayment(props) {
                     Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
                     getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                         return  <tr key={academy.academyRegistrationId} 
-                                    style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>
+                                    style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                     <td>{academy.acaAsnum}</td>
                                     <td>{academy.acaNm}</td>
-                                    <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
+                                    <td>
+                                        <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                            {selectedAcademy === academy ? '선택 해제' : '선택' }
+                                        </button>
+                                    </td>
                                 </tr>
                     })
                 }
@@ -173,24 +230,35 @@ function MypageAdPayment(props) {
             <div css={S.SPageNumbers}>
                 {pagination()}
             </div>
-            {!!selectedAcademy && 
+            {isPaymentInfoOpen && !!selectedAcademy && (
             <div css={S.SProductContainer}>
-                {!getProduct.isLoading && getProduct.data.data.map(product => {
-                    return <div css={S.SProductLayout} onClick={() => {handlePaymentSubmit(product);}}>
-                                <div css={S.SProductImgBox}>
-                                    <img css={S.SProductImg} src={productImg} alt="" /> 
-                                        <p css={S.SProductImgText}>{product.productPrice}원</p>
-                                </div>
-                                <div css={S.SProductDetail}>
-                                    <div>상품 : {product.productName}</div>
-                                    <div>가격 : {product.productPrice}원</div>
-                                    <div>기간 : {product.productPeriod}일</div>
-                                    <div>상품설명 : {product.productPrice}의 행복</div>
-                                </div>
+                {ispurchase.isLoading ? <></> : !!isAcademyPaid
+                ? (<div>결제정보: 결제된 내용
+                        <div>상품 : {isAcademyPaid.productName}</div>
+                        <div>가격 : {isAcademyPaid.productPrice}원</div>
+                        <div>기간 : {isAcademyPaid.productPeriod}일</div>
+                        <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
+                    </div>)
+                : products.map(product => {
+                        return (
+                        <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
+                            <div css={S.SProductImgBox}>
+                                <img css={S.SProductImg} src={productImg} alt="" />
+                                <p css={S.SProductImgText}>{product.productPrice}원</p>
                             </div>
-                })}
-            </div>}
-        </div>
+                                <div css={S.SProductDetail}>
+                                <div>상품 : {product.productName}</div>
+                                <div>가격 : {product.productPrice}원</div>
+                                <div>기간 : {product.productPeriod}일</div>
+                                <div>상품설명 : {product.productPrice}원의 행복</div>
+                            </div>
+                        </div>
+                        );
+                    })
+                }
+                </div>
+                )}
+            </div>
     );
 }
 

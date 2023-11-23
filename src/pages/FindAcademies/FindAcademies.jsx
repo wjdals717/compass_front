@@ -61,7 +61,7 @@ function FindAcademies(props) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            return await instance.get(`/purchase`, option)
+            return await instance.get(`/ad/academies/random`, option)
         } catch(error) {
             console.error(error)
         }
