@@ -11,9 +11,13 @@ import FindEducationOffice from '../../components/FindEducationOffice/FindEducat
 import { selectedAcademyState } from '../../store/RegistAtom';
 import { useRecoilState } from 'recoil';
 import FileUpload from '../../components/FileUpload/FileUpload';
+import { useNavigate } from 'react-router-dom';
 
 
 function RegistAcademy(props) {
+
+    const navigate = useNavigate();
+
     const [ matchOption, setMatchOption ] = useState(true);
     const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]);
     const [ selectedEducationOffice, setSelectedEducationOffice ] = useState("");
@@ -36,6 +40,21 @@ function RegistAcademy(props) {
         idFile: "",
         operationRegistrationFile: ""
     })
+
+    useEffect(() => {
+        if(!principal.data) {
+            alert("로그인 후 사용해주세요.")
+            navigate("/auth/signin")
+            return;
+        }
+
+        if(!principal.data.data.enabled) {
+            alert("이메일 인증 후 이용해주세요.")
+            navigate("/account/mypage/user")
+            return;
+        }
+    }, [])
+
     
     useEffect(() => {
         setAcademyContent(prevAcademyContent => ({

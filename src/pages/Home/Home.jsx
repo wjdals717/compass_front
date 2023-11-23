@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useRecoilState } from 'recoil';

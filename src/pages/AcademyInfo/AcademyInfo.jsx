@@ -173,19 +173,26 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     }, []);
 
     const reviewSubmitButton = async () => {
-        try{
-            const options = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
+        try {
+            // 사용자가 로그인되어 있고 이메일이 확인된 경우 확인
+            if (principal.data && principal.data.data.enabled) {
+                const options = {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken")
+                    }
+                };
+                await instance.post("/review", reviewWriteData, options);
+                document.getElementById("reviewContent").value = '';
+                return getReviews.refetch();
+            } else {
+                alert("이메일 인증 후 이용해주세요.");
+                navigate("/account/mypage/user")
+                return;
             }
-            await instance.post("/review", reviewWriteData, options);
-            document.getElementById("reviewContent").value='';
-            return getReviews.refetch();
-        } catch(error) {
+        } catch (error) {
             alert(error.response.data.message);
         }
-    }
+    };
 
     const handleinquiryButton = () => {
         // 로그인이 안된것
