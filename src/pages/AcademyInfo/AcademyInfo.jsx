@@ -122,6 +122,21 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     })
 
+     // 학원 관리자가 등록된 학원인지 확인
+    const isAcademyAdminRegistered = useQuery(["isAcademyAdminRegistered"], async () => {
+        try {
+            return await instance.get(`academy/check/${academyId}`)
+        } catch (error) {
+            console.error(error);
+        }
+    },{
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setIsAcademyRegistered(response.data);
+        }
+    });
+
     useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {
             if (window.scrollY > 200) {
