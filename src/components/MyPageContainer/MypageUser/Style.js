@@ -1,28 +1,6 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
-export const SLayout = css`
-    & button {
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        background-color: white;
-        padding: 3px 5px;
-        cursor: pointer;
-        :disabled {
-            color: #dbdbdb;
-            cursor: default;
-        }
-    }
-`;
-
-export const STitleLayout = css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    
-`;
-
 export const STable = css`
     margin: 0 20px;
     width: 740px;
@@ -35,7 +13,6 @@ export const STable = css`
 
     td:nth-of-type(1){    //1번째 td인 경우
         width: 150px;
-        font-weight: 600;
     }
 
     td button {
@@ -43,3 +20,31 @@ export const STable = css`
     }
 `;
 
+export const SButtonBox = css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dbdbdb;
+    padding: 0 20px 10px;
+
+    & div {
+        font-size: 17px;
+        font-weight: 600;
+    }
+    & button {
+        border: none;
+        border-radius: 10px;
+        padding: 5px 30px;
+        background-color: #5FA8D3;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        :disabled {
+            color: #dbdbdb;
+            cursor: default;
+        }
+        :active {
+            background-color: #5596BC;
+        }
+    }
+`;

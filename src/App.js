@@ -19,9 +19,8 @@ const wrapper = css`
 `
 
 const content = css`
-  flex: 1;
-  padding-bottom: 120px;
-  min-height: 810px;
+  padding-bottom: 110px;
+  min-height: calc(100vh - 130px);
 `;
 
 function App() {

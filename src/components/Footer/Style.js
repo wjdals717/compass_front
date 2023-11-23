@@ -9,14 +9,15 @@ export const SLayout = css`
     position : relative;
     transform : translateY(-100%);
     border-top: 1px solid #dbdbdb;
-    padding: 20px 0;
     width: 100%;
-    height: 120px;
+    height: 110px;
     color: #777;
     font-size: 13px;
+    background-color: #FBFBFB;
 `;
 
 export const SFooterLogo = css`
-    width: 150px;
-    height: 150px;
+    margin: 0 20px;
+    width: auto;
+    height: 90px;
 `;

@@ -201,63 +201,65 @@ function MypageAdPayment(props) {
     return (
         <div>
             <h2>💸 광고 결제</h2>
-            <table css={S.STable}>
-                <thead>
-                    <tr>
-                        <td>학원 번호</td>
-                        <td>학원명</td>
-                        <td>학원 선택</td>
-                    </tr>
-                </thead>
-                <tbody>
-                {!getMyAcademies.isLoading && 
-                    Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
-                    getMyAcademies?.data?.data.academyRegistrations.map(academy => {
-                        return  <tr key={academy.academyRegistrationId} 
-                                    style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
-                                    <td>{academy.acaAsnum}</td>
-                                    <td>{academy.acaNm}</td>
-                                    <td>
-                                        <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
-                                            {selectedAcademy === academy ? '선택 해제' : '선택' }
-                                        </button>
-                                    </td>
-                                </tr>
-                    })
-                }
-                </tbody>
-            </table>
-            <div css={S.SPageNumbers}>
-                {pagination()}
-            </div>
-            {isPaymentInfoOpen && !!selectedAcademy && (
-            <div css={S.SProductContainer}>
-                {ispurchase.isLoading ? <></> : !!isAcademyPaid
-                ? (<div>결제정보: 결제된 내용
-                        <div>상품 : {isAcademyPaid.productName}</div>
-                        <div>가격 : {isAcademyPaid.productPrice}원</div>
-                        <div>기간 : {isAcademyPaid.productPeriod}일</div>
-                        <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
-                    </div>)
-                : products.map(product => {
-                        return (
-                        <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
-                            <div css={S.SProductImgBox}>
-                                <img css={S.SProductImg} src={productImg} alt="" />
-                                <p css={S.SProductImgText}>{product.productPrice}원</p>
-                            </div>
-                                <div css={S.SProductDetail}>
-                                <div>상품 : {product.productName}</div>
-                                <div>가격 : {product.productPrice}원</div>
-                                <div>기간 : {product.productPeriod}일</div>
-                                <div>상품설명 : {product.productPrice}원의 행복</div>
-                            </div>
-                        </div>
-                        );
-                    })
-                }
+            <div>
+                <table css={S.STable}>
+                    <thead>
+                        <tr>
+                            <td>학원 번호</td>
+                            <td>학원명</td>
+                            <td>학원 선택</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {!getMyAcademies.isLoading && 
+                        Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
+                        getMyAcademies?.data?.data.academyRegistrations.map(academy => {
+                            return  <tr key={academy.academyRegistrationId} 
+                                        style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
+                                        <td>{academy.acaAsnum}</td>
+                                        <td>{academy.acaNm}</td>
+                                        <td>
+                                            <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                                {selectedAcademy === academy ? '선택 해제' : '선택' }
+                                            </button>
+                                        </td>
+                                    </tr>
+                        })
+                    }
+                    </tbody>
+                </table>
+                <div css={S.SPageNumbers}>
+                    {pagination()}
                 </div>
-                )}
+                {isPaymentInfoOpen && !!selectedAcademy && (
+                <div css={S.SProductContainer}>
+                    {ispurchase.isLoading ? <></> : !!isAcademyPaid
+                    ? (<div>결제정보: 결제된 내용
+                            <div>상품 : {isAcademyPaid.productName}</div>
+                            <div>가격 : {isAcademyPaid.productPrice}원</div>
+                            <div>기간 : {isAcademyPaid.productPeriod}일</div>
+                            <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
+                        </div>)
+                    : products.map(product => {
+                            return (
+                            <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
+                                <div css={S.SProductImgBox}>
+                                    <img css={S.SProductImg} src={productImg} alt="" />
+                                    <p css={S.SProductImgText}>{product.productPrice}원</p>
+                                </div>
+                                    <div css={S.SProductDetail}>
+                                    <div>상품 : {product.productName}</div>
+                                    <div>가격 : {product.productPrice}원</div>
+                                    <div>기간 : {product.productPeriod}일</div>
+                                    <div>상품설명 : {product.productPrice}원의 행복</div>
+                                </div>
+                            </div>
+                            );
+                        })
+                    }
+                    </div>
+                    )}
+                </div>
             </div>
     );
 }

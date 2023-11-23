@@ -72,14 +72,17 @@ function MypageUser(props) {
     }
 
     return (
-        <div css={S.SLayout}>
-            <div css={S.STitleLayout}>
-                <h2>🛠️ 개인정보수정</h2>
-                {isEdit? 
-                    <button onClick={handleEditSubmitOnClick}>확인</button> 
-                    : <button onClick={handleEditBtnOnClick}>개인정보 변경하기</button>}
-            </div>
+        <div>
+            <h2>🛠️ 개인 정보 수정</h2>
             <div>
+                <div css={S.SButtonBox}>
+                    <div>
+                        내 정보
+                    </div>
+                    {isEdit? 
+                    <button onClick={handleEditSubmitOnClick}>확인</button> 
+                    : <button onClick={handleEditBtnOnClick}>변경하기</button>}
+                </div>
                 <table css={S.STable}>
                     <tbody>
                         <tr>

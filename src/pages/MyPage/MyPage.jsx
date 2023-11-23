@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import RootContainer from '../../components/RootContainer/RootContainer';
 import MypageContainer from '../../components/MyPageContainer/MypageContainer';
+import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import MypageUser from '../../components/MyPageContainer/MypageUser/MypageUser';
 import MyPageInquiry from '../../components/MyPageContainer/StudentMypage/MypageInquiry/MypageInquiry';
 import MypageReview from '../../components/MyPageContainer/StudentMypage/MypageReview/MypageReview';
@@ -20,35 +21,28 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 
 /** @jsxImportSource @emotion/react */
-
-// 사용자 정의 인증 확인을 위한 훅
-const useAuth = () => {
-const navigate = useNavigate();
-const isAuthenticated = !!localStorage.getItem("accessToken");
-
-useEffect(() => {
-    if (!isAuthenticated) {
-    // 인증되지 않았다면 로그인 페이지로 리디렉션
-    alert("로그인 후 이용해주세요");
-    navigate('/auth/signin');
-    }
-}, [isAuthenticated, navigate]);
-
-return isAuthenticated;
-};
-
-const SLayout = css`
-display: flex;
-justify-content: space-between;
-margin: 50px 0;
-width: 1160px;
-`;
+import * as S from "./Style"
 
 function MyPage(props) {
     // 사용자 정의 인증 확인 훅 사용
     const isAuthenticated = useAuth();
 
-    // useQueryClient, useState, useQuery를 컴포넌트의 맨 위에서 호출
+    const navigate = useNavigate();
+    const useAuth = () => {
+    const navigate = useNavigate();
+    const isAuthenticated = !!localStorage.getItem("accessToken");
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+        // 인증되지 않았다면 로그인 페이지로 리디렉션
+        alert("로그인 후 이용해주세요");
+        navigate('/auth/signin');
+        }
+    }, [isAuthenticated, navigate]);
+
+    return isAuthenticated;
+    };
+
     const queryClient = useQueryClient();
     const principalState = queryClient.getQueryState("getPrincipal");
     const principal = principalState?.data?.data;
@@ -93,26 +87,24 @@ function MyPage(props) {
         : null;
 
     return (
-    <RootContainer>
-        <div css={SLayout}>
-        {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
-
-        <MypageContainer title={"title"}>
-            <Routes>
-            <Route path='/' element={<MypageLike />} />
-            <Route path='/user' element={<MypageUser />} />
-            <Route path='/inquiry/:page' element={<MyPageInquiry setUncheckedAnswerCount={setUncheckedAnswerCount} />} />
-            <Route path='/review' element={<MypageReview />} />
-            <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
-            <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />
-            <Route path='/consultation/:page' element={<MyPageConsultation />} />
-            <Route path='/adpayment/:page' element={<MypageAdPayment />} />
-            <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
-            <Route path='/inquirylist' element={<InquiryList />} />
-            </Routes>
-        </MypageContainer>
-        </div>
-    </RootContainer>
+        <RootContainer>
+            <div css={S.SLayout}>
+                {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
+                <MypageContainer>
+                    <Routes>
+                        <Route path='/like' element={<MypageLike />} />
+                        <Route path='/user' element={<MypageUser />} />
+                        <Route path='/inquiry/:page' element={<MyPageInquiry setUncheckedAnswerCount={setUncheckedAnswerCount}/>} />
+                        <Route path='/review' element={<MypageReview />} />
+                        <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
+                        <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />                    
+                        <Route path='/consultation/:page' element={<MyPageConsultation />} />
+                        <Route path='/adpayment/:page' element={<MypageAdPayment />} />
+                        <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
+                    </Routes>
+                </MypageContainer>
+            </div>
+        </RootContainer>
     );
 }
 
