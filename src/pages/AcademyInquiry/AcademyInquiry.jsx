@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 
 function AcademyInquiry(props) {
+    const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const academyId = queryParams.get('academyId');
@@ -23,6 +24,13 @@ function AcademyInquiry(props) {
         answerChecked: 0
     });
 
+    useEffect(() => {
+        setInquiryData({
+            ...inquiryData,
+            userId: principal.data.data.userId,
+            academyId: academyId
+        })
+    }, []);
 
     // 학원 정보 가져오기
     const getAcademy = useQuery(["getAcademy"], async () => {
@@ -50,9 +58,6 @@ function AcademyInquiry(props) {
             setAcademyData(response.data.academy)
         }
     })
-
-    console.log(principal);
-    console.log(inquiryData);
     
     const handleTitle = (e) => {
         setInquiryData({
@@ -68,8 +73,6 @@ function AcademyInquiry(props) {
         });
     }
 
-    
-
     const InquiryButtonClick = async() => {
         // inquiryTitle과 inquiryContent가 빈값이나 null인지 확인
         if (!inquiryData.inquiryTitle || !inquiryData.inquiryContent) {
@@ -80,11 +83,6 @@ function AcademyInquiry(props) {
 
         const confirmed = window.confirm(`학원명: ${academyData.ACA_NM}\n에 문의하시겠습니까?`);
         if (confirmed) {
-            setInquiryData({
-                ...inquiryData,
-                userId: principal.data.data.userId,
-                academyId: academyId
-            })
             const option = {
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
@@ -92,10 +90,10 @@ function AcademyInquiry(props) {
             }
             try {
                 await instance.post("/inquiry", inquiryData, option);
+                navigate("/account/mypage/inquiry/1");
             } catch (error) {
                 console.error(error);
             }
-            
         } else {
             return;
         }

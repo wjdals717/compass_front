@@ -188,6 +188,17 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     }
 
     const handleinquiryButton = () => {
+        // 로그인이 안된것
+        if (!principal.data) {
+            alert("로그인 후 문의 작성이 가능합니다");
+            window.location.replace("/auth/signin");
+            return;
+        }
+        if (!principal?.data?.data.enabled) {
+            alert("이메일 인증 후 문의 작성이 가능합니다.");
+            window.location.replace("/account/mypage/user");
+            return;
+        }
         navigate(`/academy/inquiry?academyId=${academyId}`);
     }
 
