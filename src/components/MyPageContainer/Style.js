@@ -1,18 +1,25 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
+
 export const SInterestAcademyBox = css`
-    border-radius: 20px;
-    box-shadow: 4px 4px 10px 4px #dbdbdb;
-    padding: 30px;
-    width: 850px;
-    height: 100%;
-    background-color: wheat;
+    flex-grow: 1;
+    padding: 0 50px;
+    background-color: white;
 
     & h2 {
+        padding-bottom: 20px;
+        border-bottom: 3px solid #5FA8D3;
         margin-bottom: 20px;
         font-size: 20px;
         font-weight: bold;
+    }
+
+    & > div > div {
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        background-color: #F8FBFD;
+        padding: 20px;
     }
 `;
 

@@ -122,59 +122,61 @@ function MypageConsultation(props) {
     return (
         <div>
             <h2>📞 나의 학원 문의</h2>
-            <div css={S.SOptionBox}>
-                <Select options={academyList} 
-                    css={S.SSelect}
-                    defaultValue={selectedAcademy}
-                    onChange={handleAcademyChange} 
-                />
-                <div>
-                    <input 
-                        type="checkbox" 
-                        id='unansweredOnly' 
-                        onChange={handleUnansweredOnlyChange} 
-                    />
-                    <label htmlFor="unansweredOnly">미답변 문의</label>
-                </div>
-            </div>
             <div>
-                <table css={S.STable}>
-                    <thead>
-                        <tr>
-                            <td>No</td>
-                            <td>학원명</td>
-                            <td>문의사항</td>
-                            <td>등록자</td>
-                            <td>답변</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!getInquiryList.isLoading && Array.isArray(getInquiryList?.data?.data.inquiries) && getInquiryList?.data?.data.inquiries.map(inquiry => {
-                                const answerDisplay = inquiry.answer ? 'O' : 'X';
-                                return  <tr key={inquiry.inquiryId} 
-                                            onClick={() => handleInquiryOnClick(inquiry)} 
-                                            style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal' }}>
-                                            <td>{inquiry.inquiryId}</td>
-                                            <td>{inquiry.acaNm}</td>
-                                            <td>{inquiry.inquiryTitle}</td>
-                                            <td>{inquiry.nickname}</td>
-                                            <td>{answerDisplay}</td>
-                                        </tr>
-                        })}
-                    </tbody>
-                </table>
-                <div css={S.SPageNumbers}>
-                    {pagination()}
-                </div>
-                {!!selectedInquiry && 
-                    <SelectedInquiry
-                        key={selectedInquiry.inquiryId}
-                        selectedInquiry={selectedInquiry}
-                        setSelectedInquiry={setSelectedInquiry}
-                        page={page} 
-                        selectedAcademy={selectedAcademy}
+                <div css={S.SOptionBox}>
+                    <Select options={academyList} 
+                        css={S.SSelect}
+                        defaultValue={selectedAcademy}
+                        onChange={handleAcademyChange} 
                     />
-                }
+                    <div>
+                        <input 
+                            type="checkbox" 
+                            id='unansweredOnly' 
+                            onChange={handleUnansweredOnlyChange} 
+                        />
+                        <label htmlFor="unansweredOnly">미답변 문의</label>
+                    </div>
+                </div>
+                <div>
+                    <table css={S.STable}>
+                        <thead>
+                            <tr>
+                                <td>No</td>
+                                <td>학원명</td>
+                                <td>문의사항</td>
+                                <td>등록자</td>
+                                <td>답변</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {!getInquiryList.isLoading && Array.isArray(getInquiryList?.data?.data.inquiries) && getInquiryList?.data?.data.inquiries.map(inquiry => {
+                                    const answerDisplay = inquiry.answer ? 'O' : 'X';
+                                    return  <tr key={inquiry.inquiryId} 
+                                                onClick={() => handleInquiryOnClick(inquiry)} 
+                                                style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal' }}>
+                                                <td>{inquiry.inquiryId}</td>
+                                                <td>{inquiry.acaNm}</td>
+                                                <td>{inquiry.inquiryTitle}</td>
+                                                <td>{inquiry.nickname}</td>
+                                                <td>{answerDisplay}</td>
+                                            </tr>
+                            })}
+                        </tbody>
+                    </table>
+                    <div css={S.SPageNumbers}>
+                        {pagination()}
+                    </div>
+                    {!!selectedInquiry && 
+                        <SelectedInquiry
+                            key={selectedInquiry.inquiryId}
+                            selectedInquiry={selectedInquiry}
+                            setSelectedInquiry={setSelectedInquiry}
+                            page={page} 
+                            selectedAcademy={selectedAcademy}
+                        />
+                    }
+                </div>
             </div>
         </div>
     );

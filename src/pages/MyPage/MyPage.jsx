@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 import MyPageSidebar from '../../components/MyPageSidebar/MyPageSidebar';
 import MypageContainer from '../../components/MyPageContainer/MypageContainer';
-import { Route, Routes, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import MypageUser from '../../components/MyPageContainer/MypageUser/MypageUser';
 import MyPageInquiry from '../../components/MyPageContainer/StudentMypage/MypageInquiry/MypageInquiry';
 import MypageReview from '../../components/MyPageContainer/StudentMypage/MypageReview/MypageReview';
@@ -21,15 +21,11 @@ import MypageMyAcademy from '../../components/MyPageContainer/AcademyMypage/Mypa
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 /** @jsxImportSource @emotion/react */
-
-const SLayout = css`
-    display: flex;
-    justify-content: space-between;
-    margin: 50px 0;
-    width: 1160px;
-`;
+import * as S from "./Style"
 
 function MyPage(props) {
+
+    const navigate = useNavigate();
 
     const queryClient = useQueryClient();
     const principalState = queryClient.getQueryState("getPrincipal");
@@ -72,12 +68,11 @@ function MyPage(props) {
 
     return (
         <RootContainer>
-            <div css={SLayout}>
+            <div css={S.SLayout}>
                 {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
-
-                <MypageContainer title={"title"}>
+                <MypageContainer>
                     <Routes>
-                        <Route path='/' element={<MypageLike />} />
+                        <Route path='/like' element={<MypageLike />} />
                         <Route path='/user' element={<MypageUser />} />
                         <Route path='/inquiry/:page' element={<MyPageInquiry setUncheckedAnswerCount={setUncheckedAnswerCount}/>} />
                         <Route path='/review' element={<MypageReview />} />
@@ -86,7 +81,6 @@ function MyPage(props) {
                         <Route path='/consultation/:page' element={<MyPageConsultation />} />
                         <Route path='/adpayment/:page' element={<MypageAdPayment />} />
                         <Route path='/academywaiting/:page' element={<AcademyWaiting />} />
-                        <Route path='/inquirylist' element={<InquiryList />} />
                     </Routes>
                 </MypageContainer>
             </div>

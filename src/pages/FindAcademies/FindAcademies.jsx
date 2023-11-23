@@ -15,6 +15,7 @@ import QueryString from 'qs';
 import { FaLocationDot } from "react-icons/fa6";
 import SearchBtn from '../../components/Button/SearchBtn/SearchBtn';
 import SelectModalBtn from '../../components/Button/SelectModalBtn/SelectModalBtn'
+import LiAcademyBox from '../../components/LiAcademyBox/LiAcademyBox';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
@@ -222,28 +223,7 @@ function FindAcademies(props) {
                             </div>
                             <ul css={S.UlBox}>
                             {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
-                                const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
-                                const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
-                                const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
-                                const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
-                                const realm =
-                                    academy.REALM_SC_NM === '국제화'
-                                        ? '외국어'
-                                        : academy.REALM_SC_NM === '정보'
-                                        ? 'IT'
-                                        : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-                                return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                    {academy.logo_img ? (
-                                        <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
-                                    ): (
-                                        <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
-                                            <span>{firstTwoKoreanChars}</span>
-                                        </div>
-                                    )}
-                                    <strong>{academy.ACA_NM}</strong>
-                                    <div css={S.SAddress}><FaLocationDot />{address}</div>
-                                    <div>{realm}</div>
-                                </li>
+                                return <LiAcademyBox academy={academy}/>
                             })}
                             </ul>
                         </div>
@@ -258,28 +238,7 @@ function FindAcademies(props) {
                             </div>
                             <ul css={S.UlBox}>
                                 {academyList.map((academy) => {
-                                    const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
-                                    const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
-                                    const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
-                                    const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
-                                    const realm =
-                                        academy.REALM_SC_NM === '국제화'
-                                            ? '외국어'
-                                            : academy.REALM_SC_NM === '정보'
-                                            ? 'IT'
-                                            : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-                                    return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
-                                        {academy.logoImg ? (
-                                            <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
-                                        ): (
-                                            <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
-                                                <span>{firstTwoKoreanChars}</span>
-                                            </div>
-                                        )}
-                                        <strong>{academy.ACA_NM}</strong>
-                                        <div css={S.SAddress}><FaLocationDot />{address}</div>
-                                        <div>{realm}</div>
-                                    </li>
+                                    return <LiAcademyBox academy={academy}/>
                                 })}
                             </ul>
                         </div>
