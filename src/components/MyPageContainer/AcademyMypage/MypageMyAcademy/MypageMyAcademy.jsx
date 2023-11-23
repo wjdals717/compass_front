@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import DetailMyAcademy from './DetailMyAcademy/DetailMyAcademy';
+import { useEffect } from 'react';
 
 function MypageMyAcademy(props) {
 
@@ -17,6 +18,8 @@ function MypageMyAcademy(props) {
     const principal = queryClient.getQueryState("getPrincipal");
 
     const [ selectedAcademy, setSelectedAcademy ] = useState(null);
+    const [ selectedTarget, setSelectedTarget ] = useState(null);
+    const [ selectAcademyInfoOpen, setSelectAcademyInfoOpen ] = useState(false);
 
     const getMyAcademies = useQuery(["getMyAcademies", page], async () => {
         const option = {
@@ -32,8 +35,17 @@ function MypageMyAcademy(props) {
         }
     })
 
-    const handleAcademyOnClick = (academy) => {
-        setSelectedAcademy(academy);
+    const handleAcademyOnClick = (e, academy) => {
+        setSelectedAcademy((prevSelectedAcademy) => 
+            prevSelectedAcademy === academy ? null : academy
+        );
+    
+        if (selectedTarget === e.target) {
+            setSelectAcademyInfoOpen((prevIsOpen) => !prevIsOpen);
+            return;
+        }
+        setSelectedTarget(e.target);
+        setSelectAcademyInfoOpen(true);
     }
 
     const pagination = () => {
@@ -97,7 +109,11 @@ function MypageMyAcademy(props) {
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                             <td>{academy.acaAsnum}</td>
                                             <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
-                                            <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
+                                            <td>
+                                                <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                                    {selectedAcademy === academy ? '선택 해제' : '선택'}
+                                                </button>
+                                            </td>
                                         </tr>
                             })
                         }
@@ -107,7 +123,7 @@ function MypageMyAcademy(props) {
                     {pagination()}
                 </div>
                 <div>
-                    {!!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
+                    {selectAcademyInfoOpen && !!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
                 </div>
             </div>
         </div>
