@@ -27,6 +27,8 @@ function FindAcademies(props) {
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
     
+    const [ classify, setClassify ] = useState("등록순");
+
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
     
@@ -85,7 +87,8 @@ function FindAcademies(props) {
                     ageIds: selectedAgeOptions,
                     countAgeId: selectedAgeOptions.length,
                     convenienceIds: selectedConvenienceOptions,
-                    countConvenienceId: selectedConvenienceOptions.length
+                    countConvenienceId: selectedConvenienceOptions.length,
+                    classify: classify
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
@@ -116,7 +119,7 @@ function FindAcademies(props) {
         if(page === "1") {
             getAcademyList.refetch();
         }
-    }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length]);
+    }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length, classify]);
 
 
     const handleInputOnChange = (e) => {
@@ -126,6 +129,10 @@ function FindAcademies(props) {
     const handleSelectContent = () => {
         setSelectedContent(inputValue);
     }
+
+    const handleClassifyChange = (e) => {
+        setClassify(e.target.value);
+    };
 
 
     const pagenation = () => {
@@ -172,6 +179,7 @@ function FindAcademies(props) {
         disableBodyScroll();
     };
 
+    console.log(getAcademyList);
 
     return (
         <RootContainer>
@@ -232,7 +240,7 @@ function FindAcademies(props) {
                                         : academy.REALM_SC_NM === '정보'
                                         ? 'IT'
                                         : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-                                return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+                                return  <li css={S.LiBox} key={academy.ACADEMY_ID} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
                                     {academy.logo_img ? (
                                         <img src={academy.logo_img} alt={`${academy.ACA_NM}의 로고`}  />
                                     ): (
@@ -250,10 +258,15 @@ function FindAcademies(props) {
                         <div>
                             <div css={S.HeaderBox}>
                                 <h3>검색된 정보</h3>
-                                <select css={S.ClassifyBox} name="classifyBox" id="">
-                                    <option value="최신순">최신순</option>
-                                    <option value="인기순">인기순</option>
+                                <select 
+                                    css={S.ClassifyBox} 
+                                    name="classifyBox" id=""
+                                    value={classify}  // 현재 상태 값을 선택된 값으로 설정
+                                    onChange={handleClassifyChange}  // 변경 시 이벤트 핸들러 호출
+                                >
+                                    <option value="등록순">등록순</option>
                                     <option value="좋아요순">좋아요순</option>
+                                    <option value="별점순">별점순</option>
                                 </select>
                             </div>
                             <ul css={S.UlBox}>
@@ -268,7 +281,7 @@ function FindAcademies(props) {
                                             : academy.REALM_SC_NM === '정보'
                                             ? 'IT'
                                             : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
-                                    return  <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+                                    return  <li css={S.LiBox} key={academy.ACADEMY_ID} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
                                         {academy.logoImg ? (
                                             <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
                                         ): (
