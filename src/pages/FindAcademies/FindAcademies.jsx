@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import RootContainer from '../../components/RootContainer/RootContainer';
-import SelectBtn from '../../components/SelectBtn/SelectBtn';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
 import FindAcademiesSidebar from '../../components/FindAcademiesSidebar/FindAcademiesSidebar';
 import { RiAdvertisementFill } from 'react-icons/ri';
-import { AiOutlineSearch } from 'react-icons/ai'
 import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import { instance } from '../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,6 +13,8 @@ import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
 import { useQuery, useQueryClient } from 'react-query';
 import QueryString from 'qs';
 import { FaLocationDot } from "react-icons/fa6";
+import SearchBtn from '../../components/Button/SearchBtn/SearchBtn';
+import SelectModalBtn from '../../components/Button/SelectModalBtn/SelectModalBtn'
 
 function FindAcademies(props) {
     const navigate = useNavigate();
@@ -179,15 +179,15 @@ function FindAcademies(props) {
                 <h1>학원찾기</h1>
                 <div css={S.SearchContainer}>
                     <div onClick={openLocationModal}>
-                        <SelectBtn>
+                        <SelectModalBtn>
                             {selectedLocation.atpt_ofcdc_sc_code
                                 ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
                                 : "지역 선택"
                             }   
-                        </SelectBtn>
+                        </SelectModalBtn>
                     </div>
                     <div onClick={openCategoryModal}>
-                        <SelectBtn>
+                        <SelectModalBtn>
                             {selectedCategory.realm_sc_nm
                                 ? `${selectedCategory.realm_sc_nm === '국제화'
                                 ? '외국어'
@@ -197,14 +197,12 @@ function FindAcademies(props) {
                                 ${selectedCategory.le_crse_nm.includes("전체") ? "" : selectedCategory.le_crse_nm}`
                                 : "카테고리 선택"
                             }
-                        </SelectBtn>
+                        </SelectModalBtn>
                     </div>
                     <div>
                         <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
                     </div>
-                    <div css={S.SSearchBtnBox}>
-                        <button className='btn-hover color-9' onClick={handleSelectContent}><AiOutlineSearch/></button>
-                    </div>
+                    <SearchBtn onClick={handleSelectContent}/>
                 </div>
             </div>
             <div css={S.PageLayout}>

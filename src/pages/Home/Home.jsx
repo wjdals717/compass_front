@@ -3,9 +3,6 @@ import { css } from '@emotion/react';
 import RootContainer from '../../components/RootContainer/RootContainer';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
-import { AiOutlineSearch } from 'react-icons/ai'
-import SelectBtn from '../../components/SelectBtn/SelectBtn';
-import academyImg from '../../assets/academy.jpg'
 import { Link, useNavigate } from 'react-router-dom';
 import LocationModal from '../../components/Modal/LocationModal/LocationModal';
 import CategoryModal from '../../components/Modal/CategoryModal/CategoryModal';
@@ -15,6 +12,10 @@ import { FaChevronRight } from "react-icons/fa";
 import HomeImg from "../../assets/student.png"
 import teacher from "../../assets/선생.png"
 import student from "../../assets/학생.jpg"
+import SearchBtn from '../../components/Button/SearchBtn/SearchBtn';
+import LinkBtn from '../../components/Button/LinkBtn/LinkBtn';
+import SelectModalBtn from '../../components/Button/SelectModalBtn/SelectModalBtn'
+
 
 function Home(props) {
 
@@ -74,24 +75,22 @@ function Home(props) {
                         <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요' onChange={handleInputOnChange}/>
                     </div>
                     <div onClick={openLocationModal}>
-                            <SelectBtn>
-                                {selectedLocation.atpt_ofcdc_sc_code
-                                    ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
-                                    : "지역 선택"
-                                }   
-                            </SelectBtn>
-                        </div>
-                        <div onClick={openCategoryModal}>
-                            <SelectBtn>
-                                {selectedCategory.realm_sc_nm
-                                    ? `${selectedCategory.category_nm} ${selectedCategory.le_crse_nm}`
-                                    : "카테고리 선택"
-                                }
-                            </SelectBtn>
-                        </div>
-                    <div css={S.SSearchBtnBox}>
-                        <button className='btn-hover color-9' onClick={handleSearch}><AiOutlineSearch/></button>
+                        <SelectModalBtn>
+                            {selectedLocation.atpt_ofcdc_sc_code
+                                ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
+                                : "지역 선택"
+                            }   
+                        </SelectModalBtn>
                     </div>
+                    <div onClick={openCategoryModal}>
+                        <SelectModalBtn>
+                            {selectedCategory.realm_sc_nm
+                                ? `${selectedCategory.category_nm} ${selectedCategory.le_crse_nm}`
+                                : "카테고리 선택"
+                            }
+                        </SelectModalBtn>
+                    </div>
+                    <SearchBtn />
                 </div>
                 <div css={S.SLinkContainer}>
                     <div css={S.SRegistContainer}>
@@ -101,9 +100,7 @@ function Home(props) {
                         <div css={S.SCommentContainer}>
                             <div css={S.SRegistTitle}>학원 관리자 등록하기</div>
                             <div css={S.SRegistComment}>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
-                            <div className='button_container'>
-                                <Link className='btn' to={"/academy/regist"}><span>등록하기<FaChevronRight /></span></Link>
-                            </div>
+                            <LinkBtn link={"/academy/regist"} btn={"등록하기"}/>
                         </div>
                     </div>
                     <div css={S.SRegistContainer}>
@@ -113,9 +110,7 @@ function Home(props) {
                         <div css={S.SCommentContainer}>
                             <div css={S.SRegistTitle}>나의 관심 학원 보기</div>
                             <div css={S.SRegistComment}>관심있는 학원에 하트를 누르고 한 번에 볼 수 있어요!</div>
-                            <div className='button_container'>
-                                <Link className='btn' to={"/academy/regist"}><span>보러가기<FaChevronRight /></span></Link>
-                            </div>
+                            <LinkBtn link={"/account/mypage"} btn={"보러가기"} />
                         </div>
                     </div>
                 </div>
