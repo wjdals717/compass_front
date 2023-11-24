@@ -15,6 +15,7 @@ import QueryString from 'qs';
 import { FaLocationDot } from "react-icons/fa6";
 import SearchBtn from '../../components/Button/SearchBtn/SearchBtn';
 import SelectModalBtn from '../../components/Button/SelectModalBtn/SelectModalBtn'
+import Loading from '../../components/Loading/Loading';
 import LiAcademyBox from '../../components/LiAcademyBox/LiAcademyBox';
 
 function FindAcademies(props) {
@@ -28,6 +29,8 @@ function FindAcademies(props) {
     const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
     const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
     
+    const [ classify, setClassify ] = useState("등록순");
+
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
     
@@ -70,6 +73,7 @@ function FindAcademies(props) {
 
     const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
+            setAcademyList([]);
             const options = {
                 params: {
                     pIndex: page,
@@ -82,7 +86,8 @@ function FindAcademies(props) {
                     ageIds: selectedAgeOptions,
                     countAgeId: selectedAgeOptions.length,
                     convenienceIds: selectedConvenienceOptions,
-                    countConvenienceId: selectedConvenienceOptions.length
+                    countConvenienceId: selectedConvenienceOptions.length,
+                    classify: classify
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
@@ -113,7 +118,7 @@ function FindAcademies(props) {
         if(page === "1") {
             getAcademyList.refetch();
         }
-    }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length]);
+    }, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length, classify]);
 
 
     const handleInputOnChange = (e) => {
@@ -123,6 +128,10 @@ function FindAcademies(props) {
     const handleSelectContent = () => {
         setSelectedContent(inputValue);
     }
+
+    const handleClassifyChange = (e) => {
+        setClassify(e.target.value);
+    };
 
 
     const pagenation = () => {
@@ -226,16 +235,21 @@ function FindAcademies(props) {
                         <div>
                             <div css={S.HeaderBox}>
                                 <h3>검색된 정보</h3>
-                                <select css={S.ClassifyBox} name="classifyBox" id="">
-                                    <option value="최신순">최신순</option>
-                                    <option value="인기순">인기순</option>
+                                <select 
+                                    css={S.ClassifyBox} 
+                                    name="classifyBox" id=""
+                                    value={classify}  // 현재 상태 값을 선택된 값으로 설정
+                                    onChange={handleClassifyChange}  // 변경 시 이벤트 핸들러 호출
+                                >
+                                    <option value="등록순">등록순</option>
                                     <option value="좋아요순">좋아요순</option>
+                                    <option value="별점순">별점순</option>
                                 </select>
                             </div>
                             <ul css={S.UlBox}>
-                                {academyList.map((academy) => {
+                                {academyList && academyList.length > 0 ? (academyList.map((academy) => {
                                     return <LiAcademyBox academy={academy}/>
-                                })}
+                                })) : (<Loading /> )}
                             </ul>
                         </div>
                     </div>
