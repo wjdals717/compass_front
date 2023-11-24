@@ -13,6 +13,8 @@ function AcademyWaiting(props) {
     const { page } = useParams();
 
     const [ selectedAcademy, setSelectedAcademy ] = useState();
+    const [ selectedTarget, setSelectedTarget ] = useState(null);
+    const [ isWaitingAcademyOpen, setIsWaitingAcademyOpen ] = useState(false);
 
     const getAcademies = useQuery(["getAcademies", page], async () => {
         const option = {
@@ -28,8 +30,17 @@ function AcademyWaiting(props) {
         }
     })
     
-    const handleAcademyOnClick = (academy) => {
-        setSelectedAcademy(academy);
+    const handleAcademyOnClick = (e, academy) => {
+        setSelectedAcademy((prevSelectedAcademy) => 
+        prevSelectedAcademy === academy ? null : academy
+        );
+
+        if (selectedTarget === e.target) {
+            setIsWaitingAcademyOpen((prevIsOpen) => !prevIsOpen);
+            return;
+        }
+        setSelectedTarget(e.target);
+        setIsWaitingAcademyOpen(true);
     }
 
     const pagination = () => {
@@ -94,7 +105,11 @@ function AcademyWaiting(props) {
                                             <td>{academy.acaAsnum}</td>
                                             <td>{academy.acaNm}</td>
                                             <td>{academy.name}</td>
-                                            <td><button css={GS.SButton} onClick={() => handleAcademyOnClick(academy)}>선택</button></td>
+                                            <td>
+                                                <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                                    {selectedAcademy === academy ? '선택 해제' : '선택'}
+                                                </button>
+                                            </td>
                                         </tr>
                                 })
                         }
@@ -103,7 +118,7 @@ function AcademyWaiting(props) {
                 <div css={S.SPageNumbers}>
                     {pagination()}
                 </div>
-                {!!selectedAcademy && <SelectedAcademy selectedAcademy={selectedAcademy}/>}
+                {isWaitingAcademyOpen && !!selectedAcademy && <SelectedAcademy selectedAcademy={selectedAcademy}/>}
             </div>
         </div>
     );
