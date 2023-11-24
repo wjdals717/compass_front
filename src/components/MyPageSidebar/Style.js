@@ -3,47 +3,59 @@ import { css } from '@emotion/react';
 
 
 export const MySidebarLayout = css`
-    border-radius: 20px;
-    box-shadow: 4px 4px 10px 4px #dbdbdb;
+    flex-shrink: 0;
+    border-radius: 5px;
     padding: 30px 20px;
-    background-color: beige;
-    width: 280px;
+    background-color: white;
+    border: 1px solid #dbdbdb;
+    width: 300px;
     height: 100%;
 
     & a {
         text-decoration: none;
         color: black;
     }
+
+    .active {
+        border-radius: 15px;
+        background-color: #2E739D;
+        color: white;
+        font-weight: 500;
+    }
+
 `;
 
 export const UserContainer = css`
     display: flex;
     align-items: center;
-    padding: 0 5px;
+    padding: 0 12px;
 
     h2 {
+        font-size: 18px;
+        font-weight: 600;
         margin-right: 10px;
     }
 
     & div {
-        border-radius: 50px;
-        background-color: #dbdbdb;
-        padding: 3px 6px 3px 3px;
+        border: 1px solid #dbdbdb;
+        border-radius: 10px;
+        padding: 4px 10px 4px 3px;
     }
 `;
 
 export const IconContainer = css`
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     border-bottom: 1px solid #dbdbdb;
-    padding: 30px 0;
+    padding: 20px 0;
 
     & div {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding: 10px;
     }
 
     & span {
@@ -52,9 +64,10 @@ export const IconContainer = css`
 `;
 
 export const RoleContainer = css`
+    display: flex;
+    flex-direction: column;
     margin-top: 10px;
-
-    & div {
+    & a {
         padding: 12px;
     }
 `;
@@ -74,6 +87,6 @@ export const InquiryBox = css`
         width: 15px;
         height: 15px;
         color: white;
-        background-color: red;
+        /* background-color: red; */
     }
 `;

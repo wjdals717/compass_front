@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import * as S from "../Style";
 import MyPageSidebar from '../MyPageSidebar';
 import {AiFillSetting} from 'react-icons/ai';
-import { Link, useParams } from 'react-router-dom';
+import { Link, NavLink, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../api/config/instance';
 
@@ -40,32 +40,32 @@ function StudentSidebar({ uncheckedAnswerCount, setUncheckedAnswerCount }) {
     return (
         <MyPageSidebar role={'학생'}>
             <div css={S.IconContainer}>
-                <Link to='/account/mypage'>
+                <NavLink to='/account/mypage/like' activeClassName='active'>
                     <div>
                         <span>❤️</span>
                         <span>관심 학원 {likeCountOfMypage?.data?.data}개</span>
                     </div>
-                </Link>
-                <Link to='/account/mypage/user'>
+                </NavLink>
+                <NavLink to='/account/mypage/user' activeClassName='active'>
                     <div>
                         <span><AiFillSetting/></span>
                         <span>개인 정보 수정</span>
                     </div>
-                </Link>
+                </NavLink>
             </div>
             <div css={S.RoleContainer}>
-                <Link to='/account/mypage/appliedacademy/1'>
-                    <div>🗒️ 학원 신청 목록</div>
-                </Link>
-                <Link to='/account/mypage/inquiry/1'>
+                <NavLink to='/account/mypage/appliedacademy/1' activeClassName='active'>
+                    🗒️ 학원 신청 목록
+                </NavLink>
+                <NavLink to='/account/mypage/inquiry/1' activeClassName='active'>
                     <div css={S.InquiryBox}>
                         📞 나의 학원 문의 
                         { uncheckedAnswerCount > 0 && <div>{uncheckedAnswerCount}</div>}
                     </div>
-                </Link>
-                <Link to='/account/mypage/review'>
-                    <div>📜 작성한 후기</div>
-                </Link>
+                </NavLink>
+                <NavLink to='/account/mypage/review' activeClassName='active'>
+                    📜 작성한 후기
+                </NavLink>
             </div>
         </MyPageSidebar>
     );

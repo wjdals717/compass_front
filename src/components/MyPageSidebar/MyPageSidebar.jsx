@@ -27,7 +27,6 @@ function MyPageSidebar({ role, children }) {
             </div>
             { children }
         </div>
-        
     );
 }
 
