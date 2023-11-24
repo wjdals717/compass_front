@@ -17,6 +17,8 @@ import SearchBtn from '../../components/Button/SearchBtn/SearchBtn';
 import SelectModalBtn from '../../components/Button/SelectModalBtn/SelectModalBtn'
 import Loading from '../../components/Loading/Loading';
 import LiAcademyBox from '../../components/LiAcademyBox/LiAcademyBox';
+import NoResult from '../../components/NoResult/NoResult';
+import Pagination from '../../components/Pagination/Pagination';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
@@ -133,41 +135,6 @@ function FindAcademies(props) {
         setClassify(e.target.value);
     };
 
-
-    const pagenation = () => {
-        const totalAcademyCount = totalCount;
-        const lastPage = totalAcademyCount % 15 === 0 
-            ? totalAcademyCount / 15
-            // Math.floor(): 절삭 = 나머지 버림
-            : Math.floor(totalAcademyCount / 15) + 1
-
-        const startIndex = parseInt(page) % 5 === 0 ? parseInt(page) - 4 : parseInt(page) - (parseInt(page) % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-        const pageNumbers = [];
-
-        for (let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/academy/find/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button className={parseInt(page) === num ? 'selected' : ''} key={num} onClick={() => {
-                        navigate(`/academy/find/${num}`)
-                    }}>{num}</button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/academy/find/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
-    }
-
     const openLocationModal = () => {
         setModalIsOpen(true);
         disableBodyScroll();
@@ -178,6 +145,7 @@ function FindAcademies(props) {
         disableBodyScroll();
     };
 
+    console.log(academyList);
 
     return (
         <RootContainer>
@@ -252,15 +220,25 @@ function FindAcademies(props) {
                                 </select>
                             </div>
                             <ul css={S.UlBox}>
-                                {academyList && academyList.length > 0 ? (academyList.map((academy) => {
-                                    return <LiAcademyBox academy={academy}/>
-                                })) : (<Loading /> )}
+                            {getAcademyList.isLoading ? (
+                                <Loading />
+                            ) : (
+                                getAcademyList.isFetching ? (
+                                    <Loading />
+                                ) : (
+                                    academyList.length > 0 ? (
+                                        academyList.map((academy) => {
+                                            return <LiAcademyBox academy={academy} />;
+                                        })
+                                    ) : (
+                                        <NoResult />
+                                    )
+                                )
+                            )}
                             </ul>
                         </div>
                     </div>
-                    <div css={S.SPageNumbers}>
-                        {pagenation()}
-                    </div>
+                    {totalCount === 0 ? ( <></> ) : ( <Pagination totalCount={totalCount} link={`/academy/find`}/> ) }
                 </div>
             </div>
             <LocationModal modalIsOpen={modalIsOpen} 
