@@ -84,13 +84,17 @@ function AcademyInfoReviews({academyId, userId, principal}) {
                 })
                 getReview.refetch();
                 return getReviews.refetch();
-            } else if (principal.data.data.roleId === 0){
+            } else if (principal.data && principal.data.data.roleId === 0){
                 alert("관리자는 후기를 작성할 수 없습니다.")
+            } else if (!principal || !principal.data || principal.data.data.userId === 0){
+                alert("로그인 후 이용해주세요.")
+                navigate("/auth/signin")
             } else {
                 alert("이메일 인증 후 이용해주세요.");
                 navigate("/account/mypage/user")
                 return;
-            }
+            } 
+            
             
         } catch (error) {
             alert(error.response.data.message);
