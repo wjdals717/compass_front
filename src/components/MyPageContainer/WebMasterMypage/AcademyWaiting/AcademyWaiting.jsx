@@ -44,23 +44,27 @@ function AcademyWaiting(props) {
         setIsWaitingAcademyOpen(true);
     }
 
+    if(getAcademies.isLoading) {
+        return <></>;
+    }
+
     return (
         <div>
             <h2>📜 학원 등록 대기목록</h2>
             <div>
-                <table css={S.STable}>
-                    <thead>
-                        <tr>
-                            <td>학원 번호</td>
-                            <td>학원명</td>
-                            <td>신청자</td>
-                            <td>학원 선택</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!getAcademies.isLoading && 
-                            Array.isArray(getAcademies?.data?.data.academyRegistrations) && 
-                            getAcademies?.data?.data.academyRegistrations.map(academy => {
+                {getAcademies.data.data.listTotalCount === 0 ? <div css={S.SEmptyBox}>등록 대기중인 학원이 없습니다.</div> : 
+                <>
+                    <table css={S.STable}>
+                        <thead>
+                            <tr>
+                                <td>학원 번호</td>
+                                <td>학원명</td>
+                                <td>신청자</td>
+                                <td>학원 선택</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { getAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal' }}>
                                             <td>{academy.acaAsnum}</td>
@@ -72,14 +76,14 @@ function AcademyWaiting(props) {
                                                 </button>
                                             </td>
                                         </tr>
-                                })
-                        }
-                    </tbody>
-                </table>
-                {!getAcademies.isLoading && 
-                    <Pagination totalCount={getAcademies.data.data.totalCount}
-                        link={'/account/mypage/academyawating'}/>}
-                {isWaitingAcademyOpen && !!selectedAcademy && <SelectedAcademy selectedAcademy={selectedAcademy}/>}
+                            })}
+                        </tbody>
+                    </table>
+                    {!getAcademies.isLoading && 
+                        <Pagination totalCount={getAcademies.data.data.listTotalCount}
+                            link={'/account/mypage/academyawating'}/>}
+                    {isWaitingAcademyOpen && !!selectedAcademy && <SelectedAcademy selectedAcademy={selectedAcademy}/>}
+                </>}
             </div>
         </div>
     );

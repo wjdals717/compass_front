@@ -5,6 +5,7 @@ import * as S from "./Style"
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { AiFillStar } from 'react-icons/ai';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageReview(props) {
     const queryClient = useQueryClient();
@@ -111,11 +112,18 @@ function MypageReview(props) {
             alert(error.response.data.message);
         }
     }
+
+    if(getUserReviews.isLoading) {
+        return <></>;
+    }
     
     return (
         <div>
             <h2>📜 작성한 후기</h2>
             <div>
+            {getUserReviews.data.data.length === 0 ? 
+                <EmptyBox comment={"다녀본 학원에 후기를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
+                <>
                 <table css={S.STable}>
                     <thead>
                         <tr>
@@ -171,6 +179,7 @@ function MypageReview(props) {
                         }
                     </div>
                 }
+                </>}
             </div>
         </div>
     );

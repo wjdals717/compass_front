@@ -9,6 +9,7 @@ import { useQuery } from 'react-query';
 import { useQueryClient } from 'react-query';
 import RetryMyAcademy from './RetryMyAcademy/RetryMyAcademy';
 import Pagination from '../../../Pagination/Pagination';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageAppliedAcademy(props) {
     const navigate = useNavigate();
@@ -48,24 +49,32 @@ function MypageAppliedAcademy(props) {
         setIsApplicatedOpen(true);
     }
 
+    if(getAppliedAcademies.isLoading) {
+        return <></>;
+    }
+
+    console.log(getAppliedAcademies)
+
     return (
         <div>
             <h2>🗒️ 학원 신청 목록</h2>
             <div>
-                <div css={S.SComment}>학원 승인 여부를 확인하고 재신청 해보세요!</div>
-                <table css={S.STable}>
-                    <thead>
-                        <tr>
-                            <td>학원 번호</td>
-                            <td>학원명</td>
-                            <td>승인 여부</td>
-                            <td>학원 선택</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!getAppliedAcademies.isLoading && 
-                            Array.isArray(getAppliedAcademies?.data?.data.academyRegistrations) && 
-                            getAppliedAcademies?.data?.data.academyRegistrations.map(academy => {
+                {getAppliedAcademies?.data?.data.listTotalCount === 0 ? 
+                <EmptyBox comment={<>신청된 학원이 없습니다.<br/>학원을 등록해 보세요!</>}
+                    link={'/academy/regist'} btn={"등록하기"}/> : 
+                <>
+                    <div css={S.SComment}>학원 승인 여부를 확인하고 재신청 해보세요!</div>
+                    <table css={S.STable}>
+                        <thead>
+                            <tr>
+                                <td>학원 번호</td>
+                                <td>학원명</td>
+                                <td>승인 여부</td>
+                                <td>학원 선택</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {getAppliedAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>
                                             <td>{academy.acaAsnum}</td>
@@ -77,20 +86,21 @@ function MypageAppliedAcademy(props) {
                                                 </button>
                                             </td>
                                         </tr>
-                            })
-                        }
-                    </tbody>
-                </table>
-                {!getAppliedAcademies.isLoading &&
-                    <Pagination totalCount={getAppliedAcademies?.data?.data?.listTotalCount}
-                        link={`/account/mypage/appliedacademy`}/>}
-                <div>
-                    {isApplicatedOpen && !!selectedAcademy && 
-                        (selectedAcademy?.approvalStatus > 0 ? <></> : 
-                            selectedAcademy.approvalStatus === 0 ? 
-                            <RetryMyAcademy type={"awaiting"} selectedAcademy={selectedAcademy}/> : 
-                            <RetryMyAcademy type={"reject"} selectedAcademy={selectedAcademy}/>)}
-                </div>
+                            })}
+                        </tbody>
+                    </table>
+                    {!getAppliedAcademies.isLoading &&
+                        <Pagination totalCount={getAppliedAcademies?.data?.data?.listTotalCount}
+                            link={`/account/mypage/appliedacademy`}/>}
+                    <div>
+                        {isApplicatedOpen && !!selectedAcademy && 
+                            (selectedAcademy?.approvalStatus > 0 ? <></> : 
+                                selectedAcademy.approvalStatus === 0 ? 
+                                <RetryMyAcademy type={"awaiting"} selectedAcademy={selectedAcademy}/> : 
+                                <RetryMyAcademy type={"reject"} selectedAcademy={selectedAcademy}/>)}
+                    </div>
+                </>    
+                }
             </div>
         </div>
     );

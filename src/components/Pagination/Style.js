@@ -22,12 +22,11 @@ export const SPageNumbers = css`
 
         :disabled {
             background-color: white;
-            border: none;
             cursor: default;
         }
 
         &.selected {
-            background-color: #92c2f4;
+            background-color: #5FA8D3;
         }
     }
 `;

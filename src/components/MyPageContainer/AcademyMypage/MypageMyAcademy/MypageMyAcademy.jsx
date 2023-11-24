@@ -9,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import DetailMyAcademy from './DetailMyAcademy/DetailMyAcademy';
 import { useEffect } from 'react';
 import Pagination from '../../../Pagination/Pagination';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageMyAcademy(props) {
 
@@ -50,23 +51,29 @@ function MypageMyAcademy(props) {
         setSelectAcademyInfoOpen(true);
     }
 
+    if(getMyAcademies.isLoading) {
+        return <></>;
+    }
+
     return (
         <div>
             <h2>🎒 나의 학원</h2>
             <div>
-                <div css={S.SComment}>나의 <span>학원 정보를 수정</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
-                <table css={S.STable}>
-                    <thead>
-                        <tr>
-                            <td>학원 번호</td>
-                            <td>학원명</td>
-                            <td>학원 선택</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!getMyAcademies.isLoading && 
-                            Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
-                            getMyAcademies?.data?.data.academyRegistrations.map(academy => {
+                {getMyAcademies.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={<>나의 학원이 없습니다! <br />학원을 등록하고 승인 받아 나의 학원 정보를 등록해보세요!</>}
+                    link={'/academy/regist'} btn={"등록하기"}/> :
+                <>
+                    <div css={S.SComment}>나의 <span>학원 정보를 수정</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
+                    <table css={S.STable}>
+                        <thead>
+                            <tr>
+                                <td>학원 번호</td>
+                                <td>학원명</td>
+                                <td>학원 선택</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                             <td>{academy.acaAsnum}</td>
@@ -77,16 +84,16 @@ function MypageMyAcademy(props) {
                                                 </button>
                                             </td>
                                         </tr>
-                            })
-                        }
-                    </tbody>
-                </table>
-                <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
-                    link={`/account/mypage/myacademy`} />
-                <div>
-                    {selectAcademyInfoOpen && !!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
-                </div>
-            </div>
+                            })}
+                        </tbody>
+                    </table>
+                    <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
+                        link={`/account/mypage/myacademy`} />
+                    <div>
+                        {selectAcademyInfoOpen && !!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
+                    </div>
+                </> }
+            </div> 
         </div>
     );
 }

@@ -8,6 +8,8 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../api/config/instance';
 import { useNavigate } from 'react-router-dom';
 import LiAcademyBox from '../../LiAcademyBox/LiAcademyBox';
+import LinkBtn from '../../Button/LinkBtn/LinkBtn';
+import EmptyBox from '../../EmptyBox/EmptyBox';
 
 function MypageLike(props) {
     // 랜덤 색상을 생성하는 함수
@@ -40,16 +42,22 @@ function MypageLike(props) {
         retry: 0,
         refetchOnWindowFocus: false
     });
+
+    if(getLikeAcademiesQuery.isLoading) {
+        return <></>;
+    }
     
     return (
         <div>
             <h2>❤️ 나의 관심 학원</h2>
             <div>
+                {getLikeAcademiesQuery.data.data.length === 0 ? 
+                <EmptyBox comment={"나의 관심 학원을 추가해 보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
                 <ul css={S.UlBox}>
                     {!getLikeAcademiesQuery.isLoading && Array.isArray(getLikeAcademiesQuery?.data?.data) && getLikeAcademiesQuery?.data?.data.map(academy => {
                         return <LiAcademyBox academy={academy}/>
                     })}
-                </ul>
+                </ul>}
             </div>
         </div>
     );

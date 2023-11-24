@@ -8,6 +8,7 @@ import { instance } from '../../../../api/config/instance';
 import Select from 'react-select';
 import SelectedInquiry from './SelectedInquiry/SelectedInquiry';
 import Pagination from '../../../Pagination/Pagination';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageConsultation(props) {
     const navigate = useNavigate();
@@ -80,38 +81,45 @@ function MypageConsultation(props) {
         setUnansweredOnly(event.target.checked ? 1 : 0);
     };
 
+    if(getInquiryList.isLoading) {
+        return <></>;
+    }
+
     return (
         <div>
             <h2>📞 나의 학원 문의</h2>
             <div>
-                <div css={S.SOptionBox}>
-                    <Select options={academyList} 
-                        css={S.SSelect}
-                        defaultValue={selectedAcademy}
-                        onChange={handleAcademyChange} 
-                    />
-                    <div>
-                        <input 
-                            type="checkbox" 
-                            id='unansweredOnly' 
-                            onChange={handleUnansweredOnlyChange} 
+                {getInquiryList.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={"나의 학원에 남겨진 문의가 없습니다..."} link={'/academy/find/1'} btn={"보러 가기"}/> : 
+                <>
+                    <div css={S.SOptionBox}>
+                        <Select options={academyList} 
+                            css={S.SSelect}
+                            defaultValue={selectedAcademy}
+                            onChange={handleAcademyChange} 
                         />
-                        <label htmlFor="unansweredOnly">미답변 문의</label>
+                        <div>
+                            <input 
+                                type="checkbox" 
+                                id='unansweredOnly' 
+                                onChange={handleUnansweredOnlyChange} 
+                            />
+                            <label htmlFor="unansweredOnly">미답변 문의</label>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <table css={S.STable}>
-                        <thead>
-                            <tr>
-                                <td>No</td>
-                                <td>학원명</td>
-                                <td>문의사항</td>
-                                <td>등록자</td>
-                                <td>답변</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {!getInquiryList.isLoading && Array.isArray(getInquiryList?.data?.data.inquiries) && getInquiryList?.data?.data.inquiries.map(inquiry => {
+                    <div>
+                        <table css={S.STable}>
+                            <thead>
+                                <tr>
+                                    <td>No</td>
+                                    <td>학원명</td>
+                                    <td>문의사항</td>
+                                    <td>등록자</td>
+                                    <td>답변</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { getInquiryList?.data?.data.inquiries.map(inquiry => {
                                     const answerDisplay = inquiry.answer ? 'O' : 'X';
                                     return  <tr key={inquiry.inquiryId} 
                                                 onClick={() => handleInquiryOnClick(inquiry)} 
@@ -122,22 +130,24 @@ function MypageConsultation(props) {
                                                 <td>{inquiry.nickname}</td>
                                                 <td>{answerDisplay}</td>
                                             </tr>
-                            })}
-                        </tbody>
-                    </table>
-                    {!getInquiryList.isLoading &&
-                        <Pagination totalCount={getInquiryList.data.data.totalCount}
-                            link={`/account/mypage/consultation`}/>}
-                    {!!selectedInquiry && 
-                        <SelectedInquiry
-                            key={selectedInquiry.inquiryId}
-                            selectedInquiry={selectedInquiry}
-                            setSelectedInquiry={setSelectedInquiry}
-                            page={page} 
-                            selectedAcademy={selectedAcademy}
-                        />
-                    }
-                </div>
+                                })}
+                            </tbody>
+                        </table>
+                        {!getInquiryList.isLoading &&
+                            <Pagination totalCount={getInquiryList.data.data.totalCount}
+                                link={`/account/mypage/consultation`}/>}
+                        {!!selectedInquiry && 
+                            <SelectedInquiry
+                                key={selectedInquiry.inquiryId}
+                                selectedInquiry={selectedInquiry}
+                                setSelectedInquiry={setSelectedInquiry}
+                                page={page} 
+                                selectedAcademy={selectedAcademy}
+                            />
+                        }
+                    </div>
+                </>
+                }
             </div>
         </div>
     );
