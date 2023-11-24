@@ -6,7 +6,7 @@ import { instance } from '../../../../api/config/instance';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
 import { useNavigate, useParams } from 'react-router-dom';
-import productImg from "../../../../assets/진행시켜.jpg"
+import productImg from "../../../../assets/결제 이밍지.png"
 import Pagination from '../../../Pagination/Pagination';
 import EmptyBox from '../../../EmptyBox/EmptyBox';
 
@@ -28,6 +28,22 @@ function MypageAdPayment(props) {
 
     const [ isPaymentInfoOpen, setIsPaymentInfoOpen ] = useState(false);
     const [ selectedTarget, setSelectedTarget ] = useState(null);
+
+    // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    // 날짜에 일수를 더하는 함수
+    function addDays(dateString, days) {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + days);
+        return date;
+    }
 
     // 나의학원 리스트
     const getMyAcademies = useQuery(["getMyAcademies", page], async () => {
@@ -172,6 +188,7 @@ function MypageAdPayment(props) {
                 <EmptyBox comment={<>광고 결제할 학원이 없습니다! <br />학원을 등록하고 승인 받아 나의 학원을 홍보해보세요!</>}
                     link={'/academy/regist'} btn={"등록하기"}/> :
                 <>
+                    <div css={S.SComment}><span>광고 결제</span> 하고 나의 학원 <span>진행시켜!!!</span></div>
                     <table css={S.STable}>
                         <thead>
                             <tr>
@@ -201,12 +218,17 @@ function MypageAdPayment(props) {
                     {isPaymentInfoOpen && !!selectedAcademy && (
                     <div css={S.SProductContainer}>
                         {ispurchase.isLoading ? <></> : !!isAcademyPaid
-                        ? (<div>결제정보: 결제된 내용
+                        ? (
+                        <div css={S.SPurchaseInfoBox}>
+                            <div css={S.SPurchaseInfo}><span>결제된 내용</span>
                                 <div>상품 : {isAcademyPaid.productName}</div>
                                 <div>가격 : {isAcademyPaid.productPrice}원</div>
                                 <div>기간 : {isAcademyPaid.productPeriod}일</div>
+                                <div>상품 기간 : {formatDate(isAcademyPaid.purchaseDate)} ~ {formatDate(addDays(isAcademyPaid.purchaseDate, isAcademyPaid.productPeriod))}</div>
                                 <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
-                            </div>)
+                            </div>
+                        </div>
+                        )
                         : products.map(product => {
                                 return (
                                 <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
