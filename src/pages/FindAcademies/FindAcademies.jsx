@@ -178,6 +178,7 @@ function FindAcademies(props) {
         disableBodyScroll();
     };
 
+    console.log(academyList);
 
     return (
         <RootContainer>
@@ -252,9 +253,17 @@ function FindAcademies(props) {
                                 </select>
                             </div>
                             <ul css={S.UlBox}>
-                                {academyList && academyList.length > 0 ? (academyList.map((academy) => {
-                                    return <LiAcademyBox academy={academy}/>
-                                })) : (<Loading /> )}
+                            {totalCount === 0 ? (
+                                <p>검색결과가 없습니다</p>
+                            ) : (
+                                academyList && academyList.length > 0 ? (
+                                    academyList.map((academy) => {
+                                        return <LiAcademyBox academy={academy} />;
+                                    })
+                                ) : (
+                                    <Loading />
+                                )
+                            )}
                             </ul>
                         </div>
                     </div>

@@ -108,7 +108,7 @@ function AcademyInquiry(props) {
                 </div>
                 <div css={S.InputContainer}>
                     <input type="text" name='title' placeholder='제목' onChange={handleTitle}/>
-                    <textarea name="" id="" cols="30" rows="10" onChange={handleContent}></textarea>
+                    <textarea name="" id="" cols="30" rows="10" onChange={handleContent} style={{ resize: "none" }}></textarea>
                 </div>
                 <div css={S.ButtonContainer}>
                     <button onClick={InquiryButtonClick}>문의하기</button>

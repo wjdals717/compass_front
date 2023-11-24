@@ -66,3 +66,9 @@ export const SRandomImg = css`
         color: #fff;
     }
 `;
+
+export const SLikeAndRating = css`
+    display: flex;
+    justify-content: space-between;
+    width: 198px;
+`;
