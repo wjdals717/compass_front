@@ -87,6 +87,6 @@ export const InquiryBox = css`
         width: 15px;
         height: 15px;
         color: white;
-        /* background-color: red; */
+        background-color: red;
     }
 `;
