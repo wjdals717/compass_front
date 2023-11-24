@@ -8,7 +8,6 @@ import MypageReview from '../../components/MyPageContainer/StudentMypage/MypageR
 import MypageAdPayment from '../../components/MyPageContainer/AcademyMypage/MypageAdPayment/MypageAdPayment';
 import MyPageConsultation from '../../components/MyPageContainer/AcademyMypage/MypageConsultation/MypageConsultation';
 import AcademyWaiting from '../../components/MyPageContainer/WebMasterMypage/AcademyWaiting/AcademyWaiting';
-import InquiryList from '../../components/MyPageContainer/WebMasterMypage/InquiryList/InquiryList';
 import MypageLike from '../../components/MyPageContainer/MypageLike/MypageLike';
 import StudentSidebar from '../../components/MyPageSidebar/StudentSidebar/StudentSidebar';
 import WebMastesrSidebar from '../../components/MyPageSidebar/WebMastesrSidebar/WebMastesrSidebar';

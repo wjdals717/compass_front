@@ -2,8 +2,11 @@ import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
 export const SComment = css`
-    margin: 30px 20px 10px;
+    margin: 10px 20px;
     font-size: 16px;
+    & span {
+        font-weight: 500;
+    }
 `;
 
 export const STable = css`

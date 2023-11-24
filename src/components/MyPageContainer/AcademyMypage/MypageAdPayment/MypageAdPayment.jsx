@@ -7,6 +7,7 @@ import { instance } from '../../../../api/config/instance';
 import * as S from "./Style"
 import { useNavigate, useParams } from 'react-router-dom';
 import productImg from "../../../../assets/진행시켜.jpg"
+import Pagination from '../../../Pagination/Pagination';
 
 function MypageAdPayment(props) {
 
@@ -228,9 +229,9 @@ function MypageAdPayment(props) {
                     }
                     </tbody>
                 </table>
-                <div css={S.SPageNumbers}>
-                    {pagination()}
-                </div>
+                {!getMyAcademies.isLoading && 
+                    <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
+                        link={`/account/mypage/adpayment`}/>}
                 {isPaymentInfoOpen && !!selectedAcademy && (
                 <div css={S.SProductContainer}>
                     {ispurchase.isLoading ? <></> : !!isAcademyPaid
@@ -257,10 +258,10 @@ function MypageAdPayment(props) {
                             );
                         })
                     }
-                    </div>
-                    )}
                 </div>
+                )}
             </div>
+        </div>
     );
 }
 

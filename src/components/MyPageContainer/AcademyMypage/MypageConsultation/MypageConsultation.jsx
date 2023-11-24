@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import Select from 'react-select';
 import SelectedInquiry from './SelectedInquiry/SelectedInquiry';
+import Pagination from '../../../Pagination/Pagination';
 
 function MypageConsultation(props) {
     const navigate = useNavigate();
@@ -67,46 +68,6 @@ function MypageConsultation(props) {
         }
     })
 
-    const pagination = () => {
-        if(getInquiryList.isLoading) {
-            return <></>
-        }
-        const totalAcademyCount = getInquiryList.data.data.listTotalCount;
-        const lastPage = getInquiryList.data.data.listTotalCount % 5 === 0 
-            ? totalAcademyCount / 5 
-            : Math.floor(totalAcademyCount / 5) + 1
-
-        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-
-        const pageNumbers = [];
-        
-        for(let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/account/mypage/consultation/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button  className={parseInt(page) === num ? 'selected' : ''}
-                                    onClick={() => {
-                                        navigate(`/account/mypage/consultation/${num}`);
-                                    }} 
-                                key={num}>{num}
-                            </button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/account/mypage/consultation/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
-    }
-
     const handleAcademyChange = (selectedOption) => {
         setSelectedAcademy(selectedOption);
     };
@@ -164,9 +125,9 @@ function MypageConsultation(props) {
                             })}
                         </tbody>
                     </table>
-                    <div css={S.SPageNumbers}>
-                        {pagination()}
-                    </div>
+                    {!getInquiryList.isLoading &&
+                        <Pagination totalCount={getInquiryList.data.data.totalCount}
+                            link={`/account/mypage/consultation`}/>}
                     {!!selectedInquiry && 
                         <SelectedInquiry
                             key={selectedInquiry.inquiryId}

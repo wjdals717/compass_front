@@ -10,7 +10,7 @@ export const STopContainer = css`
     border-radius: 50px;
     padding: 30px 40px 40px;
     width: 800px;
-    box-shadow: 4px 4px 10px 4px #dbdbdb;
+    box-shadow: 4px 4px 10px 0px #dbdbdb;
 `;
 
 export const SH1 = css`
@@ -37,7 +37,6 @@ export const SMatchButtonContainer = css`
         padding: 10px 50px;
         background-color: white;
         font-size: 23px;
-        box-shadow: 1px 5px 5px 1px #eee;
         cursor: pointer;
     }
 
@@ -56,7 +55,7 @@ export const SContainer = css`
     border-radius: 50px;
     padding: 30px 40px;
     width: 800px;
-    box-shadow: 4px 4px 10px 4px #dbdbdb;
+    box-shadow: 4px 4px 10px 0px #dbdbdb;
 `;
 
 export const SContainerName = css`
@@ -163,6 +162,6 @@ export const SSubmitButton = css`
     background-color: #5FA8D3;
     color: white;
     font-size: 23px;
-    box-shadow: 1px 5px 5px 1px #eee;
+    box-shadow: 4px 4px 5px 0px #eee;
     cursor: pointer;
 `;

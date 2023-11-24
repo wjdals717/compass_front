@@ -7,6 +7,7 @@ import { instance } from '../../../../api/config/instance';
 import { useQuery } from 'react-query';
 import SelectedAcademy from './SelectedAcademy/SelectedAcademy';
 import { useNavigate, useParams } from 'react-router';
+import Pagination from '../../../Pagination/Pagination';
 
 function AcademyWaiting(props) {
     const navigate = useNavigate();
@@ -30,46 +31,6 @@ function AcademyWaiting(props) {
     
     const handleAcademyOnClick = (academy) => {
         setSelectedAcademy(academy);
-    }
-
-    const pagination = () => {
-        if(getAcademies.isLoading) {
-            return <></>
-        }
-        const totalAcademyCount = getAcademies.data.data.listTotalCount;
-        const lastPage = getAcademies.data.data.listTotalCount % 5 === 0 
-            ? totalAcademyCount / 5 
-            : Math.floor(totalAcademyCount / 5) + 1
-
-        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-
-        const pageNumbers = [];
-        
-        for(let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/account/mypage/academywaiting/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button  className={parseInt(page) === num ? 'selected' : ''}
-                                    onClick={() => {
-                                        navigate(`/account/mypage/academywaiting/${num}`);
-                                    }} 
-                                key={num}>{num}
-                            </button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/account/mypage/academywaiting/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
     }
 
     return (
@@ -100,9 +61,9 @@ function AcademyWaiting(props) {
                         }
                     </tbody>
                 </table>
-                <div css={S.SPageNumbers}>
-                    {pagination()}
-                </div>
+                {!getAcademies.isLoading && 
+                    <Pagination totalCount={getAcademies.data.data.totalCount}
+                        link={'/account/mypage/academyawating'}/>}
                 {!!selectedAcademy && <SelectedAcademy selectedAcademy={selectedAcademy}/>}
             </div>
         </div>

@@ -8,6 +8,7 @@ import { instance } from '../../../../api/config/instance';
 import { useQuery } from 'react-query';
 import { useQueryClient } from 'react-query';
 import RetryMyAcademy from './RetryMyAcademy/RetryMyAcademy';
+import Pagination from '../../../Pagination/Pagination';
 
 function MypageAppliedAcademy(props) {
     const navigate = useNavigate();
@@ -47,46 +48,6 @@ function MypageAppliedAcademy(props) {
         setIsApplicatedOpen(true);
     }
 
-    const pagination = () => {
-        if(getAppliedAcademies.isLoading) {
-            return <></>
-        }
-        const totalAcademyCount = getAppliedAcademies.data.data.listTotalCount;
-        const lastPage = getAppliedAcademies.data.data.listTotalCount % 5 === 0 
-            ? totalAcademyCount / 5 
-            : Math.floor(totalAcademyCount / 5) + 1;
-
-        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-
-        const pageNumbers = [];
-        
-        for(let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/academies/applied/${principal.data.data.userId}/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button  className={parseInt(page) === num ? 'selected' : ''}
-                                    onClick={() => {
-                                        navigate(`/academies/applied/${principal.data.data.userId}/${num}`);
-                                    }} 
-                                key={num}>{num}
-                            </button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/academies/applied/${principal.data.data.userId}/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
-    }
-
     return (
         <div>
             <h2>🗒️ 학원 신청 목록</h2>
@@ -120,9 +81,9 @@ function MypageAppliedAcademy(props) {
                         }
                     </tbody>
                 </table>
-                <div css={S.SPageNumbers}>
-                    {pagination()}
-                </div>
+                {!getAppliedAcademies.isLoading &&
+                    <Pagination totalCount={getAppliedAcademies?.data?.data?.listTotalCount}
+                        link={`/account/mypage/appliedacademy`}/>}
                 <div>
                     {isApplicatedOpen && !!selectedAcademy && 
                         (selectedAcademy?.approvalStatus > 0 ? <></> : 

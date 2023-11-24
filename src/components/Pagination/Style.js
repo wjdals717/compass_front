@@ -1,29 +1,5 @@
-import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
-
-export const SComment = css`
-    margin: 10px 20px;
-    font-size: 16px;
-`;
-
-export const STable = css`
-    margin: 0 20px;
-    width: 740px;
-    background-color: white;
-
-    thead {
-        background-color: #dbdbdb;
-    }
-
-    thead, tr, td {
-        height: 40px;
-        border: 1px solid #ccc;
-        vertical-align: middle;
-        text-align: center;
-        overflow: auto;
-        cursor: default;
-    }
-`;
+import { css } from '@emotion/react';
 
 export const SPageNumbers = css`
     display: flex;

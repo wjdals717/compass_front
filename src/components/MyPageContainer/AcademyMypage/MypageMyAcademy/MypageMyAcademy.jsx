@@ -8,10 +8,12 @@ import { instance } from '../../../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import DetailMyAcademy from './DetailMyAcademy/DetailMyAcademy';
 import { useEffect } from 'react';
+import Pagination from '../../../Pagination/Pagination';
 
 function MypageMyAcademy(props) {
 
     const navigate = useNavigate();
+
     const { page } = useParams();
 
     const queryClient = useQueryClient();
@@ -48,51 +50,11 @@ function MypageMyAcademy(props) {
         setSelectAcademyInfoOpen(true);
     }
 
-    const pagination = () => {
-        if(getMyAcademies.isLoading) {
-            return <></>
-        }
-        const totalAcademyCount = getMyAcademies.data.data.listTotalCount;
-        const lastPage = getMyAcademies.data.data.listTotalCount % 5 === 0 
-            ? totalAcademyCount / 5 
-            : Math.floor(totalAcademyCount / 5) + 1;
-
-        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-
-        const pageNumbers = [];
-        
-        for(let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/academies/${principal.data.data.userId}/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button  className={parseInt(page) === num ? 'selected' : ''}
-                                    onClick={() => {
-                                        navigate(`/academies/${principal.data.data.userId}/${num}`);
-                                    }} 
-                                key={num}>{num}
-                            </button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/academies/${principal.data.data.userId}/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
-    }
-
     return (
         <div>
             <h2>🎒 나의 학원</h2>
             <div>
-                <div css={S.SComment}>나의 학원 정보를 수정해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
+                <div css={S.SComment}>나의 <span>학원 정보를 수정</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
                 <table css={S.STable}>
                     <thead>
                         <tr>
@@ -119,9 +81,8 @@ function MypageMyAcademy(props) {
                         }
                     </tbody>
                 </table>
-                <div css={S.SPageNumbers}>
-                    {pagination()}
-                </div>
+                <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
+                    link={`/account/mypage/myacademy`} />
                 <div>
                     {selectAcademyInfoOpen && !!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
                 </div>
