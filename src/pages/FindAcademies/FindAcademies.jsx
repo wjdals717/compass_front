@@ -15,6 +15,7 @@ import QueryString from 'qs';
 import { FaLocationDot } from "react-icons/fa6";
 import SearchBtn from '../../components/Button/SearchBtn/SearchBtn';
 import SelectModalBtn from '../../components/Button/SelectModalBtn/SelectModalBtn'
+import Loading from '../../components/Loading/Loading';
 
 function FindAcademies(props) {
     const navigate = useNavigate();
@@ -75,6 +76,7 @@ function FindAcademies(props) {
 
     const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
+            setAcademyList([]);
             const options = {
                 params: {
                     pIndex: page,
@@ -179,7 +181,6 @@ function FindAcademies(props) {
         disableBodyScroll();
     };
 
-    console.log(getAcademyList);
 
     return (
         <RootContainer>
@@ -270,7 +271,7 @@ function FindAcademies(props) {
                                 </select>
                             </div>
                             <ul css={S.UlBox}>
-                                {academyList.map((academy) => {
+                                {academyList && academyList.length > 0 ? (academyList.map((academy) => {
                                     const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
                                     const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
                                     const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
@@ -293,7 +294,7 @@ function FindAcademies(props) {
                                         <div css={S.SAddress}><FaLocationDot />{address}</div>
                                         <div>{realm}</div>
                                     </li>
-                                })}
+                                })) : (<Loading /> )}
                             </ul>
                         </div>
                     </div>
