@@ -215,13 +215,9 @@ function DetailMyAcademy({ type, selectedAcademy }) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-
-            if(academyDetailInfo?.academyInfo?.academyInfoId === null) {   // academyInfoTb에 저장되지 않은 경우 insert 해줘야 함.
-                await instance.post(`/academyInfo/${selectedAcademy.academyId}`, newAcademyDetailInfo, option);
-            } else {
-                if(JSON.stringify(newAcademyDetailInfo) !== JSON.stringify(academyDetailInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
-                    await instance.put("/academy", newAcademyDetailInfo, option);
-                }
+            
+            if(JSON.stringify(newAcademyDetailInfo) !== JSON.stringify(academyDetailInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
+                await instance.put("/academy", newAcademyDetailInfo, option);
             }
             alert("수정이 완료되었습니다.");
             getAcademy.refetch();
