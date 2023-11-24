@@ -76,7 +76,7 @@ export const STable = css`
         vertical-align: middle;
         text-align: center;
         overflow: auto;
-        cursor: default;
+        /* cursor: default; */
     }
 `;
 
@@ -109,4 +109,8 @@ export const SPageNumbers = css`
             background-color: #92c2f4;
         }
     }
+`;
+
+export const SAcaNm = css`
+    cursor: pointer;
 `;
