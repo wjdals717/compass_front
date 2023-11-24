@@ -235,11 +235,11 @@ function MypageAdPayment(props) {
                 {isPaymentInfoOpen && !!selectedAcademy && (
                 <div css={S.SProductContainer}>
                     {ispurchase.isLoading ? <></> : !!isAcademyPaid
-                    ? (<div>결제정보: 결제된 내용
-                            <div>상품 : {isAcademyPaid.productName}</div>
-                            <div>가격 : {isAcademyPaid.productPrice}원</div>
-                            <div>기간 : {isAcademyPaid.productPeriod}일</div>
-                            <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
+                    ? (<div css={S.SPaymentInformation}>결제정보: 결제된 내용
+                            <div css={S.SPaymentDetailInfo}>상품 : {isAcademyPaid.productName}</div>
+                            <div css={S.SPaymentDetailInfo}>가격 : {isAcademyPaid.productPrice}원</div>
+                            <div css={S.SPaymentDetailInfo}>기간 : {isAcademyPaid.productPeriod}일</div>
+                            <div css={S.SPaymentDetailInfo}>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
                         </div>)
                     : products.map(product => {
                             return (
