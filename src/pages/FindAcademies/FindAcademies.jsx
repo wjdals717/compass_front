@@ -58,12 +58,8 @@ function FindAcademies(props) {
 
     const getPurchaseAcademyList = useQuery(["getPurchaseAcademyList"], async () => {
         try{
-            const option = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            return await instance.get(`/ad/academies/random`, option)
+            return await instance.get(`/ad/academies/random`)
+
         } catch(error) {
             console.error(error)
         }
