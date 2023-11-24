@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
 import { useNavigate } from 'react-router-dom';
@@ -20,19 +20,20 @@ function LiAcademyBox({academy}) {
             ? 'IT'
             : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
 
+    // 랜덤 색상을 useState로 한 번만 생성
+    const [randomColor, setRandomColor] = useState(generateRandomColor());
+
     // 랜덤 색상을 생성하는 함수
-    const getRandomColor = () => {
-        // 0부터 255 사이의 랜덤한 RGB 값 생성
-        const randomColor = `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
-        return randomColor;
-    };
+    function generateRandomColor() {
+        return `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
+    }
 
     return  (
         <li key={academy.ACADEMY_ID} css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
             {academy.logoImg ? (
                 <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
             ): (
-                <div css={[S.SRandomImg, { backgroundColor: getRandomColor() }]}>
+                <div css={[S.SRandomImg, { backgroundColor: randomColor }]}>
                     <span>{firstTwoKoreanChars}</span>
                 </div>
             )}
