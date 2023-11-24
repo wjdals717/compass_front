@@ -139,7 +139,7 @@ function MypageConsultation(props) {
                                 </tbody>
                             </table>
                             {!getInquiryList.isLoading &&
-                                <Pagination totalCount={getInquiryList.data.data.totalCount}
+                                <Pagination totalCount={getInquiryList.data.data.listTotalCount}
                                     link={`/account/mypage/consultation`}/>}
                             {!!selectedInquiry && 
                                 <SelectedInquiry
