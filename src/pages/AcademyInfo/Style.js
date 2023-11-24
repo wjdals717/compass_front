@@ -137,9 +137,9 @@ export const SMoveBar = (isHeaderFixed) => css`
 
 export const SIntroductionContainer  = css`
     display: flex;
+    margin-bottom: 30px;
     flex-direction: column;
     width: 100%;
-    height: 300px;
 `;
 
 export const STitle = css`
@@ -159,27 +159,39 @@ export const SIntroductions = css`
 export const SIntroduction = css`
     display: flex;
     width: 50%;
+    align-items: center;
     margin-bottom:10px;
     font-size: 18px;
-
+    line-height: 24px;
+    
     & > div {
-        width: 200px;
+        width: 150px;
     }
 
     & > span {
-        width: 300px;
+        width: 400px;
+        word-wrap: break-word;
     }
 `;
 
 export const SConvenienceContainer = css`
     width: 100%;
-    height: 200px;
+    margin-bottom: 30px;
 
     div {
-        display: flex;
-        padding: 0 20px;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: 200px 200px;
     }
+
     span {
-        margin-right: 20px;
+        font-size: 18px;
+        line-height: 1.8em;
+    }
+
+    & > span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 `;

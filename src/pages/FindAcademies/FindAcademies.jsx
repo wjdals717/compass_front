@@ -119,6 +119,12 @@ function FindAcademies(props) {
         setInputValue(e.target.value);
     }
 
+    const handleKeyUp = (e) => {
+        if (e.key === 'Enter') {
+            handleSelectContent();
+        }
+    };
+
     const handleSelectContent = () => {
         setSelectedContent(inputValue);
     }
@@ -200,7 +206,12 @@ function FindAcademies(props) {
                         </SelectModalBtn>
                     </div>
                     <div>
-                        <input type="text" placeholder='나에게 맞는 학원을 찾아보세요' value={inputValue} onChange={handleInputOnChange}/>
+                        <input type="text" 
+                            placeholder='나에게 맞는 학원을 찾아보세요' 
+                            value={inputValue} 
+                            onChange={handleInputOnChange}
+                            onKeyUp={handleKeyUp}
+                        />
                     </div>
                     <SearchBtn onClick={handleSelectContent}/>
                 </div>

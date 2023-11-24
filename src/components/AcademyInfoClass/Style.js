@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 export const SClassInfo = css`
     width: 100%;
-    height: 300px;
+    height: 250px;
 `;
 
 export const STable = css`
