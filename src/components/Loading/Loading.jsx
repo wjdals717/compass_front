@@ -1,7 +1,7 @@
 import React from 'react';
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import loading from '../../assets/Spinning_arrow.gif'
+import loading from '../../assets/bookLoading.gif'
 
 const SLoading = css`
     display: flex;
@@ -9,11 +9,6 @@ const SLoading = css`
     align-items: center;
     width: 780px;
     height: 780px;
-
-    img {
-        width: 100px;
-        height: 100px;
-    }
 `;
 
 function Loading(props) {
