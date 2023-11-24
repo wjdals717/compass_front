@@ -6,6 +6,16 @@ export const SProductContainer = css`
     align-items: center;
 `;
 
+export const SPaymentInformation = css`
+    
+    position: relative;
+    left: 20px;
+`;
+
+export const SPaymentDetailInfo = css`
+    margin: 5px 0px;
+`;
+
 export const SProductLayout = css`
     text-align: left;
     margin: 0px 10px 0px 10px;
@@ -66,7 +76,7 @@ export const STable = css`
         vertical-align: middle;
         text-align: center;
         overflow: auto;
-        cursor: default;
+        /* cursor: default; */
     }
 `;
 
@@ -99,4 +109,8 @@ export const SPageNumbers = css`
             background-color: #92c2f4;
         }
     }
+`;
+
+export const SAcaNm = css`
+    cursor: pointer;
 `;

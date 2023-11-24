@@ -6,6 +6,8 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
 import SelectedInquiry from './SelectedInquiry/SelectedInquiry';
+import Pagination from '../../../Pagination/Pagination';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageInquiry({ setUncheckedAnswerCount }) {
     const navigate = useNavigate();
@@ -60,86 +62,53 @@ function MypageInquiry({ setUncheckedAnswerCount }) {
         }
     };
 
-    const pagination = () => {
-        if(getUserInquiryList.isLoading) {
-            return <></>
-        }
-        const totalAcademyCount = getUserInquiryList.data.data.listTotalCount;
-        const lastPage = getUserInquiryList.data.data.listTotalCount % 5 === 0 
-            ? totalAcademyCount / 5 
-            : Math.floor(totalAcademyCount / 5) + 1
-
-        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-
-        const pageNumbers = [];
-        
-        for(let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/account/mypage/inquiry/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button  className={parseInt(page) === num ? 'selected' : ''}
-                                    onClick={() => {
-                                        navigate(`/account/mypage/inquiry/${num}`);
-                                    }} 
-                                key={num}>{num}
-                            </button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/account/mypage/inquiry/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
+    if(getUserInquiryList.isLoading) {
+        return <></>;
     }
-
 
     return (
         <div>
             <h2>📞 나의 학원 문의</h2>
             <div>
-                <table css={S.STable}>
-                    <thead>
-                        <tr>
-                            <td>No</td>
-                            <td>학원명</td>
-                            <td>문의사항</td>
-                            <td>답변</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!getUserInquiryList.isLoading && Array.isArray(getUserInquiryList?.data?.data.inquiries) && getUserInquiryList?.data?.data.inquiries.map(inquiry => {
-                            const answerDisplay = inquiry.answer ? 'O' : 'X';
-                            return  <tr key={inquiry.inquiryId} 
-                                        onClick={() => handleInquiryOnClick(inquiry)} 
-                                        style={{
-                                            fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal',
-                                            color: inquiry.answerChecked === 1 ? 'red' : 'black'
-                                        }}>
-                                        <td>{inquiry.inquiryId}</td>
-                                        <td>{inquiry.acaNm}</td>
-                                        <td>{inquiry.inquiryTitle}</td>
-                                        <td>{answerDisplay}</td>
-                                    </tr>
-                        })}
-                    </tbody>
-                </table>
-                <div css={S.SPageNumbers}>
-                    {pagination()}
-                </div>
-                {!!selectedInquiry && 
-                    <SelectedInquiry 
-                        selectedInquiry={selectedInquiry}  
-                        setSelectedInquiry={setSelectedInquiry}
-                        page={page}/>
-                }
+                {getUserInquiryList.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={"정보가 궁금한 학원에 문의를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
+                <>
+                    <div css={S.SComment}>학원을 클릭해서 작성한 문의와 답변을 확인해보세요! 확인 버튼을 누르면 알림이 사라집니다.</div>
+                    <table css={S.STable}>
+                        <thead>
+                            <tr>
+                                <td>No</td>
+                                <td>학원명</td>
+                                <td>문의사항</td>
+                                <td>답변</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {!getUserInquiryList.isLoading && Array.isArray(getUserInquiryList?.data?.data.inquiries) && getUserInquiryList?.data?.data.inquiries.map(inquiry => {
+                                const answerDisplay = inquiry.answer ? 'O' : 'X';
+                                return  <tr key={inquiry.inquiryId} 
+                                            onClick={() => handleInquiryOnClick(inquiry)} 
+                                            style={{
+                                                fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal',
+                                                color: inquiry.answerChecked === 1 ? 'red' : 'black'
+                                            }}>
+                                            <td>{inquiry.inquiryId}</td>
+                                            <td>{inquiry.acaNm}</td>
+                                            <td>{inquiry.inquiryTitle}</td>
+                                            <td>{answerDisplay}</td>
+                                        </tr>
+                            })}
+                        </tbody>
+                    </table>
+                    <Pagination totalCount={getUserInquiryList.data.data.listTotalCount}
+                        link={'/account/mypage/inquiry'}/>
+                    {!!selectedInquiry && 
+                        <SelectedInquiry 
+                            selectedInquiry={selectedInquiry}  
+                            setSelectedInquiry={setSelectedInquiry}
+                            page={page}/>
+                    }
+                </>}
             </div>
         </div>
     );

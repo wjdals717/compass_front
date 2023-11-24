@@ -17,6 +17,11 @@ function FileUpload({ academyContent, setAcademyContent, uploadeFile, setUploade
     const uploadLabelChange = (e) => {
         const files = [...e.target.files];
         
+        if (!files.length) {
+            // 파일이 선택되지 않은 경우를 처리합니다 (예: 사용자가 업로드를 취소한 경우)
+            return;
+        }
+
         switch (e.target.name) {    //화면에 보여주기 위함(label)
             case 'businessRegistrationFile':
                 setBusinessRegistrationFile(e.target.value);   break;

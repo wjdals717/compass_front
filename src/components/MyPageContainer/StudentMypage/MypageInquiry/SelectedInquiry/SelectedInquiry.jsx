@@ -36,7 +36,9 @@ function SelectedInquiry({ selectedInquiry, setSelectedInquiry, page }) {
                     <span>답변</span>
                     <div>{selectedInquiry.answer}</div>
                 </div>}
-            <button onClick={handleCheckButton}>확인</button>
+            <div css={S.SButtonContainer}>
+                <button onClick={handleCheckButton}>확인</button>
+            </div>
         </div>
     );
 }

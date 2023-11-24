@@ -89,12 +89,27 @@ export const SInquiryAnswer = css`
         border-radius: 10px;
         padding: 10px;
         width: 560px;
-        font-size: 18px;
+        font-size: 16px;
         background-color: #eee;
         overflow-wrap: break-word;
     }
 `;
 
-export const SubmitButton = css`
-    
+export const SButtonContainer = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & button {
+        border: none;
+        border-radius: 20px;
+        padding: 5px 0;
+        width: 300px;
+        background-color: #5FA8D3;
+        font-size: 18px;
+        color: white;
+        cursor: pointer;
+        :active {
+            background-color: #477E9E;
+        }
+    }
 `;
