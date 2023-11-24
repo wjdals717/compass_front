@@ -156,9 +156,11 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             {!!academyData?.age[0] && 
                                 <div css={S.SIntroduction}>
                                     <div><BsBarChartLineFill/><span>수강연령</span></div>
-                                    {academyData?.age?.map((age) => {
-                                        return (age.ageRange + " ")
-                                    })}
+                                    <span>
+                                        {academyData?.age?.map((age) => {
+                                            return (age.ageRange + " ")
+                                        })}
+                                    </span>
                                 </div>
                             }
                             {!!academyData?.academyInfo?.coursePeriod &&
@@ -199,6 +201,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                 </span>;
                             })}
                         </div>
+                        {!!!academyData?.convenience[0] &&  <span>등록된 편의사항이 존재하지 않습니다.</span>}
                     </div>
                     <AcademyInfoReviews academyId={academyId} userId={userId} principal={principal}/>
                     <AcademyInfoClass academyData={academyData}/>

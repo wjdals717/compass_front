@@ -1,13 +1,9 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
-export const SStar = css`
-    color: yellow;
-`;
-
 export const SReviewContainer = css`
     width: 100%;
-    height: 450px;
+    margin-bottom: 30px;
 `;
 
 export const SReviewScore = css`
@@ -80,4 +76,8 @@ export const SReviewUserScoreContainer = css`
         width: 40px;
     }
     
+`;
+
+export const SStar = css`
+    color: yellow;
 `;
