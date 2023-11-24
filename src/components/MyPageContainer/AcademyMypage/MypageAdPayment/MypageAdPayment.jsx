@@ -150,7 +150,7 @@ function MypageAdPayment(props) {
                     }
                 }
                 instance.post("/purchase", purchaseDate, option).then(response => {
-                    alert("광고결제가 완료되었습니다. 감사합니다!!")
+                    alert("광고결제가 완료되었습니다. 감사합니다!!🙇")
                     ispurchase.refetch()
                     quertClient.refetchQueries(["getPrincipal"])
                 })
