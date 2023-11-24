@@ -81,7 +81,7 @@ function AcademyInquiry(props) {
             return;
         }
 
-        const confirmed = window.confirm(`학원명: ${academyData.ACA_NM}\n에 문의하시겠습니까?`);
+        const confirmed = window.confirm(`[${academyData.ACA_NM}]에 문의하시겠습니까?`);
         if (confirmed) {
             const option = {
                 headers: {
@@ -104,11 +104,12 @@ function AcademyInquiry(props) {
             <div css={S.SLayout}>
                 <h1 >문의사항</h1>
                 <div css={S.AcademyContainer}>
+                    학원명: 
                     <div>{academyData?.ACA_NM}</div>
                 </div>
                 <div css={S.InputContainer}>
                     <input type="text" name='title' placeholder='제목' onChange={handleTitle}/>
-                    <textarea name="" id="" cols="30" rows="10" onChange={handleContent}></textarea>
+                    <textarea placeholder='문의 내용을 입력해주세요!' name="" id="" cols="30" rows="10" onChange={handleContent}></textarea>
                 </div>
                 <div css={S.ButtonContainer}>
                     <button onClick={InquiryButtonClick}>문의하기</button>

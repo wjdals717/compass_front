@@ -81,16 +81,18 @@ function MypageConsultation(props) {
         setUnansweredOnly(event.target.checked ? 1 : 0);
     };
 
-    if(getInquiryList.isLoading) {
+    if(getMyAcademyAll.isLoading || getInquiryList.isLoading) {
         return <></>;
     }
+
+    console.log(getInquiryList)
 
     return (
         <div>
             <h2>📞 나의 학원 문의</h2>
             <div>
-                {getInquiryList.data.data.listTotalCount === 0 ? 
-                <EmptyBox comment={"나의 학원에 남겨진 문의가 없습니다..."} link={'/academy/find/1'} btn={"보러 가기"}/> : 
+                {getMyAcademyAll.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={"나의 학원이 없습니다."} link={'/academy/regist'} btn={"등록하기"}/> : 
                 <>
                     <div css={S.SOptionBox}>
                         <Select options={academyList} 
@@ -108,43 +110,47 @@ function MypageConsultation(props) {
                         </div>
                     </div>
                     <div>
-                        <table css={S.STable}>
-                            <thead>
-                                <tr>
-                                    <td>No</td>
-                                    <td>학원명</td>
-                                    <td>문의사항</td>
-                                    <td>등록자</td>
-                                    <td>답변</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                { getInquiryList?.data?.data.inquiries.map(inquiry => {
-                                    const answerDisplay = inquiry.answer ? 'O' : 'X';
-                                    return  <tr key={inquiry.inquiryId} 
-                                                onClick={() => handleInquiryOnClick(inquiry)} 
-                                                style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal' }}>
-                                                <td>{inquiry.inquiryId}</td>
-                                                <td>{inquiry.acaNm}</td>
-                                                <td>{inquiry.inquiryTitle}</td>
-                                                <td>{inquiry.nickname}</td>
-                                                <td>{answerDisplay}</td>
-                                            </tr>
-                                })}
-                            </tbody>
-                        </table>
-                        {!getInquiryList.isLoading &&
-                            <Pagination totalCount={getInquiryList.data.data.totalCount}
-                                link={`/account/mypage/consultation`}/>}
-                        {!!selectedInquiry && 
-                            <SelectedInquiry
-                                key={selectedInquiry.inquiryId}
-                                selectedInquiry={selectedInquiry}
-                                setSelectedInquiry={setSelectedInquiry}
-                                page={page} 
-                                selectedAcademy={selectedAcademy}
-                            />
-                        }
+                        {!getInquiryList.isLoading && getInquiryList.data.data.inquiries.length === 0 ? 
+                        <div css={S.SEmptyBox}>{selectedAcademy.label}에는 남겨진 문의가 없습니다...</div> : 
+                        <>
+                            <table css={S.STable}>
+                                <thead>
+                                    <tr>
+                                        <td>No</td>
+                                        <td>학원명</td>
+                                        <td>문의사항</td>
+                                        <td>등록자</td>
+                                        <td>답변</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { getInquiryList?.data?.data.inquiries.map(inquiry => {
+                                        const answerDisplay = inquiry.answer ? 'O' : 'X';
+                                        return  <tr key={inquiry.inquiryId} 
+                                                    onClick={() => handleInquiryOnClick(inquiry)} 
+                                                    style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal' }}>
+                                                    <td>{inquiry.inquiryId}</td>
+                                                    <td>{inquiry.acaNm}</td>
+                                                    <td>{inquiry.inquiryTitle}</td>
+                                                    <td>{inquiry.nickname}</td>
+                                                    <td>{answerDisplay}</td>
+                                                </tr>
+                                    })}
+                                </tbody>
+                            </table>
+                            {!getInquiryList.isLoading &&
+                                <Pagination totalCount={getInquiryList.data.data.totalCount}
+                                    link={`/account/mypage/consultation`}/>}
+                            {!!selectedInquiry && 
+                                <SelectedInquiry
+                                    key={selectedInquiry.inquiryId}
+                                    selectedInquiry={selectedInquiry}
+                                    setSelectedInquiry={setSelectedInquiry}
+                                    page={page} 
+                                    selectedAcademy={selectedAcademy}
+                                />
+                            }
+                        </>}
                     </div>
                 </>
                 }

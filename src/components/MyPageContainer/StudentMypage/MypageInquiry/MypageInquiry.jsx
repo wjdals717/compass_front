@@ -73,6 +73,7 @@ function MypageInquiry({ setUncheckedAnswerCount }) {
                 {getUserInquiryList.data.data.listTotalCount === 0 ? 
                 <EmptyBox comment={"정보가 궁금한 학원에 문의를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
                 <>
+                    <div css={S.SComment}>학원을 클릭해서 작성한 문의와 답변을 확인해보세요! 확인 버튼을 누르면 알림이 사라집니다.</div>
                     <table css={S.STable}>
                         <thead>
                             <tr>
