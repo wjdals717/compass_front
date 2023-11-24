@@ -79,9 +79,12 @@ function SelectedInquiry({ selectedInquiry, setSelectedInquiry, page, selectedAc
                         onChange={handleAnswerOnChange}
                     />
                 </div>
-                <button css={S.SubmitButton} onClick={handleAnswerSubmit}>
-                    확인
-                </button>
+                <div css={S.SButtonContainer}>
+                    <button onClick={handleAnswerSubmit}>
+                        확인
+                    </button>
+                </div>
+                
             </div>
         </div>
     );

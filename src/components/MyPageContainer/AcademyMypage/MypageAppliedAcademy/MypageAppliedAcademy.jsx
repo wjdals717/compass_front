@@ -60,7 +60,7 @@ function MypageAppliedAcademy(props) {
             <h2>🗒️ 학원 신청 목록</h2>
             <div>
                 {getAppliedAcademies?.data?.data.listTotalCount === 0 ? 
-                <EmptyBox comment={<>신청된 학원이 없습니다.<br/>학원을 등록해 보세요!</>}
+                <EmptyBox comment={<>신청한 학원이 없습니다.<br/>학원을 등록해 보세요!</>}
                     link={'/academy/regist'} btn={"등록하기"}/> : 
                 <>
                     <div css={S.SComment}>학원 승인 여부를 확인하고 재신청 해보세요!</div>
