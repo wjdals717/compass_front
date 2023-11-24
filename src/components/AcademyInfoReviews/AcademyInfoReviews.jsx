@@ -3,7 +3,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { instance } from '../../api/config/instance';
 import { useState } from 'react';
-import * as S from "../../pages/AcademyInfo/Style";
+import * as S from "./Style";
 import * as GS from "../../styles/Global/Common";
 import { AiFillStar} from 'react-icons/ai';
 import { BsFillPencilFill } from 'react-icons/bs';
@@ -121,6 +121,13 @@ function AcademyInfoReviews({academyId, userId, principal}) {
         }
     }
 
+    const horoscopeChange = (e) => {
+        setReviewWriteData({
+            ...reviewWriteData,
+            [e.target.name]: parseInt(e.target.value)
+        })
+    }
+
     useEffect(() => {
         getReviews.refetch();
         getReview.refetch();
@@ -128,42 +135,42 @@ function AcademyInfoReviews({academyId, userId, principal}) {
 
     return (
         <div css={S.SReviewContainer} id='review'>
-                        <h1 css={S.STitle}>수강후기</h1>
-                        <div css={S.SReviewScore}>
-                            <AiFillStar css={S.SStar}/> {reviewData?.reviewCount?.scoreAvg}
-                        </div>
-                        <ul css={S.SReviewListContainer}>
-                            {reviewData?.reviewList.map(data => {
-                                return (
-                                    <li css={S.SReviewList} key={reviewData.reviewId}>
-                                        <h1>{data.nickname}</h1>
-                                        <div><AiFillStar css={S.SStar}/> {data.score}</div>
-                                        <span>{data.reviewContent}</span>
-                                        {data.userId == userId && 
-                                            <div>
-                                                <button css={GS.SButton} onClick={() => {reviewModifyButton()}}>수정</button>
-                                                <button css={GS.SButton} onClick={() => {reviewDeleteButton()}}>삭제</button>
-                                            </div>
-                                        }
-                                    </li>
-                                )})}
-                        </ul>
-                        <div>
-                            <div css={S.SReviewInfo}>
-                                <div css={S.SReviewUserScoreContainer}>
-                                    <h1>{principal?.data?.data.nickname}</h1>
-                                    <div>
-                                        <AiFillStar css={S.SStar}/> 
-                                        <input type="text" name="score" id="score" placeholder='별점' 
-                                            onChange={reviewScoreChange} value={reviewWriteData?.score} />
-                                    </div>
+            <h1>수강후기</h1>
+            <div css={S.SReviewScore}>
+                <AiFillStar css={S.SStar}/> {reviewData?.reviewCount?.scoreAvg}
+            </div>
+            <ul css={S.SReviewListContainer}>
+                {reviewData?.reviewList.map(data => {
+                    return (
+                        <li css={S.SReviewList} key={reviewData.reviewId}>
+                            <h2>{data.nickname}</h2>
+                            <div><AiFillStar css={S.SStar}/> {data.score}</div>
+                            <span>{data.reviewContent}</span>
+                            {data.userId == userId && 
+                                <div>
+                                    <button css={GS.SButton} onClick={() => {reviewModifyButton()}}>수정</button>
+                                    <button css={GS.SButton} onClick={() => {reviewDeleteButton()}}>삭제</button>
                                 </div>
-                                <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
-                            </div>
-                            <textarea css={S.SReviewBox} name="reviewContent" id="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
-                                onChange={reviewContentChange} value={reviewWriteData?.reviewContent} />
+                            }
+                        </li>
+                    )})}
+            </ul>
+            <div>
+                <div css={S.SReviewInfo}>
+                    <div css={S.SReviewUserScoreContainer}>
+                        <h2>{principal?.data?.data.nickname}</h2>
+                        <div>
+                            <AiFillStar css={S.SStar}/> 
+                            <input type="text" name="score" id="score" placeholder='별점' 
+                                onChange={reviewScoreChange} value={reviewWriteData?.score} />
                         </div>
                     </div>
+                    <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
+                </div>
+                <textarea css={S.SReviewBox} name="reviewContent" id="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
+                    onChange={reviewContentChange} value={reviewWriteData?.reviewContent} />
+            </div>
+        </div>
     );
 }
 
