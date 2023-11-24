@@ -6,6 +6,16 @@ export const SProductContainer = css`
     align-items: center;
 `;
 
+export const SPaymentInformation = css`
+    
+    position: relative;
+    left: 20px;
+`;
+
+export const SPaymentDetailInfo = css`
+    margin: 5px 0px;
+`;
+
 export const SProductLayout = css`
     text-align: left;
     margin: 0px 10px 0px 10px;
