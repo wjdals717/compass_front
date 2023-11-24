@@ -34,12 +34,6 @@ function FindAcademies(props) {
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
     
-    // 랜덤 색상을 생성하는 함수
-    const getRandomColor = () => {
-        // 0부터 255 사이의 랜덤한 RGB 값 생성
-        const randomColor = `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
-        return randomColor;
-    };
 
     // 모달이 열릴 때 스크롤 막기
     const disableBodyScroll = () => {
