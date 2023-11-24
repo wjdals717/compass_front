@@ -8,8 +8,11 @@ import * as GS from "../../styles/Global/Common";
 import { AiFillStar} from 'react-icons/ai';
 import { BsFillPencilFill } from 'react-icons/bs';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function AcademyInfoReviews({academyId, userId, principal}) {
+    
+    const navigate = useNavigate();
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
     const [ modifyButtonState, setModifyButtonState ] = useState(false);
 
@@ -19,6 +22,7 @@ function AcademyInfoReviews({academyId, userId, principal}) {
         score: "",
         reviewContent: ""
     })
+
 
     //리뷰 가져오기
     const getReviews = useQuery(["getReviews", modifyButtonState], async () => {
@@ -55,28 +59,40 @@ function AcademyInfoReviews({academyId, userId, principal}) {
     });
 
     const reviewSubmitButton = async () => {
-        try{
-            if(modifyButtonState) {
-                if(window.confirm("작성한 후기를 수정하시겠습니까?")){
-                    setModifyButtonState(false);
-                    await instance.put(`/review`, reviewWriteData);              
+        try {
+            // 사용자가 로그인되어 있고 이메일이 확인된 경우 확인
+            if (principal.data && principal.data.data.enabled) {
+                const options = {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken")
+                    }
+                };
+                if(modifyButtonState) {
+                    if(window.confirm("작성한 후기를 수정하시겠습니까?")){
+                        setModifyButtonState(false);
+                        await instance.put(`/review`, reviewWriteData);              
+                    }
+                } else {
+                    if(window.confirm("후기를 등록하시겠습니까?")){
+                        await instance.post("/review", reviewWriteData);
+                    }
                 }
+                setReviewWriteData({
+                    ...reviewWriteData,
+                    score: "",
+                    reviewContent: ""
+                })
+                getReview.refetch();
+                return getReviews.refetch();
             } else {
-                if(window.confirm("후기를 등록하시겠습니까?")){
-                    await instance.post("/review", reviewWriteData);
-                }
+                alert("이메일 인증 후 이용해주세요.");
+                navigate("/account/mypage/user")
+                return;
             }
-            setReviewWriteData({
-                ...reviewWriteData,
-                score: "",
-                reviewContent: ""
-            })
-            getReview.refetch();
-            return getReviews.refetch();
-        } catch(error) {
+        } catch (error) {
             alert(error.response.data.message);
         }
-    }
+    };
 
     const reviewContentChange = (e) => {
         setReviewWriteData({
