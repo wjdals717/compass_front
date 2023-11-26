@@ -25,10 +25,12 @@ export const SPurchaseInfoBox = css`
 `;
 
 export const SPurchaseInfo = css`
-    width: 100%;
-    margin: 0px 30px;
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
     line-height: 30px;
     & span {
+        flex-grow: 1;
         font-size: 18px;
         font-weight: 500;
         padding-bottom: 10px;
@@ -39,7 +41,6 @@ export const SPurchaseInfo = css`
 `;
 
 export const SPaymentInformation = css`
-    
     position: relative;
     left: 20px;
 `;
@@ -50,15 +51,15 @@ export const SPaymentDetailInfo = css`
 
 export const SProductLayout = css`
     position: relative;
-    left: 10px;
-    text-align: left;
     margin: 20px 10px 0px 10px;
+    border: 1px solid #dbdbdb;
     border-radius: 10px;
-    box-shadow: 0px 0px 5px #444;
     padding: 20px;
+    text-align: left;
+    line-height: 20px;
     width: 235px;
-    height: 220px;
     background-color: white;
+    box-shadow: 0px 0px 5px #ccc;
     cursor: pointer;
 `;
 
@@ -68,13 +69,13 @@ export const SProductImgBox = css`
     align-items: center;
     position: relative;
     margin-bottom: 10px;
-    width: 200px;
-    height: 100px;
-    
+    border: 1px solid #dbdbdb;
+    border-radius: 10px;
+    padding: 10px 0;
+    background-color: #eee;
 `;
 
 export const SProductImg = css`
-    border-radius: 10px;
     width: 100px;
     height: auto;
     z-index: 0;
@@ -82,10 +83,9 @@ export const SProductImg = css`
 
 export const SProductImgText = css`
     position: absolute;
-    top: 50px;
-    left: 40px;
-    font-size: 30px;
-    font-weight: 1000;
+    top: 55px;
+    font-size: 25px;
+    font-weight: 700;
     z-index: 1;
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: white;

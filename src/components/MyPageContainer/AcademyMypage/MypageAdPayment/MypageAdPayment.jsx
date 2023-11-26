@@ -218,7 +218,8 @@ function MypageAdPayment(props) {
                         {ispurchase.isLoading ? <></> : !!isAcademyPaid
                         ? (
                         <div css={S.SPurchaseInfoBox}>
-                            <div css={S.SPurchaseInfo}><span>결제된 내용</span>
+                            <div css={S.SPurchaseInfo}>
+                                <span>결제된 내용</span>
                                 <div>상품 : {isAcademyPaid.productName}</div>
                                 <div>가격 : {isAcademyPaid.productPrice}원</div>
                                 <div>기간 : {isAcademyPaid.productPeriod}일</div>

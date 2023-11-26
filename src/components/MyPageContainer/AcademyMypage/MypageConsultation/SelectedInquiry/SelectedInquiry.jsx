@@ -74,7 +74,7 @@ function SelectedInquiry({ selectedInquiry, setSelectedInquiry, page, selectedAc
             <div css={S.SInquiryAnswerContainer}>
                 <div css={S.SInquiryAnswer}>
                     <span>답변</span>
-                    <textarea name="" id="" cols="80" rows="10" 
+                    <textarea name="" id="" cols="80" rows="10"
                         defaultValue={inquiry.answer}
                         onChange={handleAnswerOnChange}
                     />
