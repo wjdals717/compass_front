@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "../../Style"
+import * as GS from "../../../../styles/Global/Common"
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
@@ -113,8 +114,8 @@ function MypageConsultation(props) {
                         {!getInquiryList.isLoading && getInquiryList.data.data.inquiries.length === 0 ? 
                         <div css={S.SEmptyBox}>{selectedAcademy.label}에는 남겨진 문의가 없습니다...</div> : 
                         <>
-                            <table css={S.STable}>
-                                <thead>
+                            <table css={GS.STable}>
+                                <tbody>
                                     <tr>
                                         <td>No</td>
                                         <td>학원명</td>
@@ -122,8 +123,6 @@ function MypageConsultation(props) {
                                         <td>등록자</td>
                                         <td>답변</td>
                                     </tr>
-                                </thead>
-                                <tbody>
                                     { getInquiryList?.data?.data.inquiries.map(inquiry => {
                                         const answerDisplay = inquiry.answer ? 'O' : 'X';
                                         return  <tr key={inquiry.inquiryId} 

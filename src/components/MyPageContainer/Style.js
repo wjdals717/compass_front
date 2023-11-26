@@ -18,8 +18,8 @@ export const SInterestAcademyBox = css`
     & > div > div {
         border: 1px solid #dbdbdb;
         border-radius: 5px;
+        padding: 40px;
         background-color: #F8FBFD;
-        padding: 20px;
     }
 `;
 

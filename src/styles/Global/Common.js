@@ -39,3 +39,46 @@ export const SButton = css`
         color: white;
     }
 `
+
+export const STable = css`
+    width: 100%;
+
+    table {
+        margin: auto;
+        border-radius: 10px;
+        border-collapse: collapse;
+        overflow: hidden;
+    }
+    
+    tr:first-of-type {
+        border-top: none;
+        background: #428bca;
+        color: #fff;
+    }
+
+    tr {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f9fc;
+    }
+
+    tr:nth-of-type(odd):not(:first-of-type) {
+        background-color: #ebf3f9;
+    }
+
+    tr:hover:not(:first-of-type) {
+        background-color: #d8e7f3;
+    }
+    
+    td, th {
+        vertical-align: middle;
+        text-align: center;
+        height: 45px;
+    }
+
+    input {
+        outline: none;
+        border: none;
+        background-color: transparent;
+    }
+`;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "../../Style"
+import * as GS from "../../../../styles/Global/Common"
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -74,16 +75,14 @@ function MypageInquiry({ setUncheckedAnswerCount }) {
                 <EmptyBox comment={"정보가 궁금한 학원에 문의를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
                 <>
                     <div css={S.SComment}>학원을 클릭해서 작성한 문의와 답변을 확인해보세요! 확인 버튼을 누르면 알림이 사라집니다.</div>
-                    <table css={S.STable}>
-                        <thead>
+                    <table css={GS.STable}>
+                        <tbody>
                             <tr>
                                 <td>No</td>
                                 <td>학원명</td>
                                 <td>문의사항</td>
                                 <td>답변</td>
                             </tr>
-                        </thead>
-                        <tbody>
                             {!getUserInquiryList.isLoading && Array.isArray(getUserInquiryList?.data?.data.inquiries) && getUserInquiryList?.data?.data.inquiries.map(inquiry => {
                                 const answerDisplay = inquiry.answer ? 'O' : 'X';
                                 return  <tr key={inquiry.inquiryId} 
