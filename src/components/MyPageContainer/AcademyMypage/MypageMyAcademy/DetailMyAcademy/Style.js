@@ -122,33 +122,6 @@ export const STitleBox = css`
     padding-bottom: 10px;
 `;
 
-export const STable = css`
-    width: 100%;
-    background-color: white;
-
-    thead {
-        background-color: #dbdbdb;
-    }
-
-    th, tr, td {
-        line-height: 40px;
-        height: 40px;
-        border: 1px solid #ccc;
-        vertical-align: middle;
-        text-align: center;
-        overflow: auto;
-        cursor: default;
-    }
-
-    input {
-        outline: none;
-        border: none;
-        padding: 0 10px 0;
-        width: 100%;
-        overflow-wrap: break-word;
-    }
-`;
-
 export const SEmpty = css`
     display: flex;
     justify-content: center;

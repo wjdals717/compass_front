@@ -64,15 +64,13 @@ function MypageMyAcademy(props) {
                     link={'/academy/regist'} btn={"등록하기"}/> :
                 <>
                     <div css={S.SComment}>나의 <span>학원 정보를 수정</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
-                    <table css={S.STable}>
-                        <thead>
+                    <table css={GS.STable}>
+                        <tbody>
                             <tr>
                                 <td>학원 번호</td>
                                 <td>학원명</td>
                                 <td>학원 선택</td>
                             </tr>
-                        </thead>
-                        <tbody>
                             { getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>

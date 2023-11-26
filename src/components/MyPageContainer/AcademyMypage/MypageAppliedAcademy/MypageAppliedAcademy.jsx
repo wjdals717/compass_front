@@ -64,16 +64,14 @@ function MypageAppliedAcademy(props) {
                     link={'/academy/regist'} btn={"등록하기"}/> : 
                 <>
                     <div css={S.SComment}>학원 승인 여부를 확인하고 재신청 해보세요!</div>
-                    <table css={S.STable}>
-                        <thead>
+                    <table css={GS.STable}>
+                        <tbody>
                             <tr>
                                 <td>학원 번호</td>
                                 <td>학원명</td>
                                 <td>승인 여부</td>
                                 <td>학원 선택</td>
                             </tr>
-                        </thead>
-                        <tbody>
                             {getAppliedAcademies?.data?.data.academyRegistrations.map(academy => {
                                 return  <tr key={academy.academyRegistrationId} 
                                             style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>

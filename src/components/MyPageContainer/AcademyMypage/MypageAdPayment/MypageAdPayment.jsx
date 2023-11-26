@@ -188,16 +188,14 @@ function MypageAdPayment(props) {
                 <EmptyBox comment={<>광고 결제할 학원이 없습니다! <br />학원을 등록하고 승인 받아 나의 학원을 홍보해보세요!</>}
                     link={'/academy/regist'} btn={"등록하기"}/> :
                 <>
-                    <div css={S.SComment}><span>광고 결제</span> 하고 나의 학원 <span>진행시켜!!!</span></div>
-                    <table css={S.STable}>
-                        <thead>
+                    <div css={S.SComment}><span>광고 결제</span> 하고 <span>나의 학원을 홍보</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
+                    <table css={GS.STable}>
+                        <tbody>
                             <tr>
                                 <td>학원 번호</td>
                                 <td>학원명</td>
                                 <td>학원 선택</td>
                             </tr>
-                        </thead>
-                        <tbody>
                         { getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                             return  <tr key={academy.academyRegistrationId} 
                                         style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
@@ -220,7 +218,8 @@ function MypageAdPayment(props) {
                         {ispurchase.isLoading ? <></> : !!isAcademyPaid
                         ? (
                         <div css={S.SPurchaseInfoBox}>
-                            <div css={S.SPurchaseInfo}><span>결제된 내용</span>
+                            <div css={S.SPurchaseInfo}>
+                                <span>결제된 내용</span>
                                 <div>상품 : {isAcademyPaid.productName}</div>
                                 <div>가격 : {isAcademyPaid.productPrice}원</div>
                                 <div>기간 : {isAcademyPaid.productPeriod}일</div>

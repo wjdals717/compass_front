@@ -92,6 +92,7 @@ export const SInquiryAnswer = css`
         font-size: 16px;
         background-color: #eee;
         overflow-wrap: break-word;
+        resize: none;
     }
 `;
 

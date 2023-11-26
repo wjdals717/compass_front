@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
+import * as GS from "../../../../styles/Global/Common"
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { AiFillStar } from 'react-icons/ai';
@@ -124,16 +125,14 @@ function MypageReview(props) {
             {getUserReviews.data.data.length === 0 ? 
                 <EmptyBox comment={"다녀본 학원에 후기를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
                 <>
-                <table css={S.STable}>
-                    <thead>
+                <table css={GS.STable}>
+                    <tbody>
                         <tr>
                             <td>학원명</td>
                             <td>별점</td>
                             <td>후기</td>
                             <td>선택</td>
                         </tr>
-                    </thead>
-                    <tbody>
                         {reviewData?.map(data => {
                             return (
                                 <tr>
