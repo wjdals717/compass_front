@@ -127,7 +127,7 @@ function MypageConsultation(props) {
                                         const answerDisplay = inquiry.answer ? 'O' : 'X';
                                         return  <tr key={inquiry.inquiryId} 
                                                     onClick={() => handleInquiryOnClick(inquiry)} 
-                                                    style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal' }}>
+                                                    style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal', cursor: 'pointer'}}>
                                                     <td>{inquiry.inquiryId}</td>
                                                     <td>{inquiry.acaNm}</td>
                                                     <td>{inquiry.inquiryTitle}</td>
