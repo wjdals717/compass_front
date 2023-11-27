@@ -1,9 +1,18 @@
 import { css } from '@emotion/react';
 
+export const SPageLayout = css`
+    background-color: #f6f6f6;
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+`;
+
 export const SLayout = css`
     position: relative;
-    margin: 0px auto;
+    margin: 40px auto;
     width: 1000px;
+    background-color: white;
+    box-shadow: 0px 0px 10px 0px #dbdbdb;
 
     & h1{
         margin-bottom: 30px;
@@ -15,13 +24,18 @@ export const SLayout = css`
 export const SHead = css`
     display: flex;
     flex-direction: column;
-    margin: 30px 0px 20px;
+    margin: 20px 0;
     background-color: white;
     z-index: 100;
 `;
 
 export const SBody = css`
-    padding: 0 70px;
+    padding: 0 80px;
+    & > div {
+        margin-top: 30px;
+        border-top: 1px solid #dbdbdb;
+        padding: 30px;
+    }
 `;
 
 export const SAcademyInfoContainer = css`
@@ -35,7 +49,7 @@ export const SAcademyInfoContainer = css`
 
 export const SAcademtLogo = css`
     margin-right: 10px;
-    border: 1px solid #888;
+    border: 1px solid #bbb;
     border-radius: 50%;
     width: 150px;
     height: 150px;
@@ -45,7 +59,6 @@ export const SAcademtLogo = css`
         display: flex;
         justify-content: center;
         align-items: center;
-
     }
     
     & span {
@@ -66,6 +79,10 @@ export const SAcademyInfo = css`
     justify-content: center;
     flex-grow: 1;
     height: 150px;
+    & > div:not(:first-of-type) {
+        margin-bottom: 10px;
+        color: #777;
+    }
 `;
 
 export const SAcademyName = css`
@@ -154,17 +171,22 @@ export const SIntroductions = css`
     justify-content: center;
     align-items: center;
     width: 100%;
+    & svg {
+        margin-right: 5px;
+    }
 `;
 
 export const SIntroduction = css`
     display: flex;
-    width: 50%;
     align-items: center;
     margin-bottom:10px;
     font-size: 18px;
     line-height: 24px;
     
     & > div {
+        display: flex;
+        justify-content: left;
+        align-items: center;
         width: 150px;
     }
 
@@ -181,10 +203,10 @@ export const SConvenienceContainer = css`
     div {
         display: grid;
         justify-content: center;
-        grid-template-columns: 200px 200px;
+        grid-template-columns: 180px 180px 180px;
     }
 
-    span {
+    div > span {
         font-size: 18px;
         line-height: 1.8em;
     }
@@ -193,5 +215,9 @@ export const SConvenienceContainer = css`
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    & svg {
+        color: #428bca;
     }
 `;

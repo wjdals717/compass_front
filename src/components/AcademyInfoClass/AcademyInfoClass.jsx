@@ -20,7 +20,7 @@ function AcademyInfoClass({academyData}) {
                             academyData?.classInfo?.map((data) => {
                                 return (<tr>
                                     <td>{data?.className}</td>
-                                    <td>{data?.classPrice}</td>
+                                    <td>{data?.classPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원</td>
                                 </tr>)
                             }) 
                             :  <tr><td colSpan='2'>학원 수업 정보를 제공하지 않습니다.</td></tr>

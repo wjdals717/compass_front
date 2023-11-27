@@ -23,10 +23,12 @@ export const SReviewListContainer = css`
 
 export const SReviewList = css`
     display: flex;
+    align-items: center;
     border: 1px solid #dbdbdb;
     padding: 10px;
+    background-color: #f7f7f7;
 
-    & > h1 {
+    & > h2 {
         margin-right: 20px;
     }
 
@@ -50,10 +52,14 @@ export const SReviewInfo = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
     margin-bottom: 10px;
     width: 100%;
 
     & > button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border: 1px solid #92C2F4;
         border-radius: 5px;
         width: 200px;
@@ -62,6 +68,9 @@ export const SReviewInfo = css`
         background-color: #92C2F4;
         color: white;
         cursor: pointer;
+        & svg {
+            margin-right: 5px;
+        }
     }
 `;
 
@@ -88,35 +97,4 @@ export const SReviewUserScoreContainer = css`
 
 export const SStar = css`
     color: yellow;
-`;
-
-export const SPageNumbers = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    width: 100%;
-
-    & button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-right: 10px;
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        background-color: white;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-
-        :disabled {
-            background-color: white;
-            border: none;
-            cursor: default;
-        }
-
-        &.selected {
-            background-color: #92c2f4;
-        }
-    }
 `;

@@ -103,7 +103,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     }
 
     return (
-        <RootContainer>
+        <div css={S.SPageLayout}>
             <div css={S.SLayout}>
                 <div css={S.SHead}>
                     <div css={S.SAcademyInfoContainer}>
@@ -186,7 +186,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                             {!!academyData?.academyInfo?.homePage &&
                                 <div css={S.SIntroduction}>
                                     <div><IoHomeSharp/><span>홈페이지</span></div>
-                                    <span>{academyData?.academyInfo?.homePage}</span>
+                                    <span><a href={academyData?.academyInfo?.homePage}>{academyData?.academyInfo?.homePage}</a></span>
                                 </div>
                             }
                             <div css={S.SIntroduction}>
@@ -194,7 +194,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                 <span>{academyData?.academy.FA_RDNMA + academyData?.academy.FA_RDNDA}</span>
                             </div>
                         </div>
-                        
                     </div>
                     <div css={S.SConvenienceContainer} id='convenience'>
                         <h1>시설 및 편의 사항</h1>
@@ -212,7 +211,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                 </div>
             </div>
             {roleId === 0 ? null : <AcademyInfoSidebar academyId={academyId} />}
-        </RootContainer>
+        </div>
     );
 }
 

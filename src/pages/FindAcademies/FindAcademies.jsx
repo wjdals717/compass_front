@@ -145,8 +145,6 @@ function FindAcademies(props) {
         disableBodyScroll();
     };
 
-    console.log(academyList);
-
     return (
         <RootContainer>
             <div css={S.SearchLayout}>

@@ -4,11 +4,11 @@ import { css } from '@emotion/react';
 export const SContainer = css`
     display: flex;
     flex-direction: column;
-    margin: 40px 20px 20px;
+    margin-top: 20px;
     border: none;
     border-radius: 50px;
-    padding: 30px 40px;
-    width: 740px;
+    padding: 30px;
+    
     box-shadow: 4px 4px 10px 4px #dbdbdb;
     background-color: white;
 `;
@@ -16,7 +16,8 @@ export const SContainer = css`
 export const SNameContainer= css`
     display: flex;
     justify-content: space-between;
-    margin: 10px 0 0;
+    align-items: center;
+    margin: 10px;
 
     & > p {
         font-size: 13px;
@@ -87,6 +88,20 @@ export const SImgBox = css`
         width: 80px;
         height: 80px;
         overflow: hidden;
+    }
+    & input {
+        width: 180px;
+        height: 30px;
+    }
+    & input::-webkit-file-upload-button {
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        padding: 3px 5px;
+        background-color: #CDDCE5;
+        cursor: pointer;
+        :active {
+            background-color: #BED3DF;
+        }
     }
 `;
 
