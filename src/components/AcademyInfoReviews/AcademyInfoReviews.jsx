@@ -10,7 +10,6 @@ import { BsFillPencilFill } from 'react-icons/bs';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '../Pagination/Pagination';
-import StarRating from '../StarRating/StarRating';
 import { Rating } from '@micahlt/react-simple-star-rating';
 
 function AcademyInfoReviews({ academyId, page }) {

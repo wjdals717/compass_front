@@ -135,8 +135,6 @@ function MypageReview(props) {
                             <td>후기</td>
                             <td>선택</td>
                         </tr>
-                    </thead>
-                    <tbody>
                         {!getUserReviews.isLoading && (!reviewData?.reviewList || reviewData.reviewList.length === 0) &&
                             <tr>
                                 <td colSpan={4}>후기가 존재하지 않습니다! 학원 페이지에서 후기를 작성해보세요!</td>
