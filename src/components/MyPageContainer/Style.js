@@ -73,7 +73,6 @@ export const SOptionBox = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 760px;
     margin-bottom: 10px;
     
 `;
