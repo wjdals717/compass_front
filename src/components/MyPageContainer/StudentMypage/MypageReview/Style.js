@@ -19,10 +19,17 @@ export const SAcademyInfoBox = css`
     align-items: center;
     
     & span {
-        font-weight: 600;
+        display: flex;
+        margin-left: 10px;
+        color: gray;
     }
 
     & div:nth-child(1) {
+        display: flex;
+        align-items: center;
+    }
+
+    & div:nth-child(1) > div:nth-child(1) {
         border: 1px solid #dbdbdb;
         border-radius: 50px;
         padding: 10px;
