@@ -5,7 +5,7 @@ export const SPageNumbers = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin: 20px 0;
     width: 100%;
 
     & button {

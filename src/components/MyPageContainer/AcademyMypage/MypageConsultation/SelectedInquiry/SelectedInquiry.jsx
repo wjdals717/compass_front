@@ -67,7 +67,7 @@ function SelectedInquiry({ selectedInquiry, setSelectedInquiry, page, selectedAc
                 </div>
                 <div css={S.SInfoContainer}>
                     <span>내용</span>
-                    <div>{selectedInquiry.inquiryContent}</div>
+                    <div css={S.SInquiry}>{selectedInquiry.inquiryContent}</div>
                 </div>
             </div>
             <div css={S.SLine}></div>

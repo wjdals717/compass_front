@@ -41,7 +41,7 @@ export const SCategoryListItem = css`
 `;
 
 export const SCategoryListItemSelected = css`
-    background-color: #92C2F4;
+    background-color: #5FA8D3;
     color: white;
     font-weight: bold;
 `;
@@ -51,6 +51,7 @@ export const SCategoryDetailList = (isDetailOptionShow) => css`
     ${isDetailOptionShow ? "" : "display: none"};
     overflow-y: auto; /* 세로 스크롤이 필요한 경우만 스크롤을 보여줌 */
     max-height: 700px;
+    width: 100%;
     cursor: pointer;
 `;
 
@@ -61,7 +62,8 @@ export const SCategoryDetailListItem = css`
 `;
 
 export const SCategoryDetailListItemSelected = css`
-    background-color: #92C2F4;
+    margin-right: 10px;
+    background-color: #5FA8D3;
     color: white;
 `;
 

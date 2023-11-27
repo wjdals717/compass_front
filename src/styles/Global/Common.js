@@ -25,19 +25,19 @@ export const Common = css`
 export const SButton = css`
     padding: 5px 8px;  
     font-size: 12px;
-    background-color: #7fb1bf;
+    background-color: #5FA8D3;
     border-radius: 10px;
     position: relative;
     border: 0;
     display: inline-block;
     text-align: center;
     color: white;
-    box-shadow: 0px 4px #74a3b0;
+    box-shadow: 0px 4px #477E9E;
     cursor: pointer;
     :active {
         top: 4px; 
-        box-shadow: 0 0 #74a3b0; 
-        background-color: #709CA8;
+        box-shadow: 0 0 #477E9E; 
+        background-color: #5FA8D3;
     }
 `
 

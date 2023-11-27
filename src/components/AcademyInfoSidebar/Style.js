@@ -28,8 +28,6 @@ export const SLikeButton =  css`
     padding: 0px;
     width: 60px;
     font-size: 13px;
-    
-    background-color: #fff;
     cursor: pointer;
 `;
 
@@ -52,7 +50,6 @@ export const SinquiryButton = (isAcademyRegistered) => css`
     text-decoration: none;
     color: black;
     font-size: 13px;
-    background-color: white;
     cursor: pointer;
 `;
 

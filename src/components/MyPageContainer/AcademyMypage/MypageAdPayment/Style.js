@@ -16,7 +16,7 @@ export const SProductContainer = css`
 
 // 결제정보
 export const SPurchaseInfoBox = css`
-    margin: 20px 20px 0px 20px;
+    margin: 0 20px;
     padding: 20px 10px;
     width: 100%;
     border-radius: 10px;
@@ -51,7 +51,7 @@ export const SPaymentDetailInfo = css`
 
 export const SProductLayout = css`
     position: relative;
-    margin: 20px 10px 0px 10px;
+    margin: 0 10px;
     border: 1px solid #dbdbdb;
     border-radius: 10px;
     padding: 20px;
