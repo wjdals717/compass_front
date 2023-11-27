@@ -22,6 +22,7 @@ export const SAcademyInfoBox = css`
         display: flex;
         margin-left: 10px;
         color: gray;
+        cursor: pointer;
     }
 
     & div:nth-child(1) {
