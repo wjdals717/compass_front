@@ -11,14 +11,12 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
 
     if(token) {
         const accessToken = "Bearer " + token;
-
-        // 토큰이 만료 되었을 경우
-
         const decodedToken = decodeToken(token); // 토큰 디코딩 함수를 사용하여 토큰 디코딩
         const expirationTime = decodedToken.exp * 1000 // 만료 시간 (밀리초 단위)
         
         if(Date.now() > expirationTime) {
             localStorage.removeItem("accessToken");
+            window.alert("토큰이 만료되었습니다. 다시 로그인 해주세요.");
         } else {
             localStorage.setItem("accessToken", accessToken);
         }

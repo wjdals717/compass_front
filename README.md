@@ -1,70 +1,105 @@
-# Getting Started with Create React App
+## **📜 목차**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🏆 [프로젝트 소개](#-프로젝트-소개)
 
-## Available Scripts
+👨‍💻 [참여자](#-참여자)
 
-In the project directory, you can run:
+🛠 [개발 도구](#-개발-도구)
 
-### `npm start`
+⏰ [프로젝트 일정](#-프로젝트-일정)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+🔗 [API명세서와 ERD설계도](#-api명세서와-erd설계도)
+  
+📝 [메뉴구조도](#-메뉴-구조도)
+  
+🖥 [화면 구현 및 코드 리뷰](#-화면-구현-및-코드-리뷰)
+  - 회원가입 및 로그인
+  - 홈 / 학원찾기
+  - 학원등록
+  - 학원 상세페이지
+  - 마이페이지
+    - 학생
+    - 학원관리자
+    - 웹마스터
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+✏ [느낀점](#-느낀점)
 
-### `npm test`
+<br/>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## **🏆 프로젝트 소개**
 
-### `npm run build`
+- 프로젝트 제목
+  - 학습 나침반 : 학원 정보 제공 웹 사이트
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- 프로젝트 목적
+  - 학원을 알아보는 사람들이 지역, 과목, 수준 등 다양한 요건을 기반으로 학원을 검색하여 정보를 찾을 수 있도록 하는 플랫폼을 제공
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- 제작 기간
+  - 2023.10.25 ~ 2023.11.29
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 주요 기능
+  - 회원가입 및 로그인
+  - 다양한 검색 옵션 제공
+  - 학원 상세 정보 제공
+  - 관심학원 등록
+  - 학원 등록 및 정보수정 기능
+  - 광고 기능
+  - 리뷰 작성, 수정, 삭제
+  - 문의 작성 및 답변
 
-### `npm run eject`
+<br/>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## **👨‍💻 참여자**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<br/>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+> **팀장: 변정민** 
+- 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+<br/>
 
-## Learn More
+> **팀원: 정가영** 
+- 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<br/>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+> **팀원: 김채원** 
+- DB 설계
+- 홈 / 학원찾기 페이지 찾기 기능 구현
+- 학생/ 학원관리자 문의 구현
 
-### Code Splitting
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+> **팀원: 이지우** 
+- 
 
-### Analyzing the Bundle Size
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## **🛠 개발 도구**
+  
+<br/>
 
-### Making a Progressive Web App
+## **⏰ 프로젝트 일정**
+  
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## **🔗 API명세서와 ERD설계도**
 
-### Advanced Configuration
+### API명세서
+  
+### ERD설계도
+![compass_ERD](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/2d62ac2b-9f1e-42cd-8636-f83c95ecc356)
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## **📝 메뉴 구조도**
+  
+<br/>
 
-### Deployment
+## **🖥 화면 구현 및 코드 리뷰**
+  
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## **✏ 느낀점**
+  
+<br/>
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
