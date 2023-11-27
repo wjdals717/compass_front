@@ -13,14 +13,14 @@
 📝 [메뉴구조도](#-메뉴-구조도)
   
 🖥 [화면 구현 및 코드 리뷰](#-화면-구현-및-코드-리뷰)
-  - 회원가입 및 로그인
-  - 홈 / 학원찾기
-  - 학원등록
-  - 학원 상세페이지
-  - 마이페이지
-    - 학생
-    - 학원관리자
-    - 웹마스터
+  - [회원가입 및 로그인](#회원가입-및-로그인)
+  - [홈 / 학원찾기](#홈--학원찾기)
+  - [학원 등록](#학원-등록)
+  - [학원 상세페이지](#학원-상세페이지)
+  - [마이페이지](#마이페이지)
+    - [학생](#학생)
+    - [학원관리자](#학원관리자)
+    - [웹마스터](#웹마스터)
 
 ✏ [느낀점](#-느낀점)
 
@@ -86,7 +86,7 @@
 
 ### BackEnd
 
-<img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
 
 ### 형상 관리
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
@@ -94,26 +94,116 @@
 <br/>
 
 ## **⏰ 프로젝트 일정**
-  
+![프로젝트_일정](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/ec7e9d78-4394-4041-8e00-5279012a3ff0)
 <br/>
 
 ## **🔗 API명세서와 ERD설계도**
 
 ### API명세서
-  
+https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce9f63ecf2b
 ### ERD설계도
-
+![compass_ERD](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/21049342-b7a5-442f-bb81-29f020218ae5)
 <br/>
 
 ## **📝 메뉴 구조도**
-  
+![메뉴구조도 drawio](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/0cf6550d-9b1d-4dfc-bf4a-00d20212c1cc)
 <br/>
 
 ## **🖥 화면 구현 및 코드 리뷰**
+
+
+### **회원가입 및 로그인**
+<details>
+<summary>로그인 유효성 검사 및 예외 처리 영상 그 외 토큰 부여 및 권한 코드 리뷰</summary>
+<div markdown="1">
+  회원가입 및 로그인
+</div>
+</details>
+
+<br/>
+
+### **홈 / 학원찾기**
+<details>
+<summary>찾기 코드 리뷰</summary>
+<div markdown="1">
+  홈
+
   
+  학원찾기
+</div>
+</details>
+
+<br/>
+
+### **학원 등록**
+<details>
+<summary>학원 등록 코드 리뷰</summary>
+<div markdown="1">
+  학원 등록
+</div>
+</details>
+
+<br/>
+
+### **학원 상세페이지**
+<details>
+<summary>학원 상세페이지 코드 리뷰</summary>
+<div markdown="1">
+  학원 상세페이지
+</div>
+</details>
+
+<br/>
+
+### **마이페이지**
+
+
+#### **학생**
+<details>
+<summary>학생 마이페이지 페이지 코드 리뷰</summary>
+<div markdown="1">
+  학생 마이페이지
+</div>
+</details>
+
+
+#### **학원관리자**
+<details>
+<summary>학원관리자 마이페이지 페이지 코드 리뷰</summary>
+<div markdown="1">
+  학원관리자 마이페이지
+</div>
+</details>
+
+
+#### **웹마스터**
+<details>
+<summary>웹마스터 마이페이지 페이지 코드 리뷰</summary>
+<div markdown="1">
+  웹마스터 마이페이지
+</div>
+</details>
+
 <br/>
 
 ## **✏ 느낀점**
-  
+> **팀장: 변정민** 
+- 
+
+<br/>
+
+> **팀원: 정가영** 
+- 
+
+<br/>
+
+> **팀원: 김채원** 
+-
+
+<br/>
+
+> **팀원: 이지우** 
+-
+
 <br/>
 

@@ -58,6 +58,7 @@ export const SProductLayout = css`
     text-align: left;
     line-height: 20px;
     width: 235px;
+    height: 275px;
     background-color: white;
     box-shadow: 0px 0px 5px #ccc;
     cursor: pointer;

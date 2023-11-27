@@ -4,11 +4,9 @@ import { css } from '@emotion/react';
 export const SContainer = css`
     display: flex;
     flex-direction: column;
-    margin: 40px 20px 20px;
     border: none;
     border-radius: 50px;
     padding: 30px 40px;
-    width: 740px;
     box-shadow: 4px 4px 10px 4px #dbdbdb;
     background-color: white;
 `;
@@ -78,6 +76,7 @@ export const SButtonBox = css`
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
 
     & button {
         display: flex;
