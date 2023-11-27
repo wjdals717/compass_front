@@ -123,8 +123,6 @@ function MypageReview(props) {
         return <></>;
     }
 
-    console.log(selectedReview);
-    
     return (
         <div>
             <h2>📜 작성한 후기</h2>

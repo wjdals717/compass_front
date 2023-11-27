@@ -54,8 +54,6 @@ function AcademyInfoReviews({ academyId, page }) {
         }
     });
 
-    console.log(reviewData);
-
     const getReview = useQuery(["getReview", modifyButtonState], async () => {
         try {
             return await instance.get(`/review/${academyId}/${userId}`);
@@ -168,12 +166,9 @@ function AcademyInfoReviews({ academyId, page }) {
                 inline: 'nearest',
             });
             sessionStorage.setItem('scrollPosition', targetScrollPosition); // 스크롤 위치를 세션 스토리지에 저장
-            console.log('Scrolled into view');
         }
         setInitialRender(false);    // 첫 렌더링 이후에는 초기 렌더링 상태를 false로 설정
     }, [page, reviewSectionRef]);
-
-    console.log(reviewWriteData);
 
     return (
         <div css={S.SReviewContainer} id='review' ref={reviewSectionRef}>

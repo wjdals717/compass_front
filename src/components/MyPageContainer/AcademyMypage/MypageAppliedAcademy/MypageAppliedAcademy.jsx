@@ -53,8 +53,6 @@ function MypageAppliedAcademy(props) {
         return <></>;
     }
 
-    console.log(getAppliedAcademies)
-
     return (
         <div>
             <h2>🗒️ 학원 신청 목록</h2>

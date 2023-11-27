@@ -86,8 +86,6 @@ function MypageConsultation(props) {
         return <></>;
     }
 
-    console.log(getInquiryList)
-
     return (
         <div>
             <h2>📩 나의 학원 문의</h2>
