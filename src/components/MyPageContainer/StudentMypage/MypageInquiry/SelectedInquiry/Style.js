@@ -8,7 +8,7 @@ export const SContainer = css`
     border-radius: 50px;
     padding: 30px 40px;
     width: 740px;
-    box-shadow: 4px 4px 10px 4px #dbdbdb;
+    box-shadow: 4px 4px 10px 0px #dbdbdb;
     background-color: white;
 `;
 
@@ -51,4 +51,23 @@ export const SInfoContainer = css`
 
 export const SInquiryAnswer = css`
 
+`;
+
+export const SButtonContainer = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & button {
+        border: none;
+        border-radius: 20px;
+        padding: 5px 0;
+        width: 300px;
+        background-color: #5FA8D3;
+        font-size: 18px;
+        color: white;
+        cursor: pointer;
+        :active {
+            background-color: #477E9E;
+        }
+    }
 `;

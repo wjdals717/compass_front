@@ -215,13 +215,9 @@ function DetailMyAcademy({ type, selectedAcademy }) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-
-            if(academyDetailInfo?.academyInfo?.academyInfoId === null) {   // academyInfoTb에 저장되지 않은 경우 insert 해줘야 함.
-                await instance.post(`/academyInfo/${selectedAcademy.academyId}`, newAcademyDetailInfo, option);
-            } else {
-                if(JSON.stringify(newAcademyDetailInfo) !== JSON.stringify(academyDetailInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
-                    await instance.put("/academy", newAcademyDetailInfo, option);
-                }
+            
+            if(JSON.stringify(newAcademyDetailInfo) !== JSON.stringify(academyDetailInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
+                await instance.put("/academy", newAcademyDetailInfo, option);
             }
             alert("수정이 완료되었습니다.");
             getAcademy.refetch();
@@ -356,16 +352,14 @@ function DetailMyAcademy({ type, selectedAcademy }) {
                             <button onClick={addRow} css={GS.SButton}>추가</button>
                         </div>
                         {tableData.length < 1 ? <div css={S.SEmpty}>수업 정보가 없습니다. 추가 버튼을 눌러 수업 정보를 추가해보세요!</div> : 
-                        <table css={S.STable}>
-                            <thead>
+                        <table css={GS.STable}>
+                            <tbody>
                                 <tr>
                                     <th>번호</th>
                                     <th>과정명</th>
                                     <th>가격</th>
                                     <th>과정 삭제</th>
                                 </tr>
-                            </thead>
-                            <tbody>
                             {tableData.map((row) => (
                                 <tr key={row.id}>
                                     <td>{row.id}</td>

@@ -8,7 +8,7 @@ const SLoading = css`
     justify-content: center;
     align-items: center;
     width: 780px;
-    height: 780px;
+    height: 500px;
 `;
 
 function Loading(props) {

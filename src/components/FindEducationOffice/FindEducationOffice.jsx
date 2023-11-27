@@ -125,7 +125,7 @@ function FindEducationOffice({ educationOfficeCode }) {
                 </li>
                 {!getAcademies.isLoading && academyData?.list?.map((academy) => {
                     return (
-                        <li key={academy.ACA_ASNUM} css={S.SList}>
+                        <li key={academy.ACADEMY_ID} css={S.SList}>
                             <div>{academy.ACA_ASNUM}</div>
                             <div>{academy.ADMST_ZONE_NM}</div>
                             <div>{academy.ACA_NM}</div>

@@ -47,6 +47,12 @@ function RegistAcademy(props) {
             navigate("/auth/signin")
             return;
         }
+        
+        if(principal.data.data.roleId === 0) {
+            alert("관리자는 학원등록을 할 수 없습니다.")
+            navigate(-1)
+            return;
+        }
 
         if(!principal.data.data.enabled) {
             alert("이메일 인증 후 이용해주세요.")
@@ -88,16 +94,6 @@ function RegistAcademy(props) {
 
     const handleEducationOptionChange = (option) => {
         setSelectedEducationOffice(option.value);
-    }
-
-    const [ isModalOpen, setIsModalOpen ] = useState(false);
-
-    const openModal = () => {
-        setIsModalOpen(true);
-    }
-
-    const closeModal = () => {
-        setIsModalOpen(false);
     }
     
     const handlesubmissionClick = async () => {

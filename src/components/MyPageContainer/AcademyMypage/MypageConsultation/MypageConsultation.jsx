@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "../../Style"
+import * as GS from "../../../../styles/Global/Common"
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import Select from 'react-select';
 import SelectedInquiry from './SelectedInquiry/SelectedInquiry';
 import Pagination from '../../../Pagination/Pagination';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageConsultation(props) {
     const navigate = useNavigate();
@@ -80,64 +82,77 @@ function MypageConsultation(props) {
         setUnansweredOnly(event.target.checked ? 1 : 0);
     };
 
+    if(getMyAcademyAll.isLoading || getInquiryList.isLoading) {
+        return <></>;
+    }
+
+    console.log(getInquiryList)
+
     return (
         <div>
             <h2>📞 나의 학원 문의</h2>
             <div>
-                <div css={S.SOptionBox}>
-                    <Select options={academyList} 
-                        css={S.SSelect}
-                        defaultValue={selectedAcademy}
-                        onChange={handleAcademyChange} 
-                    />
-                    <div>
-                        <input 
-                            type="checkbox" 
-                            id='unansweredOnly' 
-                            onChange={handleUnansweredOnlyChange} 
+                {getMyAcademyAll.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={"나의 학원이 없습니다."} link={'/academy/regist'} btn={"등록하기"}/> : 
+                <>
+                    <div css={S.SOptionBox}>
+                        <Select options={academyList} 
+                            css={S.SSelect}
+                            defaultValue={selectedAcademy}
+                            onChange={handleAcademyChange} 
                         />
-                        <label htmlFor="unansweredOnly">미답변 문의</label>
+                        <div>
+                            <input 
+                                type="checkbox" 
+                                id='unansweredOnly' 
+                                onChange={handleUnansweredOnlyChange} 
+                            />
+                            <label htmlFor="unansweredOnly">미답변 문의</label>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <table css={S.STable}>
-                        <thead>
-                            <tr>
-                                <td>No</td>
-                                <td>학원명</td>
-                                <td>문의사항</td>
-                                <td>등록자</td>
-                                <td>답변</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {!getInquiryList.isLoading && Array.isArray(getInquiryList?.data?.data.inquiries) && getInquiryList?.data?.data.inquiries.map(inquiry => {
-                                    const answerDisplay = inquiry.answer ? 'O' : 'X';
-                                    return  <tr key={inquiry.inquiryId} 
-                                                onClick={() => handleInquiryOnClick(inquiry)} 
-                                                style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal' }}>
-                                                <td>{inquiry.inquiryId}</td>
-                                                <td>{inquiry.acaNm}</td>
-                                                <td>{inquiry.inquiryTitle}</td>
-                                                <td>{inquiry.nickname}</td>
-                                                <td>{answerDisplay}</td>
-                                            </tr>
-                            })}
-                        </tbody>
-                    </table>
-                    {!getInquiryList.isLoading &&
-                        <Pagination totalCount={getInquiryList.data.data.totalCount}
-                            link={`/account/mypage/consultation`}/>}
-                    {!!selectedInquiry && 
-                        <SelectedInquiry
-                            key={selectedInquiry.inquiryId}
-                            selectedInquiry={selectedInquiry}
-                            setSelectedInquiry={setSelectedInquiry}
-                            page={page} 
-                            selectedAcademy={selectedAcademy}
-                        />
-                    }
-                </div>
+                    <div>
+                        {!getInquiryList.isLoading && getInquiryList.data.data.inquiries.length === 0 ? 
+                        <div css={S.SEmptyBox}>{selectedAcademy.label}에는 남겨진 문의가 없습니다...</div> : 
+                        <>
+                            <table css={GS.STable}>
+                                <tbody>
+                                    <tr>
+                                        <td>No</td>
+                                        <td>학원명</td>
+                                        <td>문의사항</td>
+                                        <td>등록자</td>
+                                        <td>답변</td>
+                                    </tr>
+                                    { getInquiryList?.data?.data.inquiries.map(inquiry => {
+                                        const answerDisplay = inquiry.answer ? 'O' : 'X';
+                                        return  <tr key={inquiry.inquiryId} 
+                                                    onClick={() => handleInquiryOnClick(inquiry)} 
+                                                    style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal', cursor: 'pointer'}}>
+                                                    <td>{inquiry.inquiryId}</td>
+                                                    <td>{inquiry.acaNm}</td>
+                                                    <td>{inquiry.inquiryTitle}</td>
+                                                    <td>{inquiry.nickname}</td>
+                                                    <td>{answerDisplay}</td>
+                                                </tr>
+                                    })}
+                                </tbody>
+                            </table>
+                            {!getInquiryList.isLoading &&
+                                <Pagination totalCount={getInquiryList.data.data.listTotalCount}
+                                    link={`/account/mypage/consultation`}/>}
+                            {!!selectedInquiry && 
+                                <SelectedInquiry
+                                    key={selectedInquiry.inquiryId}
+                                    selectedInquiry={selectedInquiry}
+                                    setSelectedInquiry={setSelectedInquiry}
+                                    page={page} 
+                                    selectedAcademy={selectedAcademy}
+                                />
+                            }
+                        </>}
+                    </div>
+                </>
+                }
             </div>
         </div>
     );

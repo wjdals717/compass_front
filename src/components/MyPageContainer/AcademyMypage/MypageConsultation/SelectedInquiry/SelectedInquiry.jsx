@@ -74,14 +74,17 @@ function SelectedInquiry({ selectedInquiry, setSelectedInquiry, page, selectedAc
             <div css={S.SInquiryAnswerContainer}>
                 <div css={S.SInquiryAnswer}>
                     <span>답변</span>
-                    <textarea name="" id="" cols="80" rows="10" 
+                    <textarea name="" id="" cols="80" rows="10"
                         defaultValue={inquiry.answer}
                         onChange={handleAnswerOnChange}
                     />
                 </div>
-                <button css={S.SubmitButton} onClick={handleAnswerSubmit}>
-                    확인
-                </button>
+                <div css={S.SButtonContainer}>
+                    <button onClick={handleAnswerSubmit}>
+                        확인
+                    </button>
+                </div>
+                
             </div>
         </div>
     );

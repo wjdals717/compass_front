@@ -20,6 +20,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const queryClient = useQueryClient();
     const principal = queryClient.getQueryState("getPrincipal")
     const userId = principal?.data?.data?.userId
+    const roleId = principal?.data?.data?.roleId;
 
     const [ isHeaderFixed, setIsHeaderFixed ] = useState(false);      // 네비게이션바 fixed
 
@@ -38,6 +39,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const academyId = searchParams.get('ACADEMY_ID')
+
     
     const [ reviewWriteData, setReviewWriteData] = useState({
         ACADEMY_ID: parseInt(academyId),
@@ -209,7 +211,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                     <AcademyInfoClass academyData={academyData} />
                 </div>
             </div>
-            <AcademyInfoSidebar academyId={academyId} />
+            {roleId === 0 ? null : <AcademyInfoSidebar academyId={academyId} />}
         </RootContainer>
     );
 }

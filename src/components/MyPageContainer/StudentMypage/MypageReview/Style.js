@@ -1,49 +1,6 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
-export const STable = css`
-    margin: 0 20px;
-    width: 740px;
-    background-color: white;
-
-    thead {
-        background-color: #dbdbdb;
-    }
-
-    thead, tr, td {
-        height: 40px;
-        border: 1px solid #ccc;
-        vertical-align: middle;
-        text-align: center;
-        cursor: default;
-    }
-
-    & td:nth-child(1) {
-        width: 250px;
-        overflow: hidden;
-    }
-
-    & td:nth-child(2) {
-        width: 50px;
-    }
-
-    & td:nth-child(3) {
-        display: -webkit-box;
-        border: 0;
-        width: 370px;
-        line-height: 2.8em;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        overflow-wrap: break-word;
-    }
-
-    & td:nth-child(4) {
-        width: 50px;
-    }
-`;
-
 export const SContainer = css`
     display: flex;
     flex-direction: column;

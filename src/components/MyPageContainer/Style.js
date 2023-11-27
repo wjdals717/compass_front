@@ -18,8 +18,8 @@ export const SInterestAcademyBox = css`
     & > div > div {
         border: 1px solid #dbdbdb;
         border-radius: 5px;
+        padding: 40px;
         background-color: #F8FBFD;
-        padding: 20px;
     }
 `;
 
@@ -33,63 +33,38 @@ export const SInterestList = css`
     box-sizing: content-box;
 `;
 
+export const SComment = css`
+    margin: 10px 0 20px;
+`;
+
 export const STable = css`
-    margin: 0 20px;
-    width: 740px;
-    height: 200px;
+    width: 100%;
     background-color: white;
 
     thead {
         background-color: #dbdbdb;
     }
 
-    thead, tr, td {
-        height: 50px;
+    th, tr, td {
+        line-height: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
         vertical-align: middle;
         text-align: center;
         overflow: auto;
+        cursor: default;
     }
 
-    td:nth-of-type(1){    //1번째 td인 경우
-        font-weight: 600;
+    input {
+        outline: none;
+        border: none;
+        padding: 0 10px 0;
+        width: 100%;
+        overflow-wrap: break-word;
     }
 
-    button {
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        background-color: white;
-        padding: 3px 5px;
-    }
-`;
-
-export const SPageNumbers = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    width: 100%;
-
-    & button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-right: 10px;
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        background-color: white;
-        width: 30px;
-        height: 30px;
+    tbody td {
         cursor: pointer;
-
-        :disabled {
-            background-color: white;
-            border: none;
-            cursor: default;
-        }
-
-        &.selected {
-            background-color: #92c2f4;
-        }
     }
 `;
 
@@ -98,9 +73,19 @@ export const SOptionBox = css`
     align-items: center;
     justify-content: space-between;
     width: 760px;
+    margin-bottom: 10px;
+    
 `;
 
 export const SSelect = css`
-    margin-left: 20px;
     width: 200px;
+`;
+
+export const SEmptyBox = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 18px;
+    color: #777;
 `;

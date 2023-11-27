@@ -6,8 +6,9 @@ import { instance } from '../../../../api/config/instance';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
 import { useNavigate, useParams } from 'react-router-dom';
-import productImg from "../../../../assets/진행시켜.jpg"
+import productImg from "../../../../assets/결제 이밍지.png"
 import Pagination from '../../../Pagination/Pagination';
+import EmptyBox from '../../../EmptyBox/EmptyBox';
 
 function MypageAdPayment(props) {
 
@@ -27,6 +28,22 @@ function MypageAdPayment(props) {
 
     const [ isPaymentInfoOpen, setIsPaymentInfoOpen ] = useState(false);
     const [ selectedTarget, setSelectedTarget ] = useState(null);
+
+    // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    // 날짜에 일수를 더하는 함수
+    function addDays(dateString, days) {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + days);
+        return date;
+    }
 
     // 나의학원 리스트
     const getMyAcademies = useQuery(["getMyAcademies", page], async () => {
@@ -89,46 +106,6 @@ function MypageAdPayment(props) {
         setIsPaymentInfoOpen(true);
     }
 
-    const pagination = () => {
-        if(getMyAcademies.isLoading) {
-            return <></>
-        }
-        const totalAcademyCount = getMyAcademies?.data?.data?.listTotalCount;
-        const lastPage = getMyAcademies?.data?.data?.listTotalCount % 5 === 0 
-            ? totalAcademyCount / 5 
-            : Math.floor(totalAcademyCount / 5) + 1;
-
-        const startIndex = page % 5 === 0 ? page - 4 : page - (page % 5) + 1;
-        const endIndex = startIndex + 4 <= lastPage ? startIndex + 4 : lastPage;
-
-        const pageNumbers = [];
-        
-        for(let i = startIndex; i <= endIndex; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <>
-                <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`/academies/${principal.data.data.userId}/${parseInt(page) - 1}`);
-                }}>&#60;</button>
-
-                {pageNumbers.map(num => {
-                    return <button  className={parseInt(page) === num ? 'selected' : ''}
-                                    onClick={() => {
-                                        navigate(`/academies/${principal.data.data.userId}/${num}`);
-                                    }} 
-                                key={num}>{num}
-                            </button>
-                })}
-
-                <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`/academies/${principal.data.data.userId}/${parseInt(page) + 1}`);
-                }}>&#62;</button>
-            </>
-        )
-    }
-
     // 결제
     const getProduct = useQuery(["getProduct"], async () => {
         try{
@@ -189,7 +166,8 @@ function MypageAdPayment(props) {
                     }
                 }
                 instance.post("/purchase", purchaseDate, option).then(response => {
-                    alert("광고결제가 완료되었습니다.")
+                    alert("광고결제가 완료되었습니다. 감사합니다!!🙇")
+                    ispurchase.refetch()
                     quertClient.refetchQueries(["getPrincipal"])
                 })
             } else {
@@ -197,69 +175,79 @@ function MypageAdPayment(props) {
             }
         })
     }
-    console.log(isAcademyPaid);
+    
+    if(getMyAcademies.isLoading) {
+        return <></>;
+    }
     
     return (
         <div>
             <h2>💸 광고 결제</h2>
             <div>
-                <table css={S.STable}>
-                    <thead>
-                        <tr>
-                            <td>학원 번호</td>
-                            <td>학원명</td>
-                            <td>학원 선택</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {!getMyAcademies.isLoading && 
-                        Array.isArray(getMyAcademies?.data?.data.academyRegistrations) && 
-                        getMyAcademies?.data?.data.academyRegistrations.map(academy => {
+                {getMyAcademies.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={<>광고 결제할 학원이 없습니다! <br />학원을 등록하고 승인 받아 나의 학원을 홍보해보세요!</>}
+                    link={'/academy/regist'} btn={"등록하기"}/> :
+                <>
+                    <div css={S.SComment}><span>광고 결제</span> 하고 <span>나의 학원을 홍보</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
+                    <table css={GS.STable}>
+                        <tbody>
+                            <tr>
+                                <td>학원 번호</td>
+                                <td>학원명</td>
+                                <td>학원 선택</td>
+                            </tr>
+                        { getMyAcademies?.data?.data.academyRegistrations.map(academy => {
                             return  <tr key={academy.academyRegistrationId} 
                                         style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                         <td>{academy.acaAsnum}</td>
-                                        <td>{academy.acaNm}</td>
+                                        <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
                                         <td>
                                             <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
                                                 {selectedAcademy === academy ? '선택 해제' : '선택' }
                                             </button>
                                         </td>
                                     </tr>
-                        })
-                    }
-                    </tbody>
-                </table>
-                {!getMyAcademies.isLoading && 
-                    <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
-                        link={`/account/mypage/adpayment`}/>}
-                {isPaymentInfoOpen && !!selectedAcademy && (
-                <div css={S.SProductContainer}>
-                    {ispurchase.isLoading ? <></> : !!isAcademyPaid
-                    ? (<div>결제정보: 결제된 내용
-                            <div>상품 : {isAcademyPaid.productName}</div>
-                            <div>가격 : {isAcademyPaid.productPrice}원</div>
-                            <div>기간 : {isAcademyPaid.productPeriod}일</div>
-                            <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
-                        </div>)
-                    : products.map(product => {
-                            return (
-                            <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
-                                <div css={S.SProductImgBox}>
-                                    <img css={S.SProductImg} src={productImg} alt="" />
-                                    <p css={S.SProductImgText}>{product.productPrice}원</p>
-                                </div>
-                                    <div css={S.SProductDetail}>
-                                    <div>상품 : {product.productName}</div>
-                                    <div>가격 : {product.productPrice}원</div>
-                                    <div>기간 : {product.productPeriod}일</div>
-                                    <div>상품설명 : {product.productPrice}원의 행복</div>
-                                </div>
+                        })}
+                        </tbody>
+                    </table>
+                    {!getMyAcademies.isLoading && 
+                        <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
+                            link={`/account/mypage/adpayment`}/>}
+                    {isPaymentInfoOpen && !!selectedAcademy && (
+                    <div css={S.SProductContainer}>
+                        {ispurchase.isLoading ? <></> : !!isAcademyPaid
+                        ? (
+                        <div css={S.SPurchaseInfoBox}>
+                            <div css={S.SPurchaseInfo}>
+                                <span>결제된 내용</span>
+                                <div>상품 : {isAcademyPaid.productName}</div>
+                                <div>가격 : {isAcademyPaid.productPrice}원</div>
+                                <div>기간 : {isAcademyPaid.productPeriod}일</div>
+                                <div>상품 기간 : {formatDate(isAcademyPaid.purchaseDate)} ~ {formatDate(addDays(isAcademyPaid.purchaseDate, isAcademyPaid.productPeriod))}</div>
+                                <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
                             </div>
-                            );
-                        })
-                    }
-                </div>
-                )}
+                        </div>
+                        )
+                        : products.map(product => {
+                                return (
+                                <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
+                                    <div css={S.SProductImgBox}>
+                                        <img css={S.SProductImg} src={productImg} alt="" />
+                                        <p css={S.SProductImgText}>{product.productPrice}원</p>
+                                    </div>
+                                        <div css={S.SProductDetail}>
+                                        <div>상품 : {product.productName}</div>
+                                        <div>가격 : {product.productPrice}원</div>
+                                        <div>기간 : {product.productPeriod}일</div>
+                                        <div>상품설명 : {product.productPrice}원의 행복</div>
+                                    </div>
+                                </div>
+                                );
+                            })
+                        }
+                    </div>
+                    )}
+                </>}
             </div>
         </div>
     );

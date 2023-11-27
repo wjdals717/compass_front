@@ -1,63 +1,14 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
-export const STable = css`
-    margin: 0 20px;
-    width: 740px;
-    background-color: white;
-
-    thead {
-        background-color: #dbdbdb;
-    }
-
-    thead, tr, td {
-        height: 40px;
-        border: 1px solid #ccc;
-        vertical-align: middle;
-        text-align: center;
-        overflow: auto;
-        cursor: default;
-    }
-
-    button {
-        border: 1px solid #aaa;
-        border-radius: 5px;
-        background-color: #eee;
-        padding: 5px 8px;
-        cursor: pointer;
-        :active {
-            background-color: #ddd;
-        }
-    }
-`;
-
-export const SPageNumbers = css`
+export const SEmptyBox = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
-    width: 100%;
+    height: 400px;
+    font-size: 18px;
+`;
 
-    & button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-right: 10px;
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        background-color: white;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-
-        :disabled {
-            background-color: white;
-            border: none;
-            cursor: default;
-        }
-
-        &.selected {
-            background-color: #92c2f4;
-        }
-    }
+export const SComment = css`
+    margin-bottom: 10px;
 `;

@@ -40,6 +40,10 @@ function LiAcademyBox({academy}) {
             <strong>{academy.ACA_NM}</strong>
             <div css={S.SAddress}><FaLocationDot />{address}</div>
             <div>{realm}</div>
+            <div css={S.SLikeAndRating}>
+                <div>💕{academy.like_count}</div>
+                <div>⭐{academy.avg_score}</div>
+            </div>
         </li>
     )
 }
