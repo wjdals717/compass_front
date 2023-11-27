@@ -21,7 +21,7 @@
     - [학생](#학생)
     - [학원관리자](#학원관리자)
     - [웹마스터](#웹마스터)
-
+   
 ✏ [느낀점](#-느낀점)
 
 <br/>
@@ -203,6 +203,14 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 <summary>웹마스터 마이페이지 페이지 코드 리뷰</summary>
 <div markdown="1">
   웹마스터 마이페이지
+</div>
+</details>
+
+#### **결제**
+<details>
+<summary>결제 페이지 페이지 코드 리뷰</summary>
+<div markdown="1">
+  결제 페이지
 </div>
 </details>
 
