@@ -209,10 +209,80 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 
 #### **결제**
 <details>
-<summary>결제 페이지 페이지 코드 리뷰</summary>
+<summary>결제 페이지 코드 리뷰</summary>
 <div markdown="1">
-  결제 페이지
+  `카카오 결제
+  
+    const getProduct = useQuery(["getProduct"], async () => {
+        try{
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/ad/products`, option)
+        } catch(error){
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: (response) => {
+            setProducts(response.data);
+        }
+    })
+
+    useEffect(() => {
+        const iamport = document.createElement("script");
+        iamport.src = "https://cdn.iamport.kr/v1/iamport.js";
+        document.head.appendChild(iamport);
+        return () => {
+            document.head.removeChild(iamport);
+        }
+    }, [])
+
+    const handlePaymentSubmit = (product) => {
+        const principal = quertClient.getQueryState("getPrincipal");
+        if(!window.IMP) {return}
+        const { IMP } = window;
+        IMP.init("imp52230315") // IMP를 초기화 시킴
+
+        const paymentData = {
+            pg: "kakaopay",
+            pay_method: "kakaopay",
+            merchant_uid: `mid_${new Date().getTime()}`,
+            amount: product.productPrice,
+            name: product.productName,
+            buyer_name: principal?.data?.data.name,
+            buyer_email: principal?.data?.data.email
+        }
+
+        IMP.request_pay(paymentData, (response) => {
+            const { success, error_msg } = response;
+
+            if(success) {
+                const purchaseDate = {
+                    productId: product.productId,
+                    userId: principal?.data?.data.userId,
+                    academyId: selectedAcademy.academyId
+                }
+                const option = {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken")
+                    }
+                }
+                instance.post("/purchase", purchaseDate, option).then(response => {
+                    alert("광고결제가 완료되었습니다. 감사합니다!!🙇")
+                    ispurchase.refetch()
+                    quertClient.refetchQueries(["getPrincipal"])
+                })
+            } else {
+                alert(error_msg);
+            }
+        })
+    }`
 </div>
+카카오 결제창이 나타나고 결제에 성공시 alert("광고결제가 완료되었습니다. 감사합니다!!🙇") 띄움
 </details>
 
 <br/>
