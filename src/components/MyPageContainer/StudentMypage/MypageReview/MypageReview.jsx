@@ -25,6 +25,8 @@ function MypageReview(props) {
     const [ changeState, setChanegState ] = useState(false);
 
     const [ selectedReview, setSelectedReview ] = useState();
+    const [ selectedTarget, setSelectedTarget ] = useState();
+    const [ isSelected, setIsSelected ] = useState(false);
 
     //리뷰 가져오기
     const getUserReviews = useQuery(["getUserReviews", modifyButtonState, page], async () => {
@@ -60,9 +62,17 @@ function MypageReview(props) {
         refetchOnWindowFocus: false
     });
 
-    const reviewOnClick = (data) => {
-        setModifyButtonState(false);
-        setSelectedReview(data);
+    const reviewOnClick = (e, data) => {
+        setSelectedReview((prevSelectedReview) => 
+            prevSelectedReview === data ? null : data
+        );
+
+        if (selectedTarget === e.target) {
+            setIsSelected((prevIsOpen) => !prevIsOpen);
+            return;
+        }
+        setSelectedTarget(e.target);
+        setIsSelected(true);
     }
 
     const reviewContentChange = (e) => {
@@ -127,75 +137,83 @@ function MypageReview(props) {
         <div>
             <h2>📜 작성한 후기</h2>
             <div>
-            {getUserReviews.data.data.length === 0 ? 
-                <EmptyBox comment={"다녀본 학원에 후기를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
-                <>
-                <table css={GS.STable}>
-                    <tbody>
-                        <tr>
-                            <td>학원명</td>
-                            <td>별점</td>
-                            <td>후기</td>
-                            <td>선택</td>
-                        </tr>
-                        {!getUserReviews.isLoading && (!reviewData?.reviewList || reviewData.reviewList.length === 0) &&
-                            <tr>
-                                <td colSpan={4}>후기가 존재하지 않습니다! 학원 페이지에서 후기를 작성해보세요!</td>
-                            </tr>
-                        }
-                        {reviewData?.reviewList?.map(data => {
-                            return (
+                {getUserReviews.data.data.length === 0 ? (
+                    <EmptyBox comment={"다녀본 학원에 후기를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/>
+                ) : (
+                    <>
+                        <table css={GS.STable}>
+                            <tbody>
                                 <tr>
-                                    <td>{data.academyName}</td>
-                                    <td>{data.score}</td>
-                                    <td>{data.reviewContent}</td>
-                                    <td><button css={GS.SButton} onClick={() => {reviewOnClick(data)}}>선택</button></td>
+                                    <td>학원명</td>
+                                    <td>별점</td>
+                                    <td>후기</td>
+                                    <td>선택</td>
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {!getUserReviews.isLoading && 
-                    <Pagination totalCount={reviewData?.reviewCount?.reviewCount} link={`/account/mypage/review`}/>}
-                {!!selectedReview &&
-                    <div css={S.SContainer}>
-                        <div css={S.SAcademyInfoBox}>
-                            <div>
-                                <div>{selectedReview.academyName}</div>
-                                <span onClick={()=>{navigate(`/academy/info/1?ACADEMY_ID=${selectedReview.ACADEMY_ID}`)}}>
-                                    <PiSneakerMove />이동
-                                </span>
-                            </div>
-                            <div>
-                                <button css={GS.SButton} onClick={reviewDeleteButton}>삭제</button>
-                                {!modifyButtonState ?
-                                    <button css={GS.SButton} onClick={reviewModifyButton}>수정</button>
-                                    : <button css={GS.SButton} onClick={reviewSubmitButton}>확인</button>
-                                }
-                            </div>
-                        </div>
-                        {!modifyButtonState ?
-                            <>
-                                <div css={S.ReviewScoreBox}>
-                                    <AiFillStar color='yellow' size={20}/>
-                                    {selectedReview.score}
-                                </div>
-                                <div css={S.ReviewContentBox}>
-                                    {selectedReview.reviewContent}
-                                </div>
-                            </>
-                            : <>
-                                <div  css={S.ReviewScoreBox}>
-                                <Rating style={{ maxWidth: 250 }} initialValue={selectedReview?.score} value={selectedReview.score} 
-                                    onClick={reviewScoreChange} allowFraction={true} size={20} fillColor="#FFFF36"/>
-                                </div>
-                                <textarea css={S.ReviewContentBox} name="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
-                                onChange={reviewContentChange} defaultValue={selectedReview?.reviewContent} />
-                            </>
+                                {!getUserReviews.isLoading && (!reviewData?.reviewList || reviewData.reviewList.length === 0) && (
+                                    <tr>
+                                        <td colSpan={4}>후기가 존재하지 않습니다! 학원 페이지에서 후기를 작성해보세요!</td>
+                                    </tr>
+                                )}
+                                {reviewData?.reviewList?.map((data) => {
+                                    return (
+                                        <tr key={data.academyId}>
+                                            <td>{data.academyName}</td>
+                                            <td>{data.score}</td>
+                                            <td>{data.reviewContent}</td>
+                                            <td>
+                                                <button css={GS.SButton} onClick={(e) => {reviewOnClick(e, data)}}>
+                                                    {selectedReview === data ? "선택해제" : "선택"}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        {isSelected && !getUserReviews.isLoading && 
+                            <Pagination totalCount={reviewData?.reviewCount?.reviewCount} link={`/account/mypage/review`}/>
                         }
-                    </div>
-                }
-                </>}
+                        {isSelected && !!selectedReview && (
+                            <div css={S.SContainer}>
+                                <div css={S.SAcademyInfoBox}>
+                                    <div>
+                                        <div>{selectedReview.academyName}</div>
+                                        <span onClick={() => {navigate(`/academy/info/1?ACADEMY_ID=${selectedReview.ACADEMY_ID}`)}}>
+                                            <PiSneakerMove />이동
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <button css={GS.SButton} onClick={reviewDeleteButton}>삭제</button>
+                                        {!modifyButtonState ?
+                                            <button css={GS.SButton} onClick={reviewModifyButton}>수정</button>
+                                            : <button css={GS.SButton} onClick={reviewSubmitButton}>확인</button>
+                                        }
+                                    </div>
+                                </div>
+                                {!modifyButtonState ? (
+                                    <>
+                                        <div css={S.ReviewScoreBox}>
+                                            <AiFillStar color='yellow' size={20}/>
+                                            {selectedReview.score}
+                                        </div>
+                                        <div css={S.ReviewContentBox}>
+                                            {selectedReview.reviewContent}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div  css={S.ReviewScoreBox}>
+                                            <Rating style={{ maxWidth: 250 }} initialValue={selectedReview?.score} value={selectedReview.score} 
+                                                onClick={reviewScoreChange} allowFraction={true} size={20} fillColor="#FFFF36"/>
+                                        </div>
+                                        <textarea css={S.ReviewContentBox} name="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
+                                            onChange={reviewContentChange} defaultValue={selectedReview?.reviewContent} />
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );
