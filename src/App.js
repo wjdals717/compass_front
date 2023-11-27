@@ -56,7 +56,7 @@ function App() {
           <Route path="/account/*" element={ <AccountRoute/> } />
           <Route path="/academy/find/:page" element={ <FindAcademies/> } />
           <Route path="/academy/regist" element={ <RegistAcademy/> } /> 
-          <Route path="/academy/info" element={ <AcademyInfo/> } /> 
+          <Route path="/academy/info/:page" element={ <AcademyInfo/> } /> 
           <Route path="/academy/inquiry" element={ <AcademyInquiry /> } /> 
         </Routes>
       </div>

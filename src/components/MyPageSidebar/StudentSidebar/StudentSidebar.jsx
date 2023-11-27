@@ -63,7 +63,7 @@ function StudentSidebar({ uncheckedAnswerCount, setUncheckedAnswerCount }) {
                         { uncheckedAnswerCount > 0 && <div>{uncheckedAnswerCount}</div>}
                     </div>
                 </NavLink>
-                <NavLink to='/account/mypage/review' activeClassName='active'>
+                <NavLink to='/account/mypage/review/1' activeClassName='active'>
                     📜 작성한 후기
                 </NavLink>
             </div>
