@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import * as S from './Style'
 import { useNavigate, useParams } from 'react-router-dom';
 
-function Pagination({ totalCount, link }) {
+function Pagination({ totalCount, link, search }) {
 
     const navigate = useNavigate();
     
@@ -28,20 +28,20 @@ function Pagination({ totalCount, link }) {
         return (
             <>
                 <button disabled={parseInt(page) === 1} onClick={() => {
-                    navigate(`${link}/${parseInt(page) - 1}`);
+                    navigate(`${link}/${parseInt(page) - 1}${search}`);
                 }}>&#60;</button>
 
                 {pageNumbers.map(num => {
                     return <button  className={parseInt(page) === num ? 'selected' : ''}
                                     onClick={() => {
-                                        navigate(`${link}/${num}`);
+                                        navigate(`${link}/${num}${search}`);
                                     }} 
                                 key={num}>{num}
                             </button>
                 })}
 
                 <button disabled={parseInt(page) === lastPage} onClick={() => {
-                    navigate(`${link}/${parseInt(page) + 1}`);
+                    navigate(`${link}/${parseInt(page) + 1}${search}`);
                 }}>&#62;</button>
             </>
         )
@@ -55,3 +55,7 @@ function Pagination({ totalCount, link }) {
 }
 
 export default Pagination;
+
+Pagination.defaultProps = {
+    search: ''
+  }

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 /** @jsxImportSource @emotion/react */
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 import { useState } from 'react';
 import * as S from "./Style";
@@ -9,23 +9,32 @@ import { AiFillStar} from 'react-icons/ai';
 import { BsFillPencilFill } from 'react-icons/bs';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Pagination from '../Pagination/Pagination';
+import StarRating from '../StarRating/StarRating';
+import { Rating } from '@micahlt/react-simple-star-rating';
 
-function AcademyInfoReviews({academyId, userId, principal}) {
-    
+function AcademyInfoReviews({ academyId, page }) {
     const navigate = useNavigate();
+
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal");
+    const userId = principal?.data?.data?.userId;
+
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
     const [ modifyButtonState, setModifyButtonState ] = useState(false);
+    const reviewSectionRef = useRef(null);
+    
+    const [ rating, setRating ] = useState(0);
 
     const [ reviewWriteData, setReviewWriteData] = useState({
         ACADEMY_ID: parseInt(academyId),
         userId: userId,
-        score: "",
+        score: 0,
         reviewContent: ""
     })
 
-
     //리뷰 가져오기
-    const getReviews = useQuery(["getReviews", modifyButtonState], async () => {
+    const getReviews = useQuery(["getReviews", modifyButtonState, page], async () => {
         // api, options를 get 요청
         try {
             const options = {
@@ -33,7 +42,7 @@ function AcademyInfoReviews({academyId, userId, principal}) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            return await instance.get(`/academy/${academyId}/reviews`, options);
+            return await instance.get(`/academy/${academyId}/reviews/${page}`, options);
         }catch(error) {
             console.error(error);
         }
@@ -46,6 +55,8 @@ function AcademyInfoReviews({academyId, userId, principal}) {
         }
     });
 
+    console.log(reviewData);
+
     const getReview = useQuery(["getReview", modifyButtonState], async () => {
         try {
             return await instance.get(`/review/${academyId}/${userId}`);
@@ -57,6 +68,7 @@ function AcademyInfoReviews({academyId, userId, principal}) {
         retry: 1,
         refetchOnWindowFocus: false
     });
+    console.log(rating);
 
     const reviewSubmitButton = async () => {
         try {
@@ -97,17 +109,17 @@ function AcademyInfoReviews({academyId, userId, principal}) {
         }
     };
 
+    const reviewScoreChange = (value) => {
+        setReviewWriteData({
+            ...reviewWriteData,
+            score: value
+        })
+    }
+
     const reviewContentChange = (e) => {
         setReviewWriteData({
             ...reviewWriteData,
             [e.target.name]: e.target.value
-        })
-    }
-
-    const reviewScoreChange = (e) => {
-        setReviewWriteData({
-            ...reviewWriteData,
-            [e.target.name]: parseInt(e.target.value)
         })
     }
 
@@ -140,44 +152,70 @@ function AcademyInfoReviews({academyId, userId, principal}) {
         }
     }
 
-    const horoscopeChange = (e) => {
-        setReviewWriteData({
-            ...reviewWriteData,
-            [e.target.name]: parseInt(e.target.value)
-        })
-    }
-
     useEffect(() => {
         getReviews.refetch();
         getReview.refetch();
     }, [modifyButtonState]);
 
+    useEffect(()=>{
+        setReviewWriteData({
+            ...reviewWriteData,
+            score: parseInt(`${rating}`)
+        })
+    }, [rating]);
+
+    useEffect(() => {       // 페이지 로드 후 섹션으로 스크롤
+        if (reviewSectionRef.current) {
+            const storedScrollPosition = sessionStorage.getItem('scrollPosition');
+            const targetScrollPosition = storedScrollPosition || 0;
+    
+            reviewSectionRef.current.scrollIntoView({
+                behavior: 'auto',
+                block: 'start',
+                inline: 'nearest'
+            });
+    
+            // 스크롤 위치를 세션 스토리지에 저장
+            sessionStorage.setItem('scrollPosition', targetScrollPosition);
+        }
+    }, [academyId, page]); // 의존성 배열에 추가
+
+    console.log(reviewWriteData);
+
     return (
-        <div css={S.SReviewContainer} id='review'>
+        <div css={S.SReviewContainer} id='review' ref={reviewSectionRef}>
             <h1>수강후기</h1>
             <div css={S.SReviewScore}>
                 <AiFillStar css={S.SStar}/> {reviewData?.reviewCount?.scoreAvg}
             </div>
-            <ul css={S.SReviewListContainer}>
-                {reviewData?.reviewList.map(data => {
-                    return (
-                        <li css={S.SReviewList} key={reviewData.reviewId}>
-                            <h2>{data.nickname}</h2>
-                            <div><AiFillStar css={S.SStar}/> {data.score}</div>
-                            <span>{data.reviewContent}</span>
-                            {data.userId == userId && 
-                                <div>
-                                    <button css={GS.SButton} onClick={() => {reviewModifyButton()}}>수정</button>
-                                    <button css={GS.SButton} onClick={() => {reviewDeleteButton()}}>삭제</button>
-                                </div>
-                            }
-                        </li>
-                    )})}
-            </ul>
+            {!!reviewData?.reviewList[0] ? 
+                <>
+                    <ul css={S.SReviewListContainer}>
+                        {reviewData?.reviewList.map(data => {
+                            return (
+                                <li css={S.SReviewList} key={reviewData.reviewId}>
+                                    <h2>{data.nickname}</h2>
+                                    <div><AiFillStar css={S.SStar}/> {data.score}</div>
+                                    <span>{data.reviewContent}</span>
+                                    {data.userId == userId && 
+                                        <div>
+                                            <button css={GS.SButton} onClick={() => {reviewModifyButton()}}>수정</button>
+                                            <button css={GS.SButton} onClick={() => {reviewDeleteButton()}}>삭제</button>
+                                        </div>
+                                    }
+                                </li>
+                            )})}
+                    </ul>
+                    <Pagination totalCount={reviewData?.reviewCount?.reviewCount} link={`/academy/info`} search={`?ACADEMY_ID=${academyId}`}/>
+                </>
+                : <div css={S.ReviewEmpty}>아직 후기가 없습니다. 후기를 등록해보세요!</div>
+            }
             <div>
                 <div css={S.SReviewInfo}>
                     <div css={S.SReviewUserScoreContainer}>
                         <h2>{principal?.data?.data.nickname}</h2>
+                        {/* <Rating style={{ maxWidth: 250 }} value={reviewWriteData.score} onClick={reviewScoreChange} size={20}/> */}
+                        {/* <StarRating /> */}
                         <div>
                             <AiFillStar css={S.SStar}/> 
                             <input type="text" name="score" id="score" placeholder='별점' 

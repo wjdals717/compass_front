@@ -2,14 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style"
+import * as GS from "../../../../styles/Global/Common";
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { AiFillStar } from 'react-icons/ai';
+import Pagination from '../../../Pagination/Pagination';
+import { useParams } from 'react-router-dom';
 
 function MypageReview(props) {
     const queryClient = useQueryClient();
     const principal = queryClient.getQueryState("getPrincipal");
     const userId = principal?.data?.data?.userId;
+    const { page } = useParams();
 
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
 
@@ -19,7 +23,7 @@ function MypageReview(props) {
     const [ selectedReview, setSelectedReview ] = useState();
 
     //리뷰 가져오기
-    const getUserReviews = useQuery(["getUserReviews", modifyButtonState], async () => {
+    const getUserReviews = useQuery(["getUserReviews", modifyButtonState, page], async () => {
         // api, options를 get 요청
         try {
             const options = {
@@ -27,7 +31,7 @@ function MypageReview(props) {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }
-            return await instance.get(`/account/${userId}/reviews`, options);
+            return await instance.get(`/account/${userId}/reviews/${page}`, options);
         }catch(error) {
             console.error(error);
         }
@@ -72,7 +76,6 @@ function MypageReview(props) {
         })
         setChanegState(true);
     }
-    
 
     const reviewModifyButton = (e) => {
         setModifyButtonState(true);
@@ -126,18 +129,25 @@ function MypageReview(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {reviewData?.map(data => {
+                        {!getUserReviews.isLoading && (!reviewData?.reviewList || reviewData.reviewList.length === 0) &&
+                            <tr>
+                                <td colSpan={4}>후기가 존재하지 않습니다! 학원 페이지에서 후기를 작성해보세요!</td>
+                            </tr>
+                        }
+                        {reviewData?.reviewList?.map(data => {
                             return (
                                 <tr>
                                     <td>{data.academyName}</td>
                                     <td>{data.score}</td>
                                     <td>{data.reviewContent}</td>
-                                    <td><button onClick={() => {reviewOnClick(data)}}>선택</button></td>
+                                    <td><button css={GS.SButton} onClick={() => {reviewOnClick(data)}}>선택</button></td>
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
+                {!getUserReviews.isLoading && 
+                    <Pagination totalCount={reviewData?.reviewCount?.reviewCount} link={`/account/mypage/review`}/>}
                 {!!selectedReview &&
                     <div css={S.SContainer}>
                         <div css={S.SAcademyInfoBox}>
@@ -145,9 +155,9 @@ function MypageReview(props) {
                                 {selectedReview.academyName}
                             </div>
                             <div>
-                                <button onClick={reviewDeleteButton}>삭제</button>
+                                <button css={GS.SButton} onClick={reviewDeleteButton}>삭제</button>
                                 {!modifyButtonState ?
-                                    <button onClick={reviewModifyButton}>수정</button>
+                                    <button css={GS.SButton} onClick={reviewModifyButton}>수정</button>
                                     : <button onClick={reviewSubmitButton}>확인</button>
                                 }
                             </div>
@@ -159,13 +169,16 @@ function MypageReview(props) {
                                     {selectedReview.score}
                                 </div>
                                 <div css={S.ReviewContentBox}>
-                                    <div>{selectedReview.reviewContent}</div>
+                                    {selectedReview.reviewContent}
                                 </div>
                             </>
                             : <>
-                                <input css={S.ReviewInputScoreBox} type="text" name="score"
-                                defaultValue={selectedReview?.score} onChange={reviewScoreChange} />
-                                <textarea css={S.ReviewInputContentBox} name="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
+                                <div  css={S.ReviewScoreBox}>
+                                    <AiFillStar color='yellow' />
+                                    <input type="text" name="score"
+                                    defaultValue={selectedReview?.score} onChange={reviewScoreChange} />
+                                </div>
+                                <textarea css={S.ReviewContentBox} name="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
                                 onChange={reviewContentChange} defaultValue={selectedReview?.reviewContent} />
                             </>
                         }
