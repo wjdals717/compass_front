@@ -76,7 +76,21 @@
 <br/>
 
 ## **🛠 개발 도구**
-  
+
+### FrontEnd
+
+<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white"/> <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"> 
+<img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"> 
+<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
+<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> 
+
+### BackEnd
+
+<img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+
+### 형상 관리
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+
 <br/>
 
 ## **⏰ 프로젝트 일정**
@@ -88,7 +102,7 @@
 ### API명세서
   
 ### ERD설계도
-![compass_ERD](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/2d62ac2b-9f1e-42cd-8636-f83c95ecc356)
+
 <br/>
 
 ## **📝 메뉴 구조도**
