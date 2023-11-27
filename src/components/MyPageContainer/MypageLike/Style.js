@@ -17,8 +17,12 @@ export const UlBox = css`
         width: 100%;
     }
 
+    li {
+        width: 232px;
+    }
+
     li:nth-of-type(3n+2) {
-        margin: 0px 19px 20px;
+        margin: 0px 10px 20px;
     }
 
     li:not(.recent):nth-of-type(n) {
