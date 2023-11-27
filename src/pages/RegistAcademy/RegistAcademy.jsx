@@ -118,7 +118,7 @@ function RegistAcademy(props) {
     }
 
     return (
-        <RootContainer>
+        <div css={S.SLayout}>
             <div css={S.STopContainer}>
                 <h1 css={S.SH1}>학원 등록하기</h1>
                 <span css={S.STopSpan}>사업자등록증의 상호명(법인명)과 학원명이 같나요?</span>
@@ -183,7 +183,7 @@ function RegistAcademy(props) {
                     </div>
                 </>
             }
-        </RootContainer>
+        </div>
     );
 }
 

@@ -110,7 +110,7 @@ function Home(props) {
                         <div css={S.SCommentContainer}>
                             <div css={S.SRegistTitle}>나의 관심 학원 보기</div>
                             <div css={S.SRegistComment}>관심있는 학원에 하트를 누르고 한 번에 볼 수 있어요!</div>
-                            <LinkBtn link={"/account/mypage/like"} btn={"보러가기"} />
+                            <LinkBtn link={"/account/mypage/like/1"} btn={"보러가기"} />
                         </div>
                     </div>
                 </div>

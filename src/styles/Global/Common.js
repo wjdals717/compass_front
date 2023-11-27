@@ -60,11 +60,11 @@ export const STable = css`
     tr {
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
-        background-color: #f5f9fc;
+        background-color: #fff;
     }
 
     tr:nth-of-type(odd):not(:first-of-type) {
-        background-color: #ebf3f9;
+        background-color: #EDF3F7;
     }
 
     tr:hover:not(:first-of-type) {

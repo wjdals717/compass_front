@@ -48,9 +48,12 @@ function Pagination({ totalCount, link, search }) {
     }
 
     return (
-        <div css={S.SPageNumbers}>
-            {pagination()}
+        <div css={S.SLayout}>
+            <div css={S.SPageNumbers}>
+                {pagination()}
+            </div>
         </div>
+        
     );
 }
 
