@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
-import defalutProfile from '../../../assets/고양이.jpg';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../api/config/instance';
 import { useNavigate } from 'react-router-dom';
@@ -55,7 +54,7 @@ function MypageLike(props) {
                 <EmptyBox comment={"나의 관심 학원을 추가해 보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
                 <ul css={S.UlBox}>
                     {!getLikeAcademiesQuery.isLoading && Array.isArray(getLikeAcademiesQuery?.data?.data) && getLikeAcademiesQuery?.data?.data.map(academy => {
-                        return <LiAcademyBox academy={academy}/>
+                        return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
                     })}
                 </ul>}
             </div>
