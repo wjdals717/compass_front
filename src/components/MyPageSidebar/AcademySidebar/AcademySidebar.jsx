@@ -17,7 +17,7 @@ function AcademySidebar(props) {
     return (
         <MyPageSidebar role={'학원 관리자'}>
             <div css={S.IconContainer}>
-                <NavLink to='/account/mypage/like' activeClassName='active'>
+                <NavLink to='/account/mypage/like/1' activeClassName='active'>
                     <div>
                         <span>❤️</span>
                         <span>관심 학원 {likeCountOfMypage?.data?.data}개</span>

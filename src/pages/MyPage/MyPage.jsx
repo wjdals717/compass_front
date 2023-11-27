@@ -83,7 +83,7 @@ function MyPage(props) {
                 {getLikeCountOfMypage.isLoading ? <></> : sidebarComponent}
                 <MypageContainer>
                     <Routes>
-                        <Route path='/like' element={<MypageLike />} />
+                        <Route path='/like/:page' element={<MypageLike />} />
                         <Route path='/user' element={<MypageUser />} />
                         <Route path='/inquiry/:page' element={<MyPageInquiry setUncheckedAnswerCount={setUncheckedAnswerCount}/>} />
                         <Route path='/review/:page' element={<MypageReview />} />

@@ -90,7 +90,7 @@ function MypageConsultation(props) {
 
     return (
         <div>
-            <h2>📞 나의 학원 문의</h2>
+            <h2>📩 나의 학원 문의</h2>
             <div>
                 {getMyAcademyAll.data.data.listTotalCount === 0 ? 
                 <EmptyBox comment={"나의 학원이 없습니다."} link={'/academy/regist'} btn={"등록하기"}/> : 

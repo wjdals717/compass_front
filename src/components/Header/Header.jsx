@@ -65,7 +65,7 @@ function Header(props) {
                         <span>반가워요, {principalState.data.data.nickname}님!{" "}</span>
                         {view ? <AiOutlineUp/> : <AiOutlineDown/>}
                         {view && <ul css={S.SDropDown}>
-                            <li><Link to={principalState.data.data.roleId > 0 ? "/account/mypage/like" : "/account/mypage/academywaiting/1" }>마이페이지</Link></li>
+                            <li><Link to={principalState.data.data.roleId > 0 ? "/account/mypage/like/1" : "/account/mypage/academywaiting/1" }>마이페이지</Link></li>
                             <li><div onClick={handleLogoutOnClick}>로그아웃</div></li>
                         </ul>}
                     </div>

@@ -69,7 +69,7 @@ function MypageInquiry({ setUncheckedAnswerCount }) {
 
     return (
         <div>
-            <h2>📞 나의 학원 문의</h2>
+            <h2>📞 나의 문의</h2>
             <div>
                 {getUserInquiryList.data.data.listTotalCount === 0 ? 
                 <EmptyBox comment={"정보가 궁금한 학원에 문의를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
@@ -89,7 +89,7 @@ function MypageInquiry({ setUncheckedAnswerCount }) {
                                             onClick={() => handleInquiryOnClick(inquiry)} 
                                             style={{
                                                 fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal',
-                                                color: inquiry.answerChecked === 1 ? 'red' : 'black'
+                                                color: inquiry.answerChecked === 1 ? 'red' : 'black', cursor: 'pointer'
                                             }}>
                                             <td>{inquiry.inquiryId}</td>
                                             <td>{inquiry.acaNm}</td>
