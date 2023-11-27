@@ -29,7 +29,7 @@ function LiAcademyBox({academy}) {
     }
 
     return  (
-        <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+        <li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info/1?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
             {academy.logoImg ? (
                 <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
             ): (

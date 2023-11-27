@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 /** @jsxImportSource @emotion/react */
 import { AiFillHeart,AiOutlineHeart } from 'react-icons/ai'
 import { BsChatLeftTextFill } from 'react-icons/bs'
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 import * as S from "./Style";
 import { useNavigate } from 'react-router-dom';
 
-function AcademyInfoSidebar({ academyId, userId, principal}) {
+function AcademyInfoSidebar({ academyId }) {
     const navigate = useNavigate();
+
+    const queryClient = useQueryClient();
+    const principal = queryClient.getQueryState("getPrincipal")
+    const userId = principal?.data?.data?.userId
     
     const [ isAcademyRegistered, setIsAcademyRegistered ] = useState(false);    // 학원 관리자 등록 여부
 

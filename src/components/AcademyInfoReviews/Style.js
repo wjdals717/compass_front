@@ -9,7 +9,6 @@ export const SReviewContainer = css`
 export const SReviewScore = css`
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
     font-size: 23px;
     &> * {
         margin-right: 5px;
@@ -19,7 +18,7 @@ export const SReviewScore = css`
 export const SReviewListContainer = css`
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
+    margin: 20px 0;
 `;
 
 export const SReviewList = css`
@@ -40,13 +39,21 @@ export const SReviewList = css`
     }
 `;
 
+export const ReviewEmpty = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+`;
+
 export const SReviewInfo = css`
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
     width: 100%;
 
     & > button {
-        margin-bottom: 10px;
         border: 1px solid #92C2F4;
         border-radius: 5px;
         width: 200px;
@@ -66,18 +73,50 @@ export const SReviewBox = css`
 
 export const SReviewUserScoreContainer = css`
     display: flex;
+    justify-content: center;
+    align-items: center;
 
-    & > h1 {
+    & > h2 {
         font-size: 18px;
         margin-right: 10px;
     }
-    & > div > input {
+    /* & > div > input {
         border: none;
         width: 40px;
-    }
-    
+    } */
 `;
 
 export const SStar = css`
     color: yellow;
+`;
+
+export const SPageNumbers = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%;
+
+    & button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        background-color: white;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+
+        :disabled {
+            background-color: white;
+            border: none;
+            cursor: default;
+        }
+
+        &.selected {
+            background-color: #92c2f4;
+        }
+    }
 `;
