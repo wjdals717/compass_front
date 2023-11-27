@@ -21,9 +21,9 @@ function AcademyInfoReviews({ academyId, page }) {
 
     const [ reviewData, setReviewData ] = useState();     // 리뷰 정보 저장하는 상태 변수
     const [ modifyButtonState, setModifyButtonState ] = useState(false);
+
     const reviewSectionRef = useRef(null);
-    
-    const [ rating, setRating ] = useState(0);
+    const [initialRender, setInitialRender] = useState(true);
 
     const [ reviewWriteData, setReviewWriteData] = useState({
         ACADEMY_ID: parseInt(academyId),
@@ -157,21 +157,21 @@ function AcademyInfoReviews({ academyId, page }) {
         getReview.refetch();
     }, [modifyButtonState]);
 
-    useEffect(() => {       // 페이지 로드 후 섹션으로 스크롤
-        if (reviewSectionRef.current) {
+    useEffect(() => {
+        if (!initialRender && reviewSectionRef.current) {
             const storedScrollPosition = sessionStorage.getItem('scrollPosition');
             const targetScrollPosition = storedScrollPosition || 0;
     
             reviewSectionRef.current.scrollIntoView({
                 behavior: 'auto',
                 block: 'start',
-                inline: 'nearest'
+                inline: 'nearest',
             });
-    
-            // 스크롤 위치를 세션 스토리지에 저장
-            sessionStorage.setItem('scrollPosition', targetScrollPosition);
+            sessionStorage.setItem('scrollPosition', targetScrollPosition); // 스크롤 위치를 세션 스토리지에 저장
+            console.log('Scrolled into view');
         }
-    }, [academyId, page]); // 의존성 배열에 추가
+        setInitialRender(false);    // 첫 렌더링 이후에는 초기 렌더링 상태를 false로 설정
+    }, [page, reviewSectionRef]);
 
     console.log(reviewWriteData);
 
