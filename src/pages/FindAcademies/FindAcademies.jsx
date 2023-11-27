@@ -55,6 +55,7 @@ function FindAcademies(props) {
     const principalState = queryClient.getQueryState("getPrincipal")
     const principal = principalState?.data?.data;
 
+    // 광고 목록 가지고오기
     const getPurchaseAcademyList = useQuery(["getPurchaseAcademyList"], async () => {
         try{
             return await instance.get(`/ad/academies/random`)
@@ -67,6 +68,7 @@ function FindAcademies(props) {
         refetchOnWindowFocus: false
     })
 
+    // 학원 목록 가지고오기
     const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
             setAcademyList([]);
@@ -145,8 +147,6 @@ function FindAcademies(props) {
         disableBodyScroll();
     };
 
-    console.log(academyList);
-
     return (
         <RootContainer>
             <div css={S.SearchLayout}>
@@ -201,7 +201,7 @@ function FindAcademies(props) {
                             </div>
                             <ul css={S.UlBox}>
                             {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
-                                return <LiAcademyBox academy={academy}/>
+                                return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
                             })}
                             </ul>
                         </div>
@@ -228,7 +228,7 @@ function FindAcademies(props) {
                                 ) : (
                                     academyList.length > 0 ? (
                                         academyList.map((academy) => {
-                                            return <LiAcademyBox academy={academy} />;
+                                            return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy} />;
                                         })
                                     ) : (
                                         <NoResult />
