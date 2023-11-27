@@ -7,10 +7,13 @@ import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../../../api/config/instance';
 import { AiFillStar } from 'react-icons/ai';
 import Pagination from '../../../Pagination/Pagination';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import EmptyBox from '../../../EmptyBox/EmptyBox';
+import { Rating } from '@micahlt/react-simple-star-rating';
+import { PiSneakerMove } from "react-icons/pi";
 
 function MypageReview(props) {
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const principal = queryClient.getQueryState("getPrincipal");
     const userId = principal?.data?.data?.userId;
@@ -70,10 +73,10 @@ function MypageReview(props) {
         setChanegState(true);
     }
 
-    const reviewScoreChange = (e) => {
+    const reviewScoreChange = (value) => {
         setSelectedReview({
             ...selectedReview,
-            [e.target.name]: parseInt(e.target.value)
+            score: parseFloat(value)
         })
         setChanegState(true);
     }
@@ -119,6 +122,8 @@ function MypageReview(props) {
     if(getUserReviews.isLoading) {
         return <></>;
     }
+
+    console.log(selectedReview);
     
     return (
         <div>
@@ -158,20 +163,23 @@ function MypageReview(props) {
                     <div css={S.SContainer}>
                         <div css={S.SAcademyInfoBox}>
                             <div>
-                                {selectedReview.academyName}
+                                <div>{selectedReview.academyName}</div>
+                                <span onClick={()=>{navigate(`/academy/info/1?ACADEMY_ID=${selectedReview.ACADEMY_ID}`)}}>
+                                    <PiSneakerMove />이동
+                                </span>
                             </div>
                             <div>
                                 <button css={GS.SButton} onClick={reviewDeleteButton}>삭제</button>
                                 {!modifyButtonState ?
                                     <button css={GS.SButton} onClick={reviewModifyButton}>수정</button>
-                                    : <button onClick={reviewSubmitButton}>확인</button>
+                                    : <button css={GS.SButton} onClick={reviewSubmitButton}>확인</button>
                                 }
                             </div>
                         </div>
                         {!modifyButtonState ?
                             <>
                                 <div css={S.ReviewScoreBox}>
-                                    <AiFillStar color='yellow' />
+                                    <AiFillStar color='yellow' size={20}/>
                                     {selectedReview.score}
                                 </div>
                                 <div css={S.ReviewContentBox}>
@@ -180,9 +188,8 @@ function MypageReview(props) {
                             </>
                             : <>
                                 <div  css={S.ReviewScoreBox}>
-                                    <AiFillStar color='yellow' />
-                                    <input type="text" name="score"
-                                    defaultValue={selectedReview?.score} onChange={reviewScoreChange} />
+                                <Rating style={{ maxWidth: 250 }} initialValue={selectedReview?.score} value={selectedReview.score} 
+                                    onClick={reviewScoreChange} allowFraction={true} size={20} fillColor="#FFFF36"/>
                                 </div>
                                 <textarea css={S.ReviewContentBox} name="reviewContent" cols="140" rows="10" placeholder='수강 후기를 작성해 주세요.' 
                                 onChange={reviewContentChange} defaultValue={selectedReview?.reviewContent} />

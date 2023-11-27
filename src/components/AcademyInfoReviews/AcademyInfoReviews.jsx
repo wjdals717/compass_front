@@ -28,7 +28,7 @@ function AcademyInfoReviews({ academyId, page }) {
     const [ reviewWriteData, setReviewWriteData] = useState({
         ACADEMY_ID: parseInt(academyId),
         userId: userId,
-        score: 0,
+        score: "",
         reviewContent: ""
     })
 
@@ -67,7 +67,6 @@ function AcademyInfoReviews({ academyId, page }) {
         retry: 1,
         refetchOnWindowFocus: false
     });
-    console.log(rating);
 
     const reviewSubmitButton = async () => {
         try {
@@ -105,8 +104,6 @@ function AcademyInfoReviews({ academyId, page }) {
                 navigate("/account/mypage/user")
                 return;
             } 
-            
-            
         } catch (error) {
             alert(error.response.data.message);
         }
@@ -160,13 +157,6 @@ function AcademyInfoReviews({ academyId, page }) {
         getReview.refetch();
     }, [modifyButtonState]);
 
-    useEffect(()=>{
-        setReviewWriteData({
-            ...reviewWriteData,
-            score: parseInt(`${rating}`)
-        })
-    }, [rating]);
-
     useEffect(() => {       // 페이지 로드 후 섹션으로 스크롤
         if (reviewSectionRef.current) {
             const storedScrollPosition = sessionStorage.getItem('scrollPosition');
@@ -217,13 +207,8 @@ function AcademyInfoReviews({ academyId, page }) {
                 <div css={S.SReviewInfo}>
                     <div css={S.SReviewUserScoreContainer}>
                         <h2>{principal?.data?.data.nickname}</h2>
-                        {/* <Rating style={{ maxWidth: 250 }} value={reviewWriteData.score} onClick={reviewScoreChange} size={20}/> */}
-                        {/* <StarRating /> */}
-                        <div>
-                            <AiFillStar css={S.SStar}/> 
-                            <input type="text" name="score" id="score" placeholder='별점' 
-                                onChange={reviewScoreChange} value={reviewWriteData?.score} />
-                        </div>
+                        <Rating style={{ maxWidth: 250 }} initialValue={reviewWriteData?.score} value={reviewWriteData.score} 
+                            onClick={reviewScoreChange} allowFraction={true} size={20} fillColor="#FFFF36"/>
                     </div>
                     <button onClick={reviewSubmitButton}><BsFillPencilFill/>후기작성</button>
                 </div>
