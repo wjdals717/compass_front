@@ -36,32 +36,23 @@ export const SAcademyInfoBox = css`
 `;
 
 export const ReviewScoreBox = css`
+    display: flex;
+    align-items: center;
     margin: 10px 0;
-`;
+    height: 30px;
 
-export const ReviewContentBox = css`
-    & div:nth-child(1) {
-        border: 1px solid #dbdbdb;
-        border-radius: 20px;
-        padding: 10px;
-        font-size: 16px;
-        width: 100%;
-        min-height: 100px;
-        overflow-wrap: break-word;
+    svg {
+        margin-right: 5px;
     }
 `;
 
-export const ReviewInputScoreBox = css`
-    padding: 5px 0px;
-`;
-
-export const ReviewInputContentBox = css`
+export const ReviewContentBox = css`
     border: 1px solid #dbdbdb;
     border-radius: 20px;
     padding: 10px;
     width: 100%;
-    height: 120px;
+    min-height: 100px;
     font-size: 16px;
-    width: 100%;
     resize: none;
+    overflow-wrap: break-word;
 `;

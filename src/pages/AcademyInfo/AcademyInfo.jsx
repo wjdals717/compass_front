@@ -6,7 +6,7 @@ import { FaLocationDot } from 'react-icons/fa6'
 import { AiFillStar, AiOutlineCheck } from 'react-icons/ai'
 import { IoHomeSharp } from 'react-icons/io5'
 import { BsFillPeopleFill, BsBarChartLineFill, BsFillCalendar2CheckFill, BsFillBookFill, BsFillPencilFill } from 'react-icons/bs'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { instance } from '../../api/config/instance';
 import AcademyInfoReviews from '../../components/AcademyInfoReviews/AcademyInfoReviews';
@@ -35,6 +35,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const str = category ? category.indexOf("(대)") : -1;
     const modifiedCategory = str !== -1 ? category.substring(0, str) : category;
     
+    const { page } = useParams();
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const academyId = searchParams.get('ACADEMY_ID')
@@ -95,7 +96,6 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-
     }, []);
 
     if(getAcademy.isLoading) {    //undefined인 경우
@@ -119,7 +119,9 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         <div css={S.SAcademyInfo}>
                             <div css={S.SAcademyName}>{academyData?.academy.ACA_NM}</div>
                             <div css={S.SAcademyLocation}><FaLocationDot/>{academyData?.academy.FA_RDNMA}</div>
-                            <div>📞 {academyData?.academy.FA_TELNO}</div>
+                            <div>
+                                {!!academyData?.academy.FA_TELNO && "📞"}
+                                {academyData?.academy.FA_TELNO}</div>
                             <div css={S.SScoreAndReviewContainer}>
                                 <AiFillStar css={S.SAcademyStar}/> 
                                 별점 {reviewData?.reviewCount?.score_avg} · 학원후기({reviewData?.reviewCount?.review_count}개)
@@ -205,11 +207,11 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                         </div>
                         {!!!academyData?.convenience[0] &&  <span>등록된 편의사항이 존재하지 않습니다.</span>}
                     </div>
-                    <AcademyInfoReviews academyId={academyId} userId={userId} principal={principal}/>
-                    <AcademyInfoClass academyData={academyData}/>
+                    <AcademyInfoReviews academyId={academyId} page={page}/>
+                    <AcademyInfoClass academyData={academyData} />
                 </div>
             </div>
-            {roleId === 0 ? null : <AcademyInfoSidebar academyId={academyId} userId={userId} principal={principal} />}
+            {roleId === 0 ? null : <AcademyInfoSidebar academyId={academyId} />}
         </RootContainer>
     );
 }

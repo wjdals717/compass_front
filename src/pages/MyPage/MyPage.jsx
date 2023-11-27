@@ -86,7 +86,7 @@ function MyPage(props) {
                         <Route path='/like' element={<MypageLike />} />
                         <Route path='/user' element={<MypageUser />} />
                         <Route path='/inquiry/:page' element={<MyPageInquiry setUncheckedAnswerCount={setUncheckedAnswerCount}/>} />
-                        <Route path='/review' element={<MypageReview />} />
+                        <Route path='/review/:page' element={<MypageReview />} />
                         <Route path='/myacademy/:page' element={<MypageMyAcademy />} />
                         <Route path='/appliedacademy/:page' element={<MypageAppliedAcademy />} />                    
                         <Route path='/consultation/:page' element={<MyPageConsultation />} />
