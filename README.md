@@ -88,7 +88,7 @@
 ### API명세서
   
 ### ERD설계도
-  
+![compass_ERD](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/2d62ac2b-9f1e-42cd-8636-f83c95ecc356)
 <br/>
 
 ## **📝 메뉴 구조도**
