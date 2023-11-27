@@ -106,7 +106,7 @@
 <br/>
 
 ## **📝 메뉴 구조도**
-  
+![메뉴구조도 drawio](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137966126/0cf6550d-9b1d-4dfc-bf4a-00d20212c1cc)
 <br/>
 
 ## **🖥 화면 구현 및 코드 리뷰**
