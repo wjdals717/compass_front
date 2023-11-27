@@ -145,6 +145,8 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 
 <br/>
 
+
+
 ### **홈 / 학원찾기**
 <details>
 <summary>찾기 코드 리뷰</summary>
@@ -158,6 +160,8 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 
 <br/>
 
+
+
 ### **학원 등록**
 <details>
 <summary>학원 등록 코드 리뷰</summary>
@@ -167,6 +171,7 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 </details>
 
 <br/>
+
 
 ### **학원 상세페이지**
 <details>
@@ -178,112 +183,55 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 
 <br/>
 
-### **마이페이지**
 
+### **학생 마이페이지**
 
-#### **학생**
 <details>
-<summary>학생 마이페이지 페이지 코드 리뷰</summary>
-<div markdown="1">
-  학생 마이페이지
-</div>
+<summary>관심 학원</summary>
 </details>
-
-
-#### **학원관리자**
-<details>
-<summary>학원관리자 마이페이지 페이지 코드 리뷰</summary>
-<div markdown="1">
-  학원관리자 마이페이지
-</div>
-</details>
-
-
-#### **웹마스터**
-<details>
-<summary>웹마스터 마이페이지 페이지 코드 리뷰</summary>
-<div markdown="1">
-  웹마스터 마이페이지
-</div>
-</details>
-
-#### **결제**
-<details>
-<summary>결제 페이지 코드 리뷰</summary>
-<div markdown="1">
-  `카카오 결제
   
-    const getProduct = useQuery(["getProduct"], async () => {
-        try{
-            const option = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            return await instance.get(`/ad/products`, option)
-        } catch(error){
-            console.error(error)
-        }
-    }, {
-        retry: 0,
-        refetchOnWindowFocus: false,
-        onSuccess: (response) => {
-            setProducts(response.data);
-        }
-    })
-
-    useEffect(() => {
-        const iamport = document.createElement("script");
-        iamport.src = "https://cdn.iamport.kr/v1/iamport.js";
-        document.head.appendChild(iamport);
-        return () => {
-            document.head.removeChild(iamport);
-        }
-    }, [])
-
-    const handlePaymentSubmit = (product) => {
-        const principal = quertClient.getQueryState("getPrincipal");
-        if(!window.IMP) {return}
-        const { IMP } = window;
-        IMP.init("imp52230315") // IMP를 초기화 시킴
-
-        const paymentData = {
-            pg: "kakaopay",
-            pay_method: "kakaopay",
-            merchant_uid: `mid_${new Date().getTime()}`,
-            amount: product.productPrice,
-            name: product.productName,
-            buyer_name: principal?.data?.data.name,
-            buyer_email: principal?.data?.data.email
-        }
-
-        IMP.request_pay(paymentData, (response) => {
-            const { success, error_msg } = response;
-
-            if(success) {
-                const purchaseDate = {
-                    productId: product.productId,
-                    userId: principal?.data?.data.userId,
-                    academyId: selectedAcademy.academyId
-                }
-                const option = {
-                    headers: {
-                        Authorization: localStorage.getItem("accessToken")
-                    }
-                }
-                instance.post("/purchase", purchaseDate, option).then(response => {
-                    alert("광고결제가 완료되었습니다. 감사합니다!!🙇")
-                    ispurchase.refetch()
-                    quertClient.refetchQueries(["getPrincipal"])
-                })
-            } else {
-                alert(error_msg);
-            }
-        })
-    }`
-</div>
-카카오 결제창이 나타나고 결제에 성공시 alert("광고결제가 완료되었습니다. 감사합니다!!🙇") 띄움
+<details>
+<summary>개인 정보 수정</summary>
 </details>
+  
+<details>
+<summary>학원 신청 목록</summary>
+</details>
+  
+<details>
+<summary>나의 문의</summary>
+</details>
+  
+<details>
+<summary>작성한 후기</summary>
+</details>
+
+<br/>
+
+
+### **학원관리자 마이페이지**
+<details>
+<summary>나의 학원</summary>
+내부 내용
+</details>
+ 
+<details>
+<summary>광고 결제</summary>
+</details>
+  
+<details>
+<summary>나의 학원 문의</summary>
+</details>
+
+<br/>
+
+
+### **웹마스터 마이페이지**
+<details>
+<summary>학원 등록 대기목록</summary>
+</details>
+
+
 
 <br/>
 
