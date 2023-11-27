@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 import * as S from "./Style";
@@ -36,10 +36,15 @@ function MypageLike(props) {
         refetchOnWindowFocus: false
     });
 
+    useEffect(() => {
+        // Refetch data when the component mounts
+        getLikeAcademiesQuery.refetch();
+    }, []);
+
     if(likeCountOfMypage.isLoading || getLikeAcademiesQuery.isLoading) {
         return <></>;
     }
-    
+    console.log(getLikeAcademiesQuery)
     return (
         <div>
             <h2>❤️ 나의 관심 학원</h2>
