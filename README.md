@@ -604,7 +604,10 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
 <details>
 <summary>관심 학원</summary>
 
-  `
+### FrontEnd
+
+#### 학원 상세페이지  좋아요 버튼
+  ```html
                       
            <div css={S.SSide}>
             <div css={S.SOptionBox}>
@@ -624,10 +627,69 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
                 </button>
             </div>
         </div>
-  학원 상세페에지 에서 좋아요 버튼을 누르면 좋아요의 count가 쌓이고
+```
+      
+-   buttton에 onClick를 넣어줌으로써 내가 취한 행동에 대한 값을 함수로 넘겨준다.
+-   data의 조건에 따라 값이 달라진다.
+
+#### 입력 받은 값 처리
+``` javascript
+const getLikeState = useQuery(["getLikeState"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/like/${academyId}/${userId}`, option)
+        } catch(error) {
+            console.error(error)
+        }
+    }, {
+        refetchOnWindowFocus: false,
+        retry: 0
+    })
+
+const likeCountOfInfo = useQuery(["getLikeCountOfInfo"], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/info/like/count/${academyId}`, option)
+        } catch(error) {
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+
+const handleLikeButtonClick = async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            if(getLikeState?.data?.data) {
+                await instance.delete(`/account/like/${academyId}/${userId}`, option);
+            } else {
+                await instance.post(`/account/like/${academyId}/${userId}`, {}, option);
+            }
+            getLikeState.refetch();
+            likeCountOfInfo.refetch();
+        } catch(error) {
+            console.error(error)
+        }
+    }
+```
+- handleLikeButtonClick 관심 학원을 추가 또는 제거하는 역할
+- likeCountOfInfo와 getLikeState : 각각 관심 학원의 좋아요 수와 현재 사용자의 해당 학원에 대한 관심 상태를 가져오는 역할
   
-        
-        
+#### 마이페이지 관심학원 리스트 보기
+   ```html
         <div>
             <h2>❤️ 나의 관심 학원</h2>
             <div>
@@ -641,7 +703,223 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
                 <Pagination totalCount={likeCountOfMypage.data.data} link={'/account/mypage/like'} search={''}/>
             </div>
         </div>
-  마이페이지에서 자신이 좋아요 한 학원 리스트를 볼 수 있다.
+```
+-   getLikeAcademiesQuery 통해 List를 볼 수 있다.
+
+#### 입력 받은 값
+
+```javascript
+const userId = principal?.userId
+
+    const getLikeAcademiesQuery = useQuery(["getLikeAcademies", page], async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/mypage/like/${userId}/${page}`, option);
+        } catch (error) {
+            console.error(error);
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
+    });
+```
+-  principal에서 추출하여 userId 상수에 할당
+
+
+### Backend
+
+#### controller
+```java
+
+@RestController
+@RequiredArgsConstructor
+public class AccountController {
+
+    private final AccountService accountService;
+
+  // 좋아요 상태
+    @GetMapping("/api/account/like/{academyId}/{userId}")
+    public ResponseEntity<?> getLikeState (@PathVariable int userId, @PathVariable int academyId) {
+        return ResponseEntity.ok(accountService.getLikeState(userId, academyId));
+    }
+
+    // 좋아요 추가
+    @PostMapping("/api/account/like/{academyId}/{userId}")
+    public ResponseEntity<?> setLike(@PathVariable int userId, @PathVariable int academyId) {
+        return ResponseEntity.ok(accountService.setLike(userId, academyId));
+    }
+
+    // 좋아요 삭제
+    @DeleteMapping("/api/account/like/{academyId}/{userId}")
+    public ResponseEntity<?> cancelLike(@PathVariable int userId, @PathVariable int academyId) {
+        return ResponseEntity.ok(accountService.cancelLike(userId, academyId));
+    }
+
+    // 좋아요 COUNT
+    @GetMapping("/api/account/mypage/like/count/{userId}")
+    public ResponseEntity<?> getLikeCount(@PathVariable int userId) {
+        return ResponseEntity.ok(accountService.getLikeCount(userId));
+    }
+
+    // 관심 학원
+    @GetMapping("/api/account/mypage/like/{userId}/{page}")
+    public ResponseEntity<?> getLikeAcademies(@PathVariable int userId, @PathVariable int page) {
+        return ResponseEntity.ok(accountService.getLikeAcademy(userId, page));
+    }
+
+    // 관심학원 COUNT
+    @GetMapping("/api/account/info/like/count/{academyId}")
+    public ResponseEntity<?> getLikeCountOfInfo(@PathVariable int academyId) {
+        return ResponseEntity.ok(accountService.getLikeInfoCount(academyId));
+    }
+}
+```
+- 좋아요의 CRUD에 대한 데이터 처리
+
+#### DTO
+```java
+@Builder
+@Data
+public class AcademyLikeRespDto {
+    private int likeId;
+    private int userId;
+    private int ACADEMYID;
+}
+```
+
+#### Service
+```java
+@Service
+@RequiredArgsConstructor
+public class AccountService {
+public boolean getLikeState(int userId, int academyId) {
+        return accountMapper.getLikeState(userId, academyId) > 0;
+    }
+
+    public boolean setLike(int userId, int academyId) {
+        return accountMapper.insertLike(userId, academyId) > 0;
+    }
+
+    public boolean cancelLike(int userId, int academyId) {
+        return accountMapper.deleteLike(userId, academyId) > 0;
+    }
+
+    public int getLikeCount(int userId) {
+        return accountMapper.getLikeCountByUserId(userId);
+    }
+
+    public List<Academy> getLikeAcademy(int userId, int page) {
+        int index = (page - 1) * 5;
+
+        return accountMapper.getLikeAcademies(userId, index);
+    }
+
+    public int getLikeInfoCount(int academyId) {
+        return accountMapper.getLikeCountByAcademyId(academyId);
+    }
+}
+```
+- controller에서 보낸 like에 관한 것들을 받는다.
+
+#### Repository
+```java
+@Mapper
+public interface AccountMapper {
+    public int getLikeState(int userId, int academyId);
+    public int insertLike(int userId, int academyId);
+    public int deleteLike(int userId, int academyId);
+
+    public int getLikeCountByUserId(int userId);
+    public List<Academy> getLikeAcademies(int userId, int index);
+
+    public int getLikeCountByAcademyId(int academyId);
+}
+```
+- 데이터베이스와 상호 작용하는 메서드를 정의
+
+#### SQL
+```java
+
+    <select id="getLikeState"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            like_tb
+        where
+            user_id = #{userId}
+            and ACADEMY_ID = #{academyId}
+
+    </select>
+
+    <select id="getLikeCountByUserId"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            like_tb
+        where
+            user_id = #{userId}
+    </select>
+
+    <select id="getLikeAcademies"
+            resultMap="academyMap">
+        SELECT
+            at.ACADEMY_ID,
+            at.ACA_NM,
+            at.REALM_SC_NM,
+            at.FA_RDNMA,
+            ait.logo_img,
+            IFNULL(clt.LIKE_COUNT, 0) AS LIKE_COUNT,
+            IFNULL(AVG(rt.score), 0) AS AVG_SCORE
+        FROM
+            like_tb lt
+            LEFT OUTER JOIN academy_tb at ON (at.ACADEMY_ID = lt.ACADEMY_ID)
+            LEFT OUTER JOIN academy_info_tb ait ON (ait.ACADEMY_ID =       lt.ACADEMY_ID)
+            LEFT OUTER JOIN review_tb rt ON (rt.ACADEMY_ID = lt.ACADEMY_ID)
+            LEFT OUTER JOIN (
+                SELECT ACADEMY_ID, COUNT(*) AS LIKE_COUNT
+                FROM like_tb
+                GROUP BY ACADEMY_ID
+            ) clt ON clt.ACADEMY_ID = at.ACADEMY_ID
+        where
+            lt.user_id = #{userId}
+        group by
+            at.ACADEMY_ID
+        order by
+            lt.like_id desc
+        limit #{index}, 9
+    </select>
+
+    <select id="getLikeCountByAcademyId"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            like_tb
+        where
+            academy_id = #{academyId}
+    </select>
+    <insert id="insertLike">
+        insert into like_tb
+        values(0, #{userId}, #{academyId})
+    </insert>
+
+    <delete id="deleteLike">
+        delete
+        from
+            like_tb
+        where
+            user_id = #{userId}
+            and ACADEMY_ID = #{academyId}
+    </delete>
+```
+-  좋아요의 CRUD 및 기능을 위한 쿼리문 작성
+
 </details>
   
 <details>
@@ -671,102 +949,13 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
  
 <details>
 <summary>광고 결제</summary>
-   `결제
-  
-    const getProduct = useQuery(["getProduct"], async () => {
-        try{
-            const option = {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }
-            return await instance.get(`/ad/products`, option)
-        } catch(error){
-            console.error(error)
-        }
-    }, {
-        retry: 0,
-        refetchOnWindowFocus: false,
-        onSuccess: (response) => {
-            setProducts(response.data);
-        }
-    })
 
-    useEffect(() => {
-        const iamport = document.createElement("script");
-        iamport.src = "https://cdn.iamport.kr/v1/iamport.js";
-        document.head.appendChild(iamport);
-        return () => {
-            document.head.removeChild(iamport);
-        }
-    }, [])
+### FrontEnd
 
-    const handlePaymentSubmit = (product) => {
-        const principal = quertClient.getQueryState("getPrincipal");
-        if(!window.IMP) {return}
-        const { IMP } = window;
-        IMP.init("imp52230315") // IMP를 초기화 시킴
+#### 카카오 결제 및 마이페이지 결제 리스트
 
-        const paymentData = {
-            pg: "kakaopay",
-            pay_method: "kakaopay",
-            merchant_uid: `mid_${new Date().getTime()}`,
-            amount: product.productPrice,
-            name: product.productName,
-            buyer_name: principal?.data?.data.name,
-            buyer_email: principal?.data?.data.email
-        }
-
-        IMP.request_pay(paymentData, (response) => {
-            const { success, error_msg } = response;
-
-            if(success) {
-                const purchaseDate = {
-                    productId: product.productId,
-                    userId: principal?.data?.data.userId,
-                    academyId: selectedAcademy.academyId
-                }
-                const option = {
-                    headers: {
-                        Authorization: localStorage.getItem("accessToken")
-                    }
-                }
-                instance.post("/purchase", purchaseDate, option).then(response => {
-                    alert("광고결제가 완료되었습니다. 감사합니다!!🙇")
-                    ispurchase.refetch()
-                    quertClient.refetchQueries(["getPrincipal"])
-                })
-            } else {
-                alert(error_msg);
-            }
-        })
-    }`
-</div>
-카카오 결제창이 나타나고 결제에 성공시 alert("광고결제가 완료되었습니다. 감사합니다!!🙇") 띄움
-
-
-          
-    ` <div>
-        <div css={S.HeaderBox}>
-            <h3>이런 학원은 어떠세요?</h3>
-            <div>
-                <span>광고</span>
-                <RiAdvertisementFill size={22}/>
-            </div>
-        </div>
-        <ul css={S.UlBox}>
-        {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
-            return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
-        })}
-        </ul>
-     </div> 
-    
- 결제 완료 후 학원 찾기 페이지 에서 결제된 학원 리스트들을 볼 수 있다.   
-                               
-                        
-
-
-    `<div>
+```html
+<div>
             <h2>💸 광고 결제</h2>
             <div>
                 {getMyAcademies.data.data.listTotalCount === 0 ? 
@@ -835,10 +1024,302 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
                 </>}
             </div>
         </div>
-    );
+```
+- handlePaymentSubmit 결제를 처리하는 핵심 함수
+- 결제된 학원 목록을 테이블로 표시하고, 선택된 학원에 대한 결제 정보를 상세하게 제공
+- 결제 정보가 없는 경우에는 알림 메시지와 함께 등록된 학원이 없다는 안내를 제공
+
+#### 입력받은 값
+```javascript
+// 결제
+    const getProduct = useQuery(["getProduct"], async () => {
+        try{
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/ad/products`, option)
+        } catch(error){
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: (response) => {
+            setProducts(response.data);
+        }
+    })
+
+    useEffect(() => {
+        const iamport = document.createElement("script");
+        iamport.src = "https://cdn.iamport.kr/v1/iamport.js";
+        document.head.appendChild(iamport);
+        return () => {
+            document.head.removeChild(iamport);
+        }
+    }, [])
+
+// 카카오 결제 관련
+    const handlePaymentSubmit = (product) => {
+        const principal = quertClient.getQueryState("getPrincipal");
+        if(!window.IMP) {return}
+        const { IMP } = window;
+        IMP.init("imp52230315") // IMP를 초기화 시킴
+
+        const paymentData = {
+            pg: "kakaopay",
+            pay_method: "kakaopay",
+            merchant_uid: `mid_${new Date().getTime()}`,
+            amount: product.productPrice,
+            name: product.productName,
+            buyer_name: principal?.data?.data.name,
+            buyer_email: principal?.data?.data.email
+        }
+
+        IMP.request_pay(paymentData, (response) => {
+            const { success, error_msg } = response;
+
+            if(success) {
+                const purchaseDate = {
+                    productId: product.productId,
+                    userId: principal?.data?.data.userId,
+                    academyId: selectedAcademy.academyId
+                }
+                const option = {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken")
+                    }
+                }
+                instance.post("/purchase", purchaseDate, option).then(response => {
+                    alert("광고결제가 완료되었습니다. 감사합니다!!🙇")
+                    ispurchase.refetch()
+                    quertClient.refetchQueries(["getPrincipal"])
+                })
+            } else {
+                alert(error_msg);
+            }
+        })
+    }
+```
+- 아임포트(Iamport): 아임포트는 결제 처리를 도와주는 외부 라이브러리입니다. 초기화 및 결제 요청에 사용됩니다.
+
+  (아임포트)
+https://portone.io/korea/koutm_source=google&utm_medium=google_sa&utm_campaign=pf_conversion_2302_kr&utm_content=homepage&gclid=EAIaIQobChMI0Za95tHlggMVzyZ7Bx3TTg0dEAAYASAAEgI14fD_BwE
+
+- 주요 기능:
+
+1. 결제된 학원 표시 :
+getMyAcademies 쿼리를 통해 사용자가 결제한 학원 목록을 가져옵니다.
+테이블을 사용하여 학원 번호, 학원명, 선택 버튼을 표시
+
+2. 결제 처리 (handlePaymentSubmit) :
+카카오 결제를 위해 IMP를 초기화하고, 결제 정보를 구성하여 IMP.request_pay를 호출
+결제 성공 시, 해당 정보를 서버에 전송하여 결제 내역을 기록하고, 관련 데이터를 업데이트
+
+3. 상품 목록 표시 :
+getProduct 쿼리를 통해 광고 상품 목록을 가져옵니다.
+가져온 상품 목록을 렌더링하여 사용자에게 선택할 수 있는 상품을 표시
+
+4. 상품 선택 및 결제 내역 표시 :
+사용자가 상품을 선택하면 해당 상품에 대한 결제 정보를 표시
+이미 결제한 경우에는 결제된 내용을 상세히 표시하고, 결제되지 않았다면 선택할 수 있는 상품 목록을 제공
+
+#### 학원 찾기 페이지 광고 리스트
+```html
+  <div>
+    <div css={S.HeaderBox}>
+        <h3>이런 학원은 어떠세요?</h3>
+        <div>
+            <span>광고</span>
+            <RiAdvertisementFill size={22}/>
+        </div>
+    </div>
+    <ul css={S.UlBox}>
+    {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
+        return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
+    })}
+    </ul>
+</div>
+```
+- 광고 리스트의 각 학원은 LiAcademyBox 컴포넌트를 통해 표현
+
+#### 입력받은 값
+```javascript
+// 광고 목록 가지고오기
+    const getPurchaseAcademyList = useQuery(["getPurchaseAcademyList"], async () => {
+        try{
+            return await instance.get(`/ad/academies/random`)
+
+        } catch(error) {
+            console.error(error)
+        }
+    }, {
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+```
+- 광고 목록을 가져오기 위해 API 엔드포인트 /ad/academies/random에 비동기 요청을 보냅니다.
+- 가져온 학원 목록은 getPurchaseAcademyList.data.data에 저장
+- 가져온 학원 목록을 매핑하여 각 학원을 LiAcademyBox로 표시
+
+### Backend
+
+#### Controller
+```java
+@RestController
+@RequiredArgsConstructor
+public class PaymentController {
+
+    private final PaymentService paymentService;
+
+    // 광고 목록 가져오기
+    @GetMapping("/api/ad/products")
+    public ResponseEntity<?> getProducts() {
+        return ResponseEntity.ok(paymentService.getProducts());
+    }
+
+    // 광고 결제된 학원
+    @PostMapping("/api/purchase")
+    public ResponseEntity<?> purchase(@RequestBody PurchaseReqDto purchaseReqDto) {
+        return ResponseEntity.ok(paymentService.purchase(purchaseReqDto));
+    }
+
+    // 광고 정보 유효성 검사
+    @GetMapping("/api/purchase/check")
+    public ResponseEntity<?> getPurchaseInfo(@RequestParam int userId, @RequestParam int academyId) {
+        return ResponseEntity.ok(paymentService.isPurchase(userId, academyId));
+    }
+}
+```
+- 광고 제품 및 구매와 관련된 엔드포인트를 관리
+
+#### DTO
+```java
+  @Data
+@Builder
+public class PurchaseReqDto {
+
+    private int purchaseInfoId;
+    private int academyId;
+    private int userId;
+    private int productId;
+    private Date purchaseDate;
+    private int productPeriod;
+
+    public Purchase toPurchase() {
+        return Purchase.builder()
+                .purchaseInfoId(purchaseInfoId)
+                .academyId(academyId)
+                .userId(userId)
+                .productId(productId)
+                .purchaseDate(purchaseDate)
+                .build();
+    }
+}
+```
+- 광고와 관련된 정보의 데이터 전송 객체
+
+#### Service
+```java
+@Service
+@RequiredArgsConstructor
+public class PaymentService {
+
+    private final PaymentMapper paymentMapper;
+
+    public List<ProductRespDto> getProducts() {
+        List<ProductRespDto> productRespDtos = new ArrayList<>();
+        paymentMapper.getProducts().forEach(product -> {
+            productRespDtos.add(product.toProduct());
+        });
+        return productRespDtos;
+    }
+
+    public boolean purchase(PurchaseReqDto purchaseReqDto) {
+        return paymentMapper.savePurchase(purchaseReqDto.toPurchase()) > 0;
+    }
+
+    public PurchaseInfoRespDto isPurchase(int userId, int academyId) {
+        if(!Objects.isNull(paymentMapper.checkPurchase(userId, academyId))) {
+            return paymentMapper.checkPurchase(userId, academyId).toPurchaseInfoDto();
+        }
+        return null;
+    }
+}
+```
+- 결제와 관련된 작업을 처리하는 비즈니스 로직이 포함된 서비스
+
+- 광고 제품 가져오기 : paymentMapper.getProducts()를 사용하여 광고 제품 목록을 가져옵니다.
+- 학원을 위한 광고 구매 : 제공된 구매 정보로 paymentMapper.savePurchase()를 호출하여 구매를 시작합니다.
+- 광고 정보 유효성 검사 : paymentMapper.checkPurchase()를 호출하여 광고 정보의 유효성을 확인합니다.
+
+#### Repository
+```java
+@Mapper
+public interface PaymentMapper {
+
+    public List<Product> getProducts();
+    public int savePurchase(Purchase purchase);
+    public Product checkPurchase(int userId, int academyId);
+}
+```
+- 결제와 관련된 데이터베이스 상호 작용을 위한 MyBatis Mapper 인터페이스
+#### SQL
+```java
+<resultMap id="productMap" type="com.aws.compass.entity.Product">
+        <id property="productId" column="product_id"/>
+        <result property="productName" column="product_Name"/>
+        <result property="productPrice" column="product_price"/>
+        <result property="productPeriod" column="product_period"/>
+        <result property="purchaseDate" column="purchase_date"/>
+    </resultMap>
+
+    <resultMap id="purchaseMap" type="com.aws.compass.entity.Purchase">
+        <id property="purchaseInfoId" column="purchase_info_id"/>
+        <result property="academyId" column="academy_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="purchaseDate" column="purchase_date"/>
+    </resultMap>
+
+    <insert id="savePurchase" parameterType="com.aws.compass.entity.Purchase">
+        insert into purchase_info_tb
+        values(0, #{academyId}, #{userId}, #{productId}, CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul'))
+    </insert>
+
+    <select id="getProducts"
+            resultMap="productMap">
+        select
+            pt.product_id,
+            pt.product_name,
+            pt.product_price,
+            pt.product_period
+        from
+            product_tb pt
+    </select>
+
+    <select id="checkPurchase" resultMap="productMap">
+        SELECT
+            pit.purchase_date,
+            pt.product_name,
+            pt.product_period,
+            pt.product_price
+        FROM
+            purchase_info_tb pit
+            left outer join product_tb pt on(pt.product_id = pit.product_id)
+        where
+            user_id = #{userId}
+            and ACADEMY_ID = #{academyId}
+            and now() <![CDATA[ <= ]]> date_add(purchase_date, interval pt.product_period DAY)
+    </select>
+```
+- 결과 매핑: SQL 쿼리 결과를 Java 객체에 매핑하기 위한 결과 맵을 정의 (productMap 및 purchaseMap)
+- Insert 쿼리 (savePurchase)
+- purchase_info_tb 테이블에 새로운 구매 레코드를 삽입
+- Select 쿼리 (getProducts 및 checkPurchase)
 
 
-   결제 완료 후 마이페이지의 결제된 학원 리스트들을 볼 수 있다.
 </details>
   
 <details>
