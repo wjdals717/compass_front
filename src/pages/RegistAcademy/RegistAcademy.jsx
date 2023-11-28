@@ -111,6 +111,7 @@ function RegistAcademy(props) {
                 }
                 await instance.post("/academy", academyContent, option);
                 alert("업로드가 완료되었습니다. 신청은 3일 이내 확인됩니다.");
+                navigate("/account/mypage/appliedacademy/1");
             }
         } catch (error) {
             alert(error.response.data.sendFail);
