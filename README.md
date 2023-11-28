@@ -91,7 +91,7 @@
 
 > **팀원: 이지우**
 - 라우트 설정
-- 카카오페이 결재 기능
+- 카카오페이 결제 기능
 - 학생, 학원관리자 좋아요 기능CRUD
 - roleId 값의 따라 mypage 바꾸기
 - 유효한 광고 목록
@@ -190,6 +190,45 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 
 <details>
 <summary>관심 학원</summary>
+
+  `
+                      
+           <div css={S.SSide}>
+            <div css={S.SOptionBox}>
+                {!getLikeState.isLoading &&
+                    <button disabled={!principal?.data?.data}
+                    css={S.SLikeButton}
+                    onClick={handleLikeButtonClick}>
+                        {getLikeState?.data?.data ? <AiFillHeart css={S.SLikeIcon(getLikeState?.data?.data)}/> :
+                        <AiOutlineHeart css={S.SLikeIcon(getLikeState?.data?.data)}/>}
+                        관심학원
+                        <div>{likeCountOfInfo?.data?.data}</div>
+                    </button>
+                }
+                <button css={S.SinquiryButton(isAcademyRegistered)} onClick={handleinquiryButton}>
+                    <BsChatLeftTextFill css={S.SinquiryIcon}/>
+                    문의
+                </button>
+            </div>
+        </div>
+  학원 상세페에지 에서 좋아요 버튼을 누르면 좋아요의 count가 쌓이고
+  
+        
+        
+        <div>
+            <h2>❤️ 나의 관심 학원</h2>
+            <div>
+                {likeCountOfMypage === 0 ? 
+                <EmptyBox comment={"나의 관심 학원을 추가해 보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
+                <ul css={S.UlBox}>
+                    {!getLikeAcademiesQuery.isLoading && Array.isArray(getLikeAcademiesQuery?.data?.data) && getLikeAcademiesQuery?.data?.data.map(academy => {
+                        return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
+                    })}
+                </ul>}
+                <Pagination totalCount={likeCountOfMypage.data.data} link={'/account/mypage/like'} search={''}/>
+            </div>
+        </div>
+  마이페이지에서 자신이 좋아요 한 학원 리스트를 볼 수 있다.
 </details>
   
 <details>
