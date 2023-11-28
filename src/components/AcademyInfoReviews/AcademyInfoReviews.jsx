@@ -75,6 +75,9 @@ function AcademyInfoReviews({ academyId, page }) {
                         Authorization: localStorage.getItem("accessToken")
                     }
                 };
+                if(!!!reviewWriteData.reviewContent) {
+                    return alert("후기 내용을 작성해주세요!");
+                }
                 if(modifyButtonState) {
                     if(window.confirm("작성한 후기를 수정하시겠습니까?")){
                         setModifyButtonState(false);
