@@ -39,6 +39,12 @@ export const SReviewList = css`
     & > span {
         flex-grow: 1;
     }
+
+    & button {
+        :first-of-type {
+            margin-right: 5px;
+        }
+    }
 `;
 
 export const ReviewEmpty = css`
