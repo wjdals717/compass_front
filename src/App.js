@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import AuthRoute from "./components/Routes/AuthRoute";
 import AccountRoute from "./components/Routes/AccountRoute";
@@ -24,6 +24,7 @@ const content = css`
 `;
 
 function App() {
+  const navigate = useNavigate();
 
   const getPrincipal = useQuery(["getPrincipal"], async () => {
     try {

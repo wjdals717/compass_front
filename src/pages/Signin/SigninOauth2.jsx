@@ -7,34 +7,10 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
     const [ searchParams, setSearchParams ] = useSearchParams();
     const queryClient = useQueryClient();
 
-    const token = searchParams.get("token");
-
-    if(token) {
-        const accessToken = "Bearer " + token;
-        const decodedToken = decodeToken(token); // 토큰 디코딩 함수를 사용하여 토큰 디코딩
-        const expirationTime = decodedToken.exp * 1000 // 만료 시간 (밀리초 단위)
-        
-        if(Date.now() > expirationTime) {
-            localStorage.removeItem("accessToken");
-            window.alert("토큰이 만료되었습니다. 다시 로그인 해주세요.");
-        } else {
-            localStorage.setItem("accessToken", accessToken);
-        }
-    }
-
-     // getPrincipal 쿼리 다시 호출
+    localStorage.setItem("accessToken", "Bearer " + searchParams.get("token"));
     queryClient.refetchQueries(["getPrincipal"]);
-    // localStorage.setItem("accessToken", "Bearer " + searchParams.get("token"));
 
     return <Navigate to={"/"} />
 }
-
-// 토큰 디코딩 함수 (실제로 사용하는 라이브러리에 따라 달라질 수 있음)
-function decodeToken(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace('-', '+').replace('_', '/');
-    return JSON.parse(atob(base64));
-}
-
 
 export default SigninOauth2;
