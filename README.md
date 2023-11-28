@@ -258,7 +258,7 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
  
 <details>
 <summary>광고 결제</summary>
-   `카카오 결제
+   `결제
   
     const getProduct = useQuery(["getProduct"], async () => {
         try{
