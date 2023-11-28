@@ -1,6 +1,13 @@
 import { css } from '@emotion/react';
 /** @jsxImportSource @emotion/react */
 
+export const ContentBox = css`
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+`;
+
 export const SContainer = css`
     display: flex;
     flex-direction: column;
@@ -59,6 +66,7 @@ export const ReviewContentBox = css`
     width: 100%;
     min-height: 100px;
     font-size: 16px;
+    line-height: 1.2em;
     resize: none;
     overflow-wrap: break-word;
 `;

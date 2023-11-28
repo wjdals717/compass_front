@@ -159,7 +159,7 @@ function MypageReview(props) {
                                         <tr key={data.academyId}>
                                             <td>{data.academyName}</td>
                                             <td>{data.score}</td>
-                                            <td>{data.reviewContent}</td>
+                                            <td css={S.ContentBox}>{data.reviewContent}</td>
                                             <td>
                                                 <button css={GS.SButton} onClick={(e) => {reviewOnClick(e, data)}}>
                                                     {selectedReview === data ? "선택해제" : "선택"}
@@ -170,7 +170,7 @@ function MypageReview(props) {
                                 })}
                             </tbody>
                         </table>
-                        {isSelected && !getUserReviews.isLoading && 
+                        {!!reviewData?.reviewList[0] && 
                             <Pagination totalCount={reviewData?.reviewCount?.reviewCount} link={`/account/mypage/review`}/>
                         }
                         {isSelected && !!selectedReview && (
