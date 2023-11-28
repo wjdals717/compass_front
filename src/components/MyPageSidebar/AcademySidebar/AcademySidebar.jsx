@@ -40,6 +40,9 @@ function AcademySidebar(props) {
                 <NavLink to='/account/mypage/adpayment/1' activeClassName='active'>
                     💸 광고 결제
                 </NavLink>
+                <NavLink to='/account/mypage/review/1' activeClassName='active'>
+                    📜 작성한 후기
+                </NavLink>
                 <NavLink to='/account/mypage/consultation/1' activeClassName='active'>
                     📩 나의 학원 문의
                 </NavLink>

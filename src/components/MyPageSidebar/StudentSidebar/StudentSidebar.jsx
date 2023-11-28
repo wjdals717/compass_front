@@ -59,7 +59,7 @@ function StudentSidebar({ uncheckedAnswerCount, setUncheckedAnswerCount }) {
                 </NavLink>
                 <NavLink to='/account/mypage/inquiry/1' activeClassName='active'>
                     <div css={S.InquiryBox}>
-                        📞 나의 학원 문의 
+                        📞 나의 문의 
                         { uncheckedAnswerCount > 0 && <div>{uncheckedAnswerCount}</div>}
                     </div>
                 </NavLink>

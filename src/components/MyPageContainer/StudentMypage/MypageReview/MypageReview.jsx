@@ -137,7 +137,7 @@ function MypageReview(props) {
         <div>
             <h2>📜 작성한 후기</h2>
             <div>
-                {getUserReviews.data.data.length === 0 ? (
+                {!getUserReviews.isLoading && (!reviewData?.reviewList || reviewData.reviewList.length === 0) ? (
                     <EmptyBox comment={"다녀본 학원에 후기를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/>
                 ) : (
                     <>
@@ -149,11 +149,6 @@ function MypageReview(props) {
                                     <td>후기</td>
                                     <td>선택</td>
                                 </tr>
-                                {!getUserReviews.isLoading && (!reviewData?.reviewList || reviewData.reviewList.length === 0) && (
-                                    <tr>
-                                        <td colSpan={4}>후기가 존재하지 않습니다! 학원 페이지에서 후기를 작성해보세요!</td>
-                                    </tr>
-                                )}
                                 {reviewData?.reviewList?.map((data) => {
                                     return (
                                         <tr key={data.academyId}>

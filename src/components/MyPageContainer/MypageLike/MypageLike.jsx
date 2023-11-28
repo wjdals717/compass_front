@@ -44,7 +44,7 @@ function MypageLike(props) {
     if(likeCountOfMypage.isLoading || getLikeAcademiesQuery.isLoading) {
         return <></>;
     }
-    console.log(likeCountOfMypage)
+
     return (
         <div>
             <h2>❤️ 나의 관심 학원</h2>

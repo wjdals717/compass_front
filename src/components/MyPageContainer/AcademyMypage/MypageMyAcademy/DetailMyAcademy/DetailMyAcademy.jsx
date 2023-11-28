@@ -219,8 +219,8 @@ function DetailMyAcademy({ type, selectedAcademy }) {
             if(JSON.stringify(newAcademyDetailInfo) !== JSON.stringify(academyDetailInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
                 await instance.put("/academy", newAcademyDetailInfo, option);
             }
-            alert("수정이 완료되었습니다.");
             getAcademy.refetch();
+            alert("수정이 완료되었습니다.");
         } catch (error) {
             alert("수정 오류");
             console.error(error);

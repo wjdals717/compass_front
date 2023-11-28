@@ -95,8 +95,7 @@ function MypageAppliedAcademy(props) {
                                 <RetryMyAcademy type={"awaiting"} selectedAcademy={selectedAcademy}/> : 
                                 <RetryMyAcademy type={"reject"} selectedAcademy={selectedAcademy}/>)}
                     </div>
-                </>    
-                }
+                </>}
             </div>
         </div>
     );
