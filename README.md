@@ -1332,7 +1332,300 @@ public interface PaymentMapper {
 ### **웹 관리자 마이페이지**
 <details>
 <summary>학원 등록 대기목록</summary>
+
+<br/>
+
+승인 대기 중인 학원들을 모아 웹 관리자가 승인/승인 거부 할 수 있도록 만든 페이지
+
+<br/>
+
+---
+
+<br/>
+
+### **Front End**
+
+**html**
+
+``` html
+<h2>📜 학원 등록 대기목록</h2>
+<div>
+    {getAcademies.data.data.listTotalCount === 0 ? <div css={S.SEmptyBox}>등록 대기중인 학원이 없습니다.</div> : 
+    <>
+        <div css={S.SComment}>
+            승인 대기 중인 학원들을 승인 거절 또는 승인 해주세요.
+        </div>
+        <table css={GS.STable}>
+            <tbody>
+                <tr>
+                    <th>학원 번호</th>
+                    <th>학원명</th>
+                    <th>신청자</th>
+                    <th>학원 선택</th>
+                </tr>
+                { getAcademies?.data?.data.academyRegistrations.map(academy => {
+                    return  <tr key={academy.academyRegistrationId} 
+                                style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal' }}>
+                                <td>{academy.acaAsnum}</td>
+                                <td>{academy.acaNm}</td>
+                                <td>{academy.name}</td>
+                                <td>
+                                    <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                        {selectedAcademy === academy ? '선택 해제' : '선택'}
+                                    </button>
+                                </td>
+                            </tr>
+                })}
+            </tbody>
+        </table>
+        {!getAcademies.isLoading && 
+            <Pagination totalCount={getAcademies.data.data.listTotalCount}
+                link={'/account/mypage/academyawating'}/>}
+        {isWaitingAcademyOpen && !!selectedAcademy && <SelectedAcademy selectedAcademy={selectedAcademy}/>}
+    </>}
+</div>
+```
+``` html
+<div css={S.SContainer}>
+    <div css={S.SNameContainer}>
+        <span css={S.SName}>선택된 학원</span>
+    </div>
+    <div css={S.SSelectedAcaContainer}>
+        <div css={S.SAcademyInfoBox}>
+            <div><span>학원 번호</span><div>{selectedAcademy.acaAsnum}</div></div>
+            <div><span>지역</span><div>{selectedAcademy.admstZoneNm}</div></div>
+            <div><span>신청자</span><div>{selectedAcademy.name}</div></div>
+        </div>
+        <div css={S.SAcademyInfoBox}>
+            <div><span>학원명</span><div>{selectedAcademy.acaNm}</div></div>
+        </div>
+    </div>
+    <div css={S.SNameContainer}>
+        <span css={S.SName}>사전확인서류 제출</span>
+    </div>
+    <FileDownload selectedAcademy={selectedAcademy}/>
+</div>
+<div css={S.SButtonBox}>
+    <button onClick={handleDisapprovalOnClick} css={S.SDeclineBtn}>승인 거절</button>
+    <button onClick={handleApprovalOnClick} css={S.SApprovalBtn}>승인</button>
+</div>
+```
+- 승인 대기중인 학원 리스트를 보여준다. 선택 버튼을 누르면 해당 학원의 정보와 업로드한 파일을 다운받아 볼 수 있다.
+- 승인 버튼과 승인 거절 버튼으로 해당 학원을 승인/승인 거절 할 수 있다.
+
+
+<br/><br/>
+
+**승인 대기 학원 목록 가져오기**
+
+``` javascript
+    const getAcademies = useQuery(["getAcademies", page], async () => {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/admin/academies/awaiting/${page}`, option);
+    }, {
+        refetchOnWindowFocus: false,
+        onSuccess: () => {
+            setSelectedAcademy(null);
+        }
+    })
+```
+- /admin/academies/awaiting 으로 요청
+
+
+<br/>
+
+**승인 버튼 클릭**
+``` javascript
+    const handleApprovalOnClick = async () => {
+        try {
+            const requestData = {
+                academyRegistrationId: selectedAcademy.academyRegistrationId,
+                userId: selectedAcademy.userId
+            }
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            await instance.put('/admin/academy/approval', requestData, option);
+            alert("승인 완료");
+            queryClient.refetchQueries(["getAcademies"]);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+```
+- /admin/academy/approval로 승인할 학원의 데이터 담아 요청
+- 승인 후 대기 학원 목록 refetch
+
+<br/>
+
+
+**승인 거절 버튼 클릭**
+``` javascript
+    const handleDisapprovalOnClick = async () => {
+        const rejectReason = prompt("거절 사유를 입력하세요: ");
+
+        if(rejectReason !== null && rejectReason.trim() !== "") {
+            try {
+                const requestData = {
+                    academyRegistrationId: selectedAcademy.academyRegistrationId,
+                    rejectReason: rejectReason
+                }
+                const option = {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken")
+                    }
+                }
+                await instance.put(`/admin/academy/disapproval`, requestData, option);
+                alert("승인 거절 완료");
+                queryClient.refetchQueries(["getAcademies"]);
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            alert("거절 사유를 입력하지 않아 취소되었습니다.");
+        }
+    }
+```
+- /admin/academy/disapproval로 승인 거절할 학원의 데이터 담아 요청
+- 거절 사유를 입력하지 않을 시 취소되도록 함.
+
+<br/>
+
+---
+
+<br/>
+
+### **Back End**
+
+
+**AdminController**
+``` java
+    // 대기 학원 가져오기
+    @GetMapping("/api/admin/academies/awaiting/{page}")
+    public ResponseEntity<?> getAwaitingAcademies(@PathVariable int page) {
+        return ResponseEntity.ok(adminService.getAwaitingAcademies(page));
+    }
+
+    // 학원 승인하기
+    @PutMapping("/api/admin/academy/approval")
+    public ResponseEntity<?> approvalAcademy(@RequestBody ApprovalAcademyReqDto approvalAcademyReqDto) {
+        return ResponseEntity.ok(adminService.approvalAcademy(approvalAcademyReqDto));
+    }
+
+    // 학원 승인 거절하기
+    @PutMapping("/api/admin/academy/disapproval")
+    public ResponseEntity<?> disapprovalAcademy(@RequestBody DisapprovalReqDto disapprovalReqDto) {
+        return ResponseEntity.ok(adminService.disapprovalAcademy(disapprovalReqDto));
+    }
+```
+- 페이지네이션을 위해 page번호를 PathVariable로 받아온다.
+
+<br/>
+
+**AdminService**
+``` java
+    public AwaitingAcademiesRespDto getAwaitingAcademies(int page) {
+        int index = (page - 1) * 5;
+
+        List<AcademyRegistration> academyRegistrations = adminMapper.getAcademyRegistrations(index);
+        int listTotalCount = adminMapper.getAwaitingAcademyCount();
+
+        return new AwaitingAcademiesRespDto(academyRegistrations, listTotalCount);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean approvalAcademy(ApprovalAcademyReqDto approvalAcademyReqDto) {
+        return adminMapper.updateApprovalState(approvalAcademyReqDto.getAcademyRegistrationId()) > 0
+                && adminMapper.updateUserRole(approvalAcademyReqDto.getUserId()) > 0;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean disapprovalAcademy(DisapprovalReqDto disapprovalReqDto) {
+        return adminMapper.updateApprovalStatus(disapprovalReqDto.getAcademyRegistrationId(), disapprovalReqDto.getRejectReason()) > 0;
+    }
+```
+- getAwaitingAcademies : 승인 대기 목록과 리스트 길이를 return
+- approvalAcademy : 
+  - 학원의 승인 상태를 변경(0(승인 대기) -> 1(승인))
+  - user의 role 변경(1(학생) -> 2(학원 관리자))
+- disapprovalAcademy :
+  - 학원의 승인 상태, 거절 사유 변경(0(승인 대기) -> -1(승인 거절))
+
+<br/>
+
+**admin_mapper**
+``` xml
+    <update id="updateApprovalState">
+        update
+            academy_registration_tb
+        set
+            approval_status = 1
+        where
+            academy_registration_id = #{academyRegistrationId}
+    </update>
+    <update id="updateUserRole">
+        update
+            user_tb
+        set
+            role_id = 2
+        where
+            user_id = #{userId}
+    </update>
+    <update id="updateApprovalStatus" parameterType="map">
+        update
+            academy_registration_tb
+        set
+            approval_status = -1,
+            reject_reason = #{rejectReason}
+        where
+            academy_registration_id = #{academyRegistrationId}
+    </update>
+
+    <select id="getAcademyRegistrations" resultMap="academyRegistrationMap">
+        select
+            art.academy_registration_id,
+            art.ACADEMY_ID,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.ADMST_ZONE_NM,
+            art.match,
+            art.user_id,
+            ut.name,
+            art.business_registration_file,
+            art.id_file,
+            art.operation_registration_file
+        from
+            academy_registration_tb art
+                left outer join academy_tb at on(at.ACADEMY_ID = art.ACADEMY_ID)
+                left outer join user_tb ut on(ut.user_id = art.user_id)
+        where
+            art.approval_status = 0
+        order by
+            art.academy_registration_id asc
+        limit #{index}, 5
+    </select>
+    <select id="getAwaitingAcademyCount" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            academy_registration_tb
+        where
+            approval_status = 0
+    </select>
+```
+- getAcademyRegistrations : approval_status가 0인 것들만(승인 대기 상태인 것) 가져옴
+- 오래된 승인 대기 학원부터 가져오기 위해 id 오름차순으로 가져옴
+
+
 </details>
+
+<br/>
 
 
 
