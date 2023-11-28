@@ -79,13 +79,18 @@ function Home(props) {
                             {selectedLocation.atpt_ofcdc_sc_code
                                 ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
                                 : "지역 선택"
-                            }   
+                            }
                         </SelectModalBtn>
                     </div>
                     <div onClick={openCategoryModal}>
                         <SelectModalBtn>
                             {selectedCategory.realm_sc_nm
-                                ? `${selectedCategory.category_nm} ${selectedCategory.le_crse_nm}`
+                                ? `${selectedCategory.realm_sc_nm === '국제화'
+                                ? '외국어'
+                                : selectedCategory.realm_sc_nm === '정보'
+                                ? 'IT'
+                                : selectedCategory.realm_sc_nm.replace(/\(대\)/g, '').trim()} 
+                                ${selectedCategory.le_crse_nm.includes("전체") ? "" : selectedCategory.le_crse_nm}`
                                 : "카테고리 선택"
                             }
                         </SelectModalBtn>
