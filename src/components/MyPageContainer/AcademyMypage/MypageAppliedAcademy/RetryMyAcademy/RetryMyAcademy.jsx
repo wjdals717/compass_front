@@ -40,7 +40,7 @@ function RetryMyAcademy({ type, selectedAcademy }) {
                     alert("아직 업로드 중입니다! 잠시후 시도해주세요.");
                     return;
                 }
-                await instance.put("/academy", academyContent, option);
+                await instance.put("/academy/reapplied", academyContent, option);
                 alert("업로드가 완료되었습니다. 신청은 3일 이내 확인됩니다.");
             }
         } catch (error) {
