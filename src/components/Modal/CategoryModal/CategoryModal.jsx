@@ -14,11 +14,9 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
     
     const [ categoryOptions, setCategoryOptions ] = useState([]); // 카테고리 목록
     const [ categoryOption, setCategoryOption ] = useState(selectedCategory.realm_sc_nm); // 선택된 카테고리
-    const [ categoryNm, setCategoryNm ] = useState(selectedCategory.category_nm);
     
     const [ categoryDetailOptions, setCategoryDetailOptions ] = useState([]); // 상세 카테고리 목록
     const [ categoryDetailOption, setCategoryDetailOption ] = useState(selectedCategory.le_crse_nm); // 선택된 상세 카테고리 
-    const [ categoryDetailNm, setCategoryDetailNm ] = useState(selectedCategory.category_detail_nm);
 
     // 선택 버튼
     const closeModal = () => {
@@ -26,9 +24,7 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
         setSelectedCategory({
             ...selectedCategory,
             realm_sc_nm: categoryOption,
-            category_nm: categoryNm,
-            le_crse_nm: categoryDetailOption,
-            category_detail_nm: categoryDetailNm
+            le_crse_nm: categoryDetailOption
         })
         setModalIsOpen(false);
         enableBodyScroll();
@@ -96,7 +92,6 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
                             onClick={() => {
                                 setCategoryOption(option.value);
                                 setCategoryDetailOption("");
-                                setCategoryNm(option.label);
                             }}
                             css={[
                                 S.SCategoryListItem, // 기존 스타일을 포함
@@ -112,7 +107,6 @@ function CategoryModal({ modalIsOpen, setModalIsOpen, enableBodyScroll }) {
                         <li key={option.categoryDetailValue} 
                         onClick={() => {
                             setCategoryDetailOption(option.categoryDetailValue);
-                            setCategoryDetailNm(option.categoryDetailName);
                             }
                         }
                         css={[

@@ -71,6 +71,7 @@ function FindAcademies(props) {
     // 학원 목록 가지고오기
     const getAcademyList = useQuery(["getAcademyList", page], async () => {
         try {
+            setTotalCount(0);
             setAcademyList([]);
             const options = {
                 params: {
