@@ -32,9 +32,8 @@ function AcademyInfoReviews({ academyId, page }) {
         reviewContent: ""
     })
 
-    //리뷰 가져오기
+    //학원 리뷰 가져오기
     const getReviews = useQuery(["getReviews", modifyButtonState, page], async () => {
-        // api, options를 get 요청
         try {
             const options = {
                 headers: {

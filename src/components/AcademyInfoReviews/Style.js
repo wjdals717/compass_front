@@ -22,23 +22,13 @@ export const SReviewListContainer = css`
 `;
 
 export const SReviewList = css`
-    display: flex;
+    display: grid;
     align-items: center;
     border: 1px solid #dbdbdb;
     padding: 10px;
     background-color: #f7f7f7;
-
-    & > h2 {
-        margin-right: 20px;
-    }
-
-    & > div {
-        margin-right: 20px;
-    }
-
-    & > span {
-        flex-grow: 1;
-    }
+    grid-template-columns: 100px 60px 520px 80px;
+    line-height: 1.2em;
 
     & button {
         :first-of-type {

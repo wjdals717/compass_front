@@ -1241,6 +1241,280 @@ public interface AccountMapper {
   
 <details>
 <summary>학원 신청 목록</summary>
+
+<br/>
+
+승인 대기, 승인 거절 상태의 학원을 볼 수 있는 기능
+
+<br/>
+
+---
+
+<br/>
+
+### **Front End**
+
+**html**
+
+``` html
+<h2>🗒️ 학원 신청 목록</h2>
+<div>
+    {getAppliedAcademies?.data?.data.listTotalCount === 0 ? 
+    <EmptyBox comment={<>신청한 학원이 없습니다.<br/>학원을 등록해 보세요!</>}
+        link={'/academy/regist'} btn={"등록하기"}/> : 
+    <>
+        <div css={S.SComment}>학원 승인 여부를 확인하고 재신청 해보세요!</div>
+        <table css={GS.STable}>
+            <tbody>
+                <tr>
+                    <td>학원 번호</td>
+                    <td>학원명</td>
+                    <td>승인 여부</td>
+                    <td>학원 선택</td>
+                </tr>
+                {getAppliedAcademies?.data?.data.academyRegistrations.map(academy => {
+                    return  <tr key={academy.academyRegistrationId} 
+                                style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal', color: academy.approvalStatus < 0 ? 'red' : 'black'}}>
+                                <td>{academy.acaAsnum}</td>
+                                <td>{academy.acaNm}</td>
+                                <td>{academy.approvalStatus === 0 ? "승인 대기" : "승인 거절"}</td>
+                                <td>
+                                    <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                        {selectedAcademy === academy ? '선택 해제' : '선택'}
+                                    </button>
+                                </td>
+                            </tr>
+                })}
+            </tbody>
+        </table>
+        {!getAppliedAcademies.isLoading &&
+            <Pagination totalCount={getAppliedAcademies?.data?.data?.listTotalCount}
+                link={`/account/mypage/appliedacademy`}/>}
+        <div>
+            {isApplicatedOpen && !!selectedAcademy && 
+                (selectedAcademy?.approvalStatus > 0 ? <></> : 
+                    selectedAcademy.approvalStatus === 0 ? 
+                    <RetryMyAcademy type={"awaiting"} selectedAcademy={selectedAcademy}/> : 
+                    <RetryMyAcademy type={"reject"} selectedAcademy={selectedAcademy}/>)}
+        </div>
+    </>}
+</div>
+```
+- 승인 대기, 승인 거절 상태의 학원 목록을 가져온다.
+- 선택된 학원의 승인 상태에 따라 props로 보내 각각의 기능을 수행한다.
+
+<br/>
+
+**승인 대기, 승인 거절 목록 불러오기**
+```javascript
+    const getAppliedAcademies = useQuery(["getAppliedAcademy", page], async () => {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/academies/applied/${principal.data.data.userId}/${page}`, option);
+    }, {
+        refetchOnWindowFocus: false,
+        onSuccess: () => {
+            setSelectedAcademy(null);
+        }
+    })
+```
+- /accademies/applied/{userId}/{page}로 get 요청
+
+<br/>
+
+**html**
+``` html
+<div>
+    <div css={S.SContainer}>
+        <div css={S.SInfo}>
+            {type === "reject" && "승인 거절된 학원 등록입니다. 거절 사유를 확인한 후 재등록 하세요."}
+            {type === "awaiting" && "승인 대기중인 학원 등록입니다. 학원 승인은 3일 이내 완료됩니다."}
+        </div>
+        {type === "reject" && 
+            <>
+                <div css={S.SNameContainer}>
+                    <span css={S.SName}>
+                        거절 사유
+                    </span>
+                </div>
+                <div css={S.SRejectReason}>
+                    {selectedAcademy.rejectReason}
+                </div>
+            </>
+        }
+        
+        <div css={S.SNameContainer}>
+            <span css={S.SName}>선택된 학원</span>
+        </div>
+        <div>
+            <div css={S.SAcademyInfoBox}>
+                <div><span>학원 번호</span><div>{selectedAcademy.acaAsnum}</div></div>
+                <div><span>지역</span><div>{selectedAcademy.admstZoneNm}</div></div>
+            </div>
+            <div css={S.SAcademyInfoBox}>
+                <div><span>학원명</span><div>{selectedAcademy.acaNm}</div></div>
+            </div>
+        </div>
+        <div css={S.SNameContainer}>
+            <span css={S.SName}>사전확인서류 제출</span>
+        </div>
+        {type === "reject" && 
+            <>
+                <FileUpload academyContent={academyContent} setAcademyContent={setAcademyContent}
+                    uploadeFile={uploadeFile} setUploadeFile={setUploadeFile}/>
+                <div css={S.SButtonContainer}>
+                    <button css={S.SSubmitButton} onClick={handlesubmissionClick}>제출</button>
+                </div>
+            </>
+        }
+        {type === "awaiting" && <FileDownload selectedAcademy={selectedAcademy}/>}
+    </div>
+</div>
+```
+- props로 보내준 type에 따라 각각의 기능을 수행
+- 승인 거절 상태이면 파일을 다시 업로드해 제출할 수 있고, 승인 대기 상태는 제출했던 파일을 다시 다운로드 받아볼 수 있다.
+
+<br/>
+
+**제출 버튼 클릭 이벤트**
+```javascript
+    const handlesubmissionClick = async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+
+            if(uploadeFile.idFile){
+                if(academyContent.match === 'false' && uploadeFile.operationRegistrationFile === 0) {
+                    alert("아직 업로드 중입니다! 잠시후 시도해주세요.");
+                    return;
+                }
+                await instance.put("/academy/reapplied", academyContent, option);
+                alert("업로드가 완료되었습니다. 신청은 3일 이내 확인됩니다.");
+            }
+        } catch (error) {
+            alert(error.response.data.sendFail);
+        }
+    }
+```
+- /academy/reapplied로 새로 업로드한 파일을 담아 put 요청
+
+<br/>
+
+---
+
+<br/>
+
+### **Back End**
+
+**AcademyController**
+
+``` java
+    // 승인 거절 학원 재신청
+    @ValidAop
+    @PutMapping("/api/academy/reapplied")
+    public ResponseEntity<?> updateAcademyRegist(@Valid @RequestBody AcademyRegistrationReqDto academyRegistrationReqDto, BindingResult bindingResult) {
+        return ResponseEntity.ok(academyService.updateAcademyRegist(academyRegistrationReqDto));
+    }
+
+    // 신청된 학원 목록 보기
+    @GetMapping("/api/academies/applied/{userId}/{page}")
+    public ResponseEntity<?> getAppliedAcademies(@PathVariable int userId, @PathVariable int page) {
+        return ResponseEntity.ok(academyService.getAppliedAcademies(userId, page));
+    }
+
+```
+- 페이지네이션을 위해 PathVariable로 page 변수 받아와줌.
+
+<br/>
+
+**AcademyService**
+
+```java
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateAcademyRegist(AcademyRegistrationReqDto academyRegistrationReqDto) {
+        AcademyRegistration academyRegistration = academyRegistrationReqDto.toAcademyRegist();
+
+        return academyMapper.updateAcademyRegist(academyRegistration) > 0;
+    }
+
+    public AppliedAcademiesRespDto getAppliedAcademies(int userId, int page) {
+        int index = (page - 1) * 5;
+
+        List<AcademyRegistration> academyRegistrations = academyMapper.getAppliedAcademyRegistrations(userId, index);
+        int listTotalCount = academyMapper.getAppliedAcademyCount(userId);
+
+        return new AppliedAcademiesRespDto(academyRegistrations, listTotalCount);
+    }
+```
+
+
+<br/>
+
+**academy_mapper**
+
+```xml
+    <update id="updateAcademyRegist">
+        update
+            academy_registration_tb
+        set
+            approval_status = 0,
+            business_registration_file = #{businessRegistrationFile},
+            id_file = #{idFile},
+            operation_registration_file =
+            <choose>
+                <when test='operationRegistrationFile==null or operationRegistrationFile.equals("")'>
+                    null,
+                </when>
+                <otherwise>
+                    #{operationRegistrationFile},
+                </otherwise>
+            </choose>
+            reject_reason = null
+        where
+            ACADEMY_ID = #{academyId}
+    </update>
+    <select id="getAppliedAcademyRegistrations" resultMap="academyRegistrationMap" parameterType="map">
+        select
+            art.academy_registration_id,
+            art.ACADEMY_ID,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.ADMST_ZONE_NM,
+            art.match,
+            art.user_id,
+            art.business_registration_file,
+            art.id_file,
+            art.operation_registration_file,
+            art.approval_status,
+            art.reject_reason
+        from
+            academy_registration_tb art
+            left outer join academy_tb at on(at.ACADEMY_ID = art.ACADEMY_ID)
+        where
+            art.user_id = #{userId}
+            and art.approval_status &lt; 1
+        order by
+            art.approval_status asc,
+            art.academy_registration_id desc
+        limit #{index}, 5
+    </select>
+```
+- updateAcademyRegist : 
+  - approval_status를 -1 -> 0으로 업데이트(승인 거절 -> 승인 대기 상태로 변경)
+  - file들 업데이트
+  - 거절 사유 null로 비워주기
+- getAppliedAcademyRegistrations : 
+  - approval_status < 1 -> 승인 대기, 승인 거절 학원들만 조회
+  - approval_status 오름차순 -> 승인 거절 상태인 학원이 먼저 보이도록
+
+<br/>
+
 </details>
   
 <details>
@@ -1257,7 +1531,647 @@ public interface AccountMapper {
 ### **학원 관리자 마이페이지**
 <details>
 <summary>나의 학원</summary>
-내부 내용
+
+<br/>
+
+승인된 나의 학원 목록을 보고 학원 상세 정보를 수정할 수 있는 기능
+
+---
+
+<br/>
+
+**html - 나의 학원 선택**
+
+```html
+<h2>🎒 나의 학원</h2>
+<div>
+    {getMyAcademies.data.data.listTotalCount === 0 ? 
+    <EmptyBox comment={<>나의 학원이 없습니다! <br />학원을 등록하고 승인 받아 나의 학원 정보를 등록해보세요!</>}
+        link={'/academy/regist'} btn={"등록하기"}/> :
+    <>
+        <div css={S.SComment}>나의 <span>학원 정보를 수정</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
+        <table css={GS.STable}>
+            <tbody>
+                <tr>
+                    <td>학원 번호</td>
+                    <td>학원명</td>
+                    <td>학원 선택</td>
+                </tr>
+                { getMyAcademies?.data?.data.academyRegistrations.map(academy => {
+                    return  <tr key={academy.academyRegistrationId} 
+                                style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
+                                <td>{academy.acaAsnum}</td>
+                                <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info/1?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
+                                <td>
+                                    <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                        {selectedAcademy === academy ? '선택 해제' : '선택'}
+                                    </button>
+                                </td>
+                            </tr>
+                })}
+            </tbody>
+        </table>
+        <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
+            link={`/account/mypage/myacademy`} />
+        <div>
+            {selectAcademyInfoOpen && !!selectedAcademy && <DetailMyAcademy selectedAcademy={selectedAcademy}/>}
+        </div>
+    </> }
+</div> 
+```
+- 승인된 나의 학원 목록 띄워줌
+- 학원 선택시 학원 정보 수정 창 띄워줌
+
+<br/>
+
+**나의 학원 불러오기**
+
+```javascript
+    const getMyAcademies = useQuery(["getMyAcademies", page], async () => {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/academies/${principal.data.data.userId}/${page}`, option);
+    }, {
+        refetchOnWindowFocus: false,
+        onSuccess: () => {
+            setSelectedAcademy(null);
+        }
+    })
+```
+- /academies/{userId}/{page}로 get 요청
+
+<br/>
+
+---
+
+<br/>
+
+**html - 학원 상세 정보 가져오기**
+
+```html
+<div>
+    <div css={S.STitleBox}>
+        <span>학원 정보</span>
+    </div>
+    <div css={S.SImgBox}>
+        로고 이미지
+        <div>
+            <img src={newAcademyDetailInfo.academyInfo.logoImg} alt="" />
+            <input type="file" onChange={handleImgInputChange}/>
+            {logoImgProgressPercent != 0 && logoImgProgressPercent != 100 && 
+                <Line percent={logoImgProgressPercent} strokeWidth={2} strokeColor="#67dce2" trailColor="#D3D3D3"/>
+            }
+        </div>
+    </div>
+    <div css={S.SInfoBox}>수강 인원<input type="text" name="classSize" value={newAcademyDetailInfo?.academyInfo?.classSize || ""} onChange={handleInfoInputChange}/></div>
+    <div css={S.SInfoBox}>수강 기간<input type="text" name="coursePeriod" value={newAcademyDetailInfo?.academyInfo?.coursePeriod || ""} onChange={handleInfoInputChange}/></div>
+    <div css={S.SInfoBox}>수강 목적<input type="text" name="purpose" value={newAcademyDetailInfo?.academyInfo?.purpose || ""} onChange={handleInfoInputChange}/></div>
+    <div css={S.SInfoBox}>홈페이지<input type="text" name="homePage" value={newAcademyDetailInfo?.academyInfo?.homePage || ""} onChange={handleInfoInputChange}/></div>
+    <div css={S.SInfoBox}>학원 전화번호<input type="text" name="phone" value={newAcademyDetailInfo?.academyInfo?.phone || ""} onChange={handleInfoInputChange}/></div>
+</div>
+```
+- 로고 이미지, 수강 인원, 수강 기간 등의 상세 정보를 입력하는 부분
+
+
+<br/>
+
+**학원 정보 가져오는 기능**
+```javascript
+    // 학원 정보 가져오기
+    const getAcademy = useQuery(["getAcademy", selectedAcademy], async () => {
+        try {
+            const options = {
+                params: {
+                    pIndex: 1,
+                    pSize: 1,
+                    ACADEMY_ID: selectedAcademy.academyId
+                },
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            // api, options를 get 요청
+            return await instance.get("/academy", options);
+        }catch (error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setAcademyDetailInfo({
+                "academyInfo": response.data.academyInfo ? response.data.academyInfo : academyInfo,
+                "age": response.data.age,
+                "convenience": response.data.convenience,
+                "classInfo": response.data.classInfo
+            });
+            setNewAcademyDetailInfo({
+                "academyInfo": !!response.data.academyInfo ? response.data.academyInfo : academyInfo,
+                "age": response.data.age,
+                "convenience": response.data.convenience,
+                "classInfo": response.data.classInfo
+            });
+
+            setSelectedAgeOptions(response.data.age.map(option => {
+                return { value: option.ageId, label: option.ageRange }
+            }));
+            setSelectedConvenienceOptions(response.data.convenience.map(option => {
+                return { value: option.convenienceId, label: option.convenienceName }
+            }));
+
+            setTableData(
+                response.data.classInfo.map((classItem, index) => ({
+                    id: index + 1,
+                    classInfoId: classItem.classInfoId,
+                    className: classItem.className,
+                    classPrice: classItem.classPrice
+                }))
+            );
+        }
+    })
+```
+- 이전 AcademyDetailInfo와 새로운 NewAcademyDetailInfo를 가져온다.
+- selectedAgeOption, selectedConvenienceOption을 가져와준다. (체크박스에서 선택된 옵션 설정)
+- tableData에 classInfo를 가져와 준다.
+
+<br/>
+
+
+**로고 이미지 업로드 함수**
+```javascript
+    const handleImgInputChange = (e) => {
+        const file = e.target.files[0];
+        //firebase에 저장
+        const storageRef = ref(storage, `logoImg/${selectedAcademy.academyId}/logoImg.jpg`);    // 해당 파일의 이름으로 firebase의 storage에 저장됨
+        const uploadTask = uploadBytesResumable(storageRef, file);        // 파일 업로드가 실행됨
+        uploadTask.on(          //업로드가 시작되면
+            "state_changed",    //파일이 변경되고 있을 때
+            (snapshot) => {     //파일 업로드 대기 중 프로그레스 바 적용할 때 사용
+                // 증가하는 %가 들어있음
+                setLogoImgProgressPercent(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
+            },
+            (error) => {        //업로드 실패할 경우
+                console.error(error);
+            },
+            () => { //업로드가 완료되었을 경우
+                getDownloadURL(storageRef).then(downloadUrl => {    //방금전 성공한 업로드 경로를 가져옴
+                    setNewAcademyDetailInfo({
+                        ...newAcademyDetailInfo, 
+                        "academyInfo": {
+                            ...newAcademyDetailInfo.academyInfo,
+                            "logoImg": downloadUrl
+                        }
+                    });
+                })
+            }
+        )
+    }
+```
+- 파이어베이스에 파일을 업로드 하고 업로드된 경로를 가져와 newAcademyDetailInfo 객체에 업데이트 한다.
+
+
+
+<br/>
+
+---
+
+<br/>
+
+**html - 수강 연령, 시설 및 편의사항 체크박스**
+
+
+```html
+<div>
+    <div css={S.STitleBox}>
+        <span>수강 연령</span>
+    </div>
+    <div css={S.SCheckBox}>
+    {!ageOptions.isLoading && ageOptions?.map((option) => (
+        <div key={option.value}>
+            <input
+                type="checkbox"
+                checked={selectedAgeOptions.some((selectedOption) => selectedOption.value === option.value)}
+                onChange={() => handleCheckboxChange(option, 'age')}
+            />
+            {option.label}
+        </div>
+    ))}
+    </div>
+</div>
+<div>
+    <div css={S.STitleBox}>
+        <span>시설 및 편의사항</span>
+    </div>
+    <div css={S.SCheckBox}>
+    {!convenienceOptionsState.isLoading && convenienceOptions?.map((option) => (
+        <div key={option.value}>
+            <input
+                type="checkbox"
+                checked={selectedConvenienceOptions.some((selectedOption) => selectedOption.value === option.value)}
+                onChange={() => handleCheckboxChange(option, 'convenience')}
+            />
+            {option.label}
+        </div>
+    ))}
+    </div>
+</div>
+```
+- 수강 연령, 시설 및 편의사항은 체크박스로 가져와 selectedOption으로 이전에 있던 항목은 체크되도록 한다. 
+
+<br/>
+
+**옵션 가져오는 기능**
+```javascript
+    const ageOptionsState = useQuery(["ageOptionsState"], async () => {
+        try {
+            return await instance.get("/option/ages");
+        } catch(error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setAgeOptions(response.data.map(option => {
+                return { value: option.ageId, label: option.ageRange }
+            }))
+        }
+    });
+
+    const convenienceOptionsState = useQuery(["convenienceOptionsState"], async () => {
+        try {
+            return await instance.get("/option/conveniences");
+        }catch(error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setConvenienceOptions(response.data.map(option => {
+                return { value: option.convenienceId, label: option.convenienceName }
+            }))
+        }
+    });
+```
+- ageOption과 convenienceOption을 가져온다.
+
+<br/>
+
+**체크박스 OnChange 함수**
+
+
+```javascript
+    const handleCheckboxChange = (option, optionType) => {
+        const optionId = option.value;
+        const optionName = option.label;
+    
+        if (optionType === 'age') {
+            const updatedSelectedOptions = selectedAgeOptions.map(({ value }) => value).includes(optionId)
+                ? selectedAgeOptions.filter(({ value }) => value !== optionId)
+                : [...selectedAgeOptions, { value: optionId, label: optionName }];
+            setSelectedAgeOptions(updatedSelectedOptions);
+    
+            setNewAcademyDetailInfo((prev) => ({
+                ...prev,
+                age: updatedSelectedOptions.map(({ value, label }) => ({ ageId: value, ageRange: label })),
+            }));
+        } else {
+            const updatedSelectedOptions = selectedConvenienceOptions.map(({ value }) => value).includes(optionId)
+                ? selectedConvenienceOptions.filter(({ value }) => value !== optionId)
+                : [...selectedConvenienceOptions, { value: optionId, label: optionName }];
+    
+            setSelectedConvenienceOptions(updatedSelectedOptions);
+    
+            setNewAcademyDetailInfo((prev) => ({
+                ...prev,
+                convenience: updatedSelectedOptions.map(({ value, label }) => ({ convenienceId: value, convenienceName: label })),
+            }));
+        }
+    };
+```
+- optionType에 따라 selectedOptions, newAcademyDetailInfo를 업데이트 해준다.
+- map을 통해 value가 optionId를 포함한다면(체크돼있던 걸 해제) filter로 selectedOptions에서 제거해주고, 포함하지 않는다면(체크돼있지 않던 걸 체크) selectedOptions에 추가해준다.
+
+<br/>
+
+---
+
+<br/>
+
+**html - 학원 수업 정보 표**
+```html
+<div css={S.SClassBox}>
+    <div css={S.STitleBox}>
+        <span>학원 수업 정보</span>
+        <button onClick={addRow} css={GS.SButton}>추가</button>
+    </div>
+    {tableData.length < 1 ? <div css={S.SEmpty}>수업 정보가 없습니다. 추가 버튼을 눌러 수업 정보를 추가해보세요!</div> : 
+    <table css={GS.STable}>
+        <tbody>
+            <tr>
+                <th>번호</th>
+                <th>과정명</th>
+                <th>가격</th>
+                <th>과정 삭제</th>
+            </tr>
+        {tableData.map((row) => (
+            <tr key={row.id}>
+                <td>{row.id}</td>
+                <td>
+                    <input type="text"
+                        value={row.className}
+                        onChange={(e) => handleClassInputChange(row.id, 'className', e.target.value)}/>
+                </td>
+                <td>
+                    <input type="text"
+                        value={row.classPrice}
+                        onChange={(e) => handleClassInputChange(row.id, 'classPrice', e.target.value)}/>
+                </td>
+                <td>
+                    <button onClick={() => handleDeleteRow(row.id)} css={GS.SButton}>삭제</button>
+                </td>
+            </tr>
+        ))}
+        </tbody>
+    </table>}
+</div>
+```
+- 표에서 추가, 삭제 버튼으로 행을 삽입, 삭제 할 수 있다.
+
+<br/>
+
+
+**수업 정보 표 행 추가, 삭제, 입력 함수**
+
+``` javascript
+    const addRow = () => {
+        setTableData([
+            ...tableData,
+            { id: tableData.length + 1, classInfoId: '', className: '', classPrice: '' },
+        ]);
+    };
+
+    const handleDeleteRow = (id) => {
+        const updatedTableData = tableData.filter((row) => row.id !== id);
+        // 다시 번호 매기기
+        const renumberedTableData = updatedTableData.map((row, index) => ({
+          ...row,
+          id: index + 1,
+        }));
+        setTableData(renumberedTableData);
+
+        // 삭제된 데이터를 newAcademyDetailInfo에서도 제거
+        const updatedClassInfo = renumberedTableData.map((row) => ({
+            className: row.className,
+            classPrice: row.classPrice,
+        }));
+
+        setNewAcademyDetailInfo((prev) => ({
+            ...prev,
+            classInfo: updatedClassInfo,
+        }));
+    };
+
+    const handleClassInputChange = (id, fieldName, value) => {
+        const updatedTableData = tableData.map((row) =>
+            row.id === id ? { ...row, [fieldName]: value } : row
+        );
+        setTableData(updatedTableData);
+    
+        const updatedClassInfo = updatedTableData.map((row) => ({
+            className: row.className,
+            classPrice: row.classPrice,
+        }));
+    
+        setNewAcademyDetailInfo((prev) => ({
+            ...prev,
+            classInfo: updatedClassInfo,
+        }));
+    };  
+```
+- addRow : 행을 삽입하는 함수, id를 tableData의 크기보다 하나 큰 값으로 두고 나머지 데이터를 빈 값으로 넣어준다.
+- handleDeleteRow : 
+  - 삭제 버튼을 클릭한 행의 id를 filter로 삭제
+  - 앞 번호가 삭제되면 id가 중복될 수 있어 다시 번호를 매겨준다.
+  - newAcademyDetailInfo에서도 삭제
+- handleClassInputChange : tableData와 newAcademyDetailInfo 업데이트 해준다.
+
+
+<br/>
+
+---
+
+<br/>
+
+**수정하기 버튼 이벤트**
+
+
+``` javascript
+    const handleEditBtnClick = async () => {
+        try {
+            const isAnyFieldEmpty = tableData.some((row) => !row.className || !row.classPrice);
+
+            if (isAnyFieldEmpty) {
+                alert('수업 과정에 빈 값이 없도록 모두 입력하세요!');
+                return;
+            }
+
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            
+            if(JSON.stringify(newAcademyDetailInfo) !== JSON.stringify(academyDetailInfo)) {    // 기존 academyInfo와 달라졌을 때만 수정
+                await instance.put("/academy", newAcademyDetailInfo, option);
+            }
+            alert("수정이 완료되었습니다.");
+            getAcademy.refetch();
+        } catch (error) {
+            alert("수정 오류");
+            console.error(error);
+        }
+    }
+```
+- 수업 과정에 수업명이나 가격이 비어 있으면 수업 과정에 빈 값이 없도록 하라는 알림
+- 기존 academyDetailInfo와 다를 때만 /academy로 put 요청
+- academy_info_tb에는 학원이 등록 될 때 내용이 null 값으로 insert되는 트리거가 있으므로 무조건 put 요청만 하면 된다.
+
+<br/>
+
+---
+
+<br/>
+
+### Back End
+
+**AcademyController**
+
+
+```java
+    // 나의 학원보기
+    @GetMapping("/api/academies/{userId}/{page}")
+    public ResponseEntity<?> getMyAcademies(@PathVariable int userId, @PathVariable int page) {
+        return ResponseEntity.ok(academyService.getMyAcademies(userId, page));
+    }
+
+    // 학원 정보 수정
+    @PutMapping("/api/academy")
+    public ResponseEntity<?> editAcademyInfo(@RequestBody EditAcademyInfoReqDto editAcademyInfoReqDto) {
+        return ResponseEntity.ok(academyService.editAcademyInfo(editAcademyInfoReqDto));
+    }
+```
+
+
+
+<br/>
+
+**AcademyService**
+
+
+```java
+    public MyAcademiesRespDto getMyAcademies(int userId, int page) {
+        int index = (page - 1) * 5;
+
+        List<AcademyRegistration> academyRegistrations = academyMapper.getMyAcademyRegistrations(userId, index);
+        int listTotalCount = academyMapper.getMyAcademyCount(userId);
+
+        return new MyAcademiesRespDto(academyRegistrations, listTotalCount);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean editAcademyInfo(EditAcademyInfoReqDto editAcademyInfoReqDto) {
+        AcademyInfo academyInfo = editAcademyInfoReqDto.getAcademyInfo();
+        academyMapper.updateAcademyInfo(academyInfo);
+
+        List<Age> ages = editAcademyInfoReqDto.getAge();
+        academyMapper.deleteAge(academyInfo.getAcademyInfoId());
+        ages.forEach(age -> {
+            academyMapper.insertAge(academyInfo.getAcademyInfoId(), age.getAgeId());
+        });
+
+        List<Convenience> conveniences = editAcademyInfoReqDto.getConvenience();
+        academyMapper.deleteConvenience(academyInfo.getAcademyInfoId());
+        conveniences.forEach(convenience -> {
+            academyMapper.insertConvenience(academyInfo.getAcademyInfoId(), convenience.getConvenienceId());
+        });
+
+        List<ClassInfo> classInfos = editAcademyInfoReqDto.getClassInfo();
+        academyMapper.deleteClassInfo(academyInfo.getAcademyInfoId());
+        classInfos.forEach(classInfo -> {
+            academyMapper.insertClassInfo(academyInfo.getAcademyInfoId(), classInfo);
+        });
+        return true;
+    }
+```
+- academy_info_tb의 학원 상세 정보들 업데이트
+- 수업 연령, 편의 시설, 수업 정보는 한 학원당 여러 개가 있기 때문에 업데이트가 까다로워 해당 학원의 데이터를 모두 삭제한 후 새로운 데이터를 insert 하는 방법을 사용하였다.
+- 배열로 정보들을 받아와서 forEach로 하나씩 insert해주었다.
+
+
+<br/>
+
+**academy_mapper**
+
+
+```xml
+    <select id="getMyAcademyRegistrations" resultMap="academyRegistrationMap" parameterType="map">
+        select
+            art.academy_registration_id,
+            art.ACADEMY_ID,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.ADMST_ZONE_NM,
+            art.match,
+            art.user_id,
+            art.business_registration_file,
+            art.id_file,
+            art.operation_registration_file,
+            art.approval_status,
+            art.reject_reason
+        from
+            academy_registration_tb art
+                left outer join academy_tb at on(at.ACADEMY_ID = art.ACADEMY_ID)
+        where
+            art.user_id = #{userId}
+            and art.approval_status = 1
+        order by
+            art.academy_registration_id desc
+        limit #{index}, 5
+    </select>
+```
+- approval_status가 1인 학원 리스트 조회(승인된 학원)
+
+
+<br/>
+
+
+```xml
+    <update id="updateAcademyInfo" parameterType="com.aws.compass.entity.AcademyInfo">
+        update
+            academy_info_tb
+        set
+            logo_img = #{logoImg},
+            class_size = #{classSize},
+            course_period = #{coursePeriod},
+            purpose = #{purpose},
+            home_page = #{homePage},
+            phone = #{phone}
+        where
+            academy_info_id = #{academyInfoId}
+    </update>
+```
+- 로고 이미지, 수업 인원, 수업 기간 등 정보 업데이트
+
+<br/>
+
+```xml
+    <insert id="insertConvenience">
+        insert into academy_convenience_tb
+        values(0, #{academyInfoId}, #{convenienceId})
+    </insert>
+    <insert id="insertAge">
+        insert into attendance_age_tb
+        values(0, #{academyInfoId}, #{ageId})
+    </insert>
+    <insert id="insertClassInfo">
+        insert into class_info_tb
+        values(0, #{academyInfoId}, #{classInfo.className}, #{classInfo.classPrice})
+    </insert>
+    <delete id="deleteConvenience">
+        delete from
+            academy_convenience_tb
+        where
+            academy_info_id = #{academy_info_id}
+    </delete>
+    <delete id="deleteAge">
+        delete from
+            attendance_age_tb
+        where
+            academy_info_id = #{academy_info_id}
+    </delete>
+    <delete id="deleteClassInfo">
+        delete from
+            class_info_tb
+        where
+            academy_info_id = #{academy_info_id}
+    </delete>
+```
+- 수업 연령, 편의 시설, 수업 정보는 해당 academy_info_id의 데이터를 모두 delete한 후 insert 해준다.
+
+<br/>
+
+---
+
+<br/>
+
 </details>
  
 <details>
