@@ -18,7 +18,12 @@ function AcademyInfoSidebar({ academyId }) {
 
     const getLikeState = useQuery(["getLikeState"], async () => {
         try {
-            return await instance.get(`/account/like/${academyId}/${userId}`)
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/account/like/${academyId}/${userId}`, option)
         } catch(error) {
             console.error(error)
         }
@@ -60,10 +65,15 @@ function AcademyInfoSidebar({ academyId }) {
 
     const handleLikeButtonClick = async () => {
         try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
             if(getLikeState?.data?.data) {
-                await instance.delete(`/account/like/${academyId}/${userId}`);
+                await instance.delete(`/account/like/${academyId}/${userId}`, option);
             } else {
-                await instance.post(`/account/like/${academyId}/${userId}`);
+                await instance.post(`/account/like/${academyId}/${userId}`, {}, option);
             }
             getLikeState.refetch();
             likeCountOfInfo.refetch();
