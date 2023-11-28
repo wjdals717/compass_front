@@ -35,7 +35,6 @@ function MypageUser(props) {
                 await instance.delete(`/account/${principalState.data.data.userId}`, option);
                 localStorage.removeItem("accessToken");
                 await queryClient.refetchQueries(["getPrincipal"]);
-                console.log(principalState);
                 window.location.reload();
             }
         } catch (error) {
