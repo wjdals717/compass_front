@@ -200,7 +200,7 @@ function MypageAdPayment(props) {
                             return  <tr key={academy.academyRegistrationId} 
                                         style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
                                         <td>{academy.acaAsnum}</td>
-                                        <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
+                                        <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info/1?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
                                         <td>
                                             <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
                                                 {selectedAcademy === academy ? '선택 해제' : '선택' }
