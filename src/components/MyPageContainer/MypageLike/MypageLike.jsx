@@ -44,19 +44,22 @@ function MypageLike(props) {
     if(likeCountOfMypage.isLoading || getLikeAcademiesQuery.isLoading) {
         return <></>;
     }
-    console.log(getLikeAcademiesQuery)
+    console.log(likeCountOfMypage)
     return (
         <div>
             <h2>❤️ 나의 관심 학원</h2>
             <div>
-                {likeCountOfMypage === 0 ? 
+                {likeCountOfMypage.data.data === 0 ? 
                 <EmptyBox comment={"나의 관심 학원을 추가해 보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
-                <ul css={S.UlBox}>
-                    {!getLikeAcademiesQuery.isLoading && Array.isArray(getLikeAcademiesQuery?.data?.data) && getLikeAcademiesQuery?.data?.data.map(academy => {
-                        return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
-                    })}
-                </ul>}
-                <Pagination totalCount={likeCountOfMypage.data.data} link={'/account/mypage/like'} search={''}/>
+                <>
+                    <ul css={S.UlBox}>
+                        {!getLikeAcademiesQuery.isLoading && Array.isArray(getLikeAcademiesQuery?.data?.data) && getLikeAcademiesQuery?.data?.data.map(academy => {
+                            return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
+                        })}
+                    </ul>
+                    <Pagination totalCount={likeCountOfMypage.data.data} link={'/account/mypage/like'} search={''}/>
+                </>
+                }
             </div>
         </div>
     );
