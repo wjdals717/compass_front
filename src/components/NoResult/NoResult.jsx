@@ -8,20 +8,23 @@ const SNoResult = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
     width: 780px;
     height: 500px;
+    font-size: 18px;
 
     img {
-        width: 700px;
-        height: 450px;
+        width: 500px;
+        height: auto;
     }
 `;
 
 function NoResult(props) {
     return (
         <div css={SNoResult}>
-            <img src={noResults} alt="No results" />
             <p>검색 결과를 찾을 수 없습니다.</p>
+            <img src={noResults} alt="No results" />
         </div>
     );
 }
