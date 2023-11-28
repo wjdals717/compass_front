@@ -38,9 +38,9 @@ function DetailSignup(props) {  // /auth/detail/signup
         } catch (error) {
             console.error(error);
             if(Object.keys(error.response.data).includes("email")) {
-                alert("이미 사용중인 이메일입니다. 다시 입력하세요.");
+                alert(error.response.data.email);
             } else if(Object.keys(error.response.data).includes("nickname")) {
-                alert("이미 사용중인 닉네임입니다. 다시 입력하세요.");
+                alert(error.response.data.nickname);
             }
         }
     }

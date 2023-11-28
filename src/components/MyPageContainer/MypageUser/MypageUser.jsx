@@ -36,15 +36,15 @@ function MypageUser(props) {
                     }
                 }
                 const response = await instance.put(`/account/user/${principalState.data.data.userId}`, newUser, option);
+                queryClient.refetchQueries(["getPrincipal"]);
                 alert("개인정보 변경이 완료 되었습니다.");
             }
-            queryClient.refetchQueries(["getPrincipal"]);
         } catch (error) {
             console.error(error);
             if(Object.keys(error.response.data).includes("email")) {
-                alert("이미 사용중인 이메일입니다. 다른 이메일 계정을 입력하세요.");
+                alert(error.response.data.email);
             } else if(Object.keys(error.response.data).includes("nickname")) {
-                alert("이미 사용중인 닉네임입니다. 다시 입력하세요.");
+                alert(error.response.data.nickname);
             }
             setNewUser(user);
         }
