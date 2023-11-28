@@ -141,7 +141,415 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 <details>
 <summary>로그인 유효성 검사 및 예외 처리 영상 그 외 토큰 부여 및 권한 코드 리뷰</summary>
 <div markdown="1">
-  회원가입 및 로그인
+
+## **OAuth2 로그인**
+  
+### **Front End**
+  
+**html 코드**
+
+```html
+    <div css={S.SLoginBox}>
+        <img src={MainLogo} alt="" css={S.SMainLogo}/>
+        <div css={S.SkakaoLoginBtn}><img css={S.SKakaoBtn} src={kakaologin} onClick= {handleKaKaoLogin} /></div>
+        <div css={S.SNaverLoginBtn}><img css={S.SNaverBtn} src={naverlogin} onClick= {handleNaverLogin} /></div>
+    </div>
+```
+
+</br>
+
+- 네이버, 카카오 아이콘을 클릭시 해당 계정으로 로그인
+
+
+</br>
+
+**로그인**
+
+```javascript
+    const handleKaKaoLogin = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
+    }
+
+    const handleNaverLogin = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/naver";
+    }
+```
+- window.location.href를 통해 브라우저의 현재 위치를 해당 주소로 변경, 이 URL은 각각 카카오, 네이버 로그인을 처리하는 서버 엔드포인트로 이동
+
+
+<br/>
+
+
+### **Back End**
+
+**application.yml**
+
+```html
+spring:
+  profiles.include:
+    - secret
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            clientId: 2dc5c2ec61e5efeb6b952c1b5d381821
+            redirectUri: http://localhost:8080/login/oauth2/code/kakao
+            authorizationGrantType: authorization_code
+            clientAuthenticationMethod: POST
+            clientName: Kakao
+          naver:
+            clientId: i4eW_RUc74M3Ci96bJuG
+            redirectUri: http://localhost:8080/login/oauth2/code/naver
+            authorizationGrantType: authorization_code
+            clientAuthenticationMethod: POST
+            clientName: Naver
+        provider:
+          kakao:
+            authorizationUri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            userNameAttribute: id
+          naver:
+            authorizationUri: https://nid.naver.com/oauth2.0/authorize
+            tokenUri: https://nid.naver.com/oauth2.0/token
+            userInfoUri: https://openapi.naver.com/v1/nid/me
+            userNameAttribute: response
+```
+
+- 카카오, 네이버에 대한 OAuth 2.0 클라이언트 정보를 정의
+
+<br/>
+
+**application-secret.yml**
+```html
+  security:
+    oauth2:
+      client:
+        registration:
+          naver:
+            clientSecret:
+```
+
+- clientSecret 키는 유출시 보안상의 위험이 있기 때문에 application-secret에 따로 숨김
+
+<br/>
+
+
+**SecurityConfig(웹 보안 설정)**
+
+
+```java
+@EnableWebSecurity
+@Configuration
+@RequiredArgsConstructor
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final PrincipalEntryPoint principalEntryPoint;
+    private final PrincipalUserDetailsService principalUserDetailsService;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors();            // WebMvcConfig의 CORS 설정을 적용
+        http.csrf().disable();  // CSRF 보호 비활성화
+        http.authorizeRequests()
+                .antMatchers("/api/auth/**", "/api/option/**",
+                        "/api/academies", "/api/academy/**",
+                        "/api/review/**", "/api/purchase/**", "/api/academy/check/**",
+                        "/api/ad/academies/random")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(principalEntryPoint)
+                .and()
+                .oauth2Login()
+                .successHandler(oAuth2SuccessHandler)
+                .userInfoEndpoint()
+                .userService(principalUserDetailsService);
+    }
+}
+```
+
+- OAuth 2.0을 이용한 소셜 로그인 및 JWT(JSON Web Token) 기반의 인증에 관련된 보안 설정
+- JwtAuthenticationFilter : jwt 인증 관련 필터
+- OAuth2SuccessHandler에서 OAuth2Login이 성공했을 때의 로직을 처리(마지막에 실행됨)
+- PrincipalUserDetailsService : 사용자 정보를 로드하여 OAuth2User를 return 하는 클래스
+
+<br/>
+
+**PrincipalUserDetailsService**
+
+``` java
+@Service
+public class PrincipalUserDetailsService implements OAuth2UserService {
+
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();    // 사용자 정보 로드하기 위한 서비스 생성
+        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);    // 사용자 정보 로드
+
+        Map<String, Object> attributes = oAuth2User.getAttributes();    // 사용자 정보에서 속성 얻어옴.
+
+        String provider = userRequest.getClientRegistration().getClientName();  // Naver, Kakao 등 provider 이름
+        Map<String, Object> response = null;
+        switch (provider) {
+            case "Naver":
+                response = (Map<String, Object>) attributes.get("response");    // 속성에서 response 부분 꺼냄(id, email, name 등의 실질적 사용자 데이터)
+                break;
+            case "Kakao":
+                response = (Map<String, Object>) attributes.get("properties");
+                response.put("id", attributes.get("id"));
+                break;
+        }
+        response.put("provider", provider); // provider 속성을 추가해줌.
+        return new DefaultOAuth2User(new ArrayList<>(), response, "id");
+    }
+}
+```
+- OAuth2 요청을 받아 사용자 정보를 로드해서 provider에 따른 구조대로 필요한 정보를 response Map에 담아준다.
+
+
+<br/>
+
+**OAuth2SuccessHandler**
+
+``` java
+@Component
+@RequiredArgsConstructor
+public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+
+    private final AuthMapper authMapper;
+    private final JwtProvider jwtProvider;
+
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        String oauth2Id = authentication.getName(); // PrincipalUserDetailsService의 loadUser에서 return 했던 DefaultOAuth2User의 key값
+        User user = authMapper.findUserByOauth2Id(oauth2Id);
+
+        if (user == null) { // 소셜 로그인 돼있는 유저가 없다면 -> 새로 회원가입
+            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+            String provider = defaultOAuth2User.getAttributes().get("provider").toString();
+
+            // 회원가입이 안 되었을 때 OAuth2 계정 회원가입 페이지로 이동
+            response.sendRedirect("http://localhost:3000/auth/detail/signup" +
+                    "?oauth2Id=" + oauth2Id +
+                    "&provider=" + provider);
+            return;
+        }
+        // 소셜 로그인 돼있는 유저가 있다면 -> 로그인
+        PrincipalUser principalUser = new PrincipalUser(user);
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
+        String accessToken = jwtProvider.generateToken(authenticationToken);
+        response.sendRedirect("http://localhost:3000/auth/oauth2/signin" +  // client로 token을 보낸다
+                "?token=" + URLEncoder.encode(accessToken));
+    }
+}
+```
+- DB에서 요청을 보낸 유저의 oauth2Id가 있는지 확인
+- 소셜 로그인 돼있는 유저가 없다면 회원가입 페이지로 redirect를 보낸다.
+- 소셜 로그인 돼있는 유저가 있다면 토큰을 담아 클라이언트로 redirect를 보낸다.
+
+<br/>
+
+### **Front End**
+
+**SigninOauth2**
+
+``` javascript
+function SigninOauth2(props) {  // /auth/oauth2/signin
+    // 서버로부터 redirection해서 들어온 token을 localStorage에 저장하는 과정
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    const queryClient = useQueryClient();
+
+    localStorage.setItem("accessToken", "Bearer " + searchParams.get("token"));
+    queryClient.refetchQueries(["getPrincipal"]);
+
+    return <Navigate to={"/"} />
+}
+```
+- 백엔드에서 OAuth2Id 유저가 있을 시에 redirect 되는 경로 파일
+- localStorage에 accessToken을 저장해둔다.
+
+<br/>
+
+---
+
+<br/>
+
+## **회원가입**
+
+### **FrontEnd**
+
+
+**html 코드**
+``` html
+<div css={S.SContainer}>
+    <h1 css={S.STitle}>회원가입</h1>
+    <h2 css={S.STitle2}>필요한 정보들을 기입해주세요.</h2>
+
+    <div css={S.SInputBox}>
+        <div css={S.SInuptCompartment}>
+            <div><input type="email" name="email" placeholder='이메일' onChange={handleInputChange}/></div>
+            <div><input type="text" name="name" placeholder='이름' onChange={handleInputChange}/></div>
+            <div><input type="text" name="nickname" placeholder='닉네임' onChange={handleInputChange}/></div>
+    <div><input type="text" name="phone" placeholder='전화번호' onChange={handleInputChange}/></div>
+        </div>
+   </div>
+
+    <div css={S.SSigninBtnBox}>
+        <div css={S.SSigninTitle}>
+            <span>이미 계정이 있으신가요?</span>
+        </div>
+        <button css={S.SSigninBtn} onClick={handleSigninOnClick}>로그인</button>
+    </div>
+    <div css={S.SSignupBtnBox}>
+        <button css={S.SSignupBtn} onClick={handleSignupSubmit}>가입하기</button>
+    </div>
+</div>
+```
+- 회원가입시 필요한 회원 정보를 더 기입
+
+
+<br/>
+
+**회원가입**
+
+``` javascript
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    const navigate = useNavigate();
+
+    const [ signupUser, setSignupUser ] = useState({
+        email: "",
+        oauth2Id: searchParams.get("oauth2Id"),
+        name: "",
+        nickname: "",
+        phone: "",
+        provider: searchParams.get("provider")
+    });
+
+    const handleSigninOnClick = () => {
+        navigate("/auth/signin")
+    }
+
+    const handleInputChange = (e) => {
+        setSignupUser({
+            ...signupUser,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleSignupSubmit = async () => {
+        try {
+            const response = await instance.post("/auth/signup", signupUser);
+            alert("회원가입 완료");
+            window.location.replace("/auth/signin");
+        } catch (error) {
+            console.error(error);
+            if(Object.keys(error.response.data).includes("email")) {
+                alert("이미 사용중인 이메일입니다. 다시 입력하세요.");
+            } else if(Object.keys(error.response.data).includes("nickname")) {
+                alert("이미 사용중인 닉네임입니다. 다시 입력하세요.");
+            }
+        }
+    }
+```
+- 회원가입 버튼 클릭시 handleSignupSubmit 함수 실행, /auth/signup으로 post 요청
+
+<br/>
+
+### **Back End**
+
+**AuthController**
+``` java
+    @ValidAop
+    @PostMapping("/api/auth/signup")
+    public ResponseEntity<?> signup(
+            @Valid @RequestBody SignupReqDto signupReqDto,
+            BindingResult bindingResult) {
+        return ResponseEntity.ok(authService.signup(signupReqDto));
+    }
+```
+- ValidAop로 유효성 검사
+
+**AuthService**
+``` java
+    public boolean signup(SignupReqDto signupReqDto) {
+        User user = signupReqDto.toUser();
+        int errorCode = authMapper.checkDuplicate(user);
+        if(errorCode > 0) {
+            responseDuplicateError(errorCode);
+        }
+        return authMapper.saveUser(user) > 0;
+    }
+
+    public void responseDuplicateError(int errorCode) {
+        Map<String, String> errorMap = new HashMap<>();
+        switch (errorCode) {
+            case 1:
+                errorMap.put("email", "이미 사용중인 이메일입니다.");
+                break;
+            case 2:
+                errorMap.put("nickname", "이미 사용중인 닉네임입니다.");
+                break;
+            case 3:
+                errorMap.put("email", "이미 사용중인 이메일입니다.");
+                errorMap.put("nickname", "이미 사용중인 닉네임입니다.");
+                break;
+        }
+        throw new DuplicateException(errorMap);
+    }
+```
+- responseDuplicateError로 닉네임, 이메일 중복 검사
+- 에러 코드가 0이면 정상 회원가입
+
+<br/>
+
+**auth_mapper**
+``` xml
+<insert id="saveUser">
+        insert into user_tb
+        values(
+            0,
+            #{email},
+            #{oauth2Id},
+            #{name},
+            #{nickname},
+            #{phone},
+            #{provider},
+            0,
+            1
+        )
+    </insert>
+    <select id="checkDuplicate"
+            parameterType="com.aws.compass.entity.User"
+            resultType="java.lang.Integer">
+        select
+            (select
+                if(count(*) > 0, 1, 0)
+            from
+                user_tb
+            where
+                email = #{email}
+            )
+            + (select
+                if(count(*) > 0, 2, 0)
+            from
+                user_tb
+            where
+                nickname = #{nickname}
+            ) as result
+    </select>
+```
+- user_tb DB에 회원 정보 저장 (enabled: 0(이메일 미인증), role: 1(학생))
+- email, nickname 중복 검사(0: 중복x, 1: 이메일 중복, 2: 닉네임 중복, 3: 둘 다 중복)
+
+
 </div>
 </details>
 
