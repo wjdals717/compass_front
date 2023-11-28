@@ -179,6 +179,7 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 
 <br/>
 
+---
 
 ### **Back End**
 
@@ -357,6 +358,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 <br/>
 
+---
+
 ### **Front End**
 
 **SigninOauth2**
@@ -462,6 +465,8 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
 - 회원가입 버튼 클릭시 handleSignupSubmit 함수 실행, /auth/signup으로 post 요청
 
 <br/>
+
+---
 
 ### **Back End**
 
