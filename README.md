@@ -330,6 +330,102 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
     }`
 </div>
 카카오 결제창이 나타나고 결제에 성공시 alert("광고결제가 완료되었습니다. 감사합니다!!🙇") 띄움
+
+
+          
+    ` <div>
+        <div css={S.HeaderBox}>
+            <h3>이런 학원은 어떠세요?</h3>
+            <div>
+                <span>광고</span>
+                <RiAdvertisementFill size={22}/>
+            </div>
+        </div>
+        <ul css={S.UlBox}>
+        {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
+            return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
+        })}
+        </ul>
+     </div> 
+    
+ 결제 완료 후 학원 찾기 페이지 에서 결제된 학원 리스트들을 볼 수 있다.   
+                               
+                        
+
+
+    `<div>
+            <h2>💸 광고 결제</h2>
+            <div>
+                {getMyAcademies.data.data.listTotalCount === 0 ? 
+                <EmptyBox comment={<>광고 결제할 학원이 없습니다! <br />학원을 등록하고 승인 받아 나의 학원을 홍보해보세요!</>}
+                    link={'/academy/regist'} btn={"등록하기"}/> :
+                <>
+                    <div css={S.SComment}><span>광고 결제</span> 하고 <span>나의 학원을 홍보</span>해보세요! 학원명을 클릭하면 상세 페이지로 이동합니다.</div>
+                    <table css={GS.STable}>
+                        <tbody>
+                            <tr>
+                                <td>학원 번호</td>
+                                <td>학원명</td>
+                                <td>학원 선택</td>
+                            </tr>
+                        { getMyAcademies?.data?.data.academyRegistrations.map(academy => {
+                            return  <tr key={academy.academyRegistrationId} 
+                                        style={{ fontWeight: selectedAcademy === academy ? 'bold' : 'normal'}}>
+                                        <td>{academy.acaAsnum}</td>
+                                        <td css={S.SAcaNm} onClick={()=> {navigate(`/academy/info?ACADEMY_ID=${academy.academyId}`)}}>{academy.acaNm}</td>
+                                        <td>
+                                            <button css={GS.SButton} onClick={(e) => handleAcademyOnClick(e, academy)}>
+                                                {selectedAcademy === academy ? '선택 해제' : '선택' }
+                                            </button>
+                                        </td>
+                                    </tr>
+                        })}
+                        </tbody>
+                    </table>
+                    {!getMyAcademies.isLoading && 
+                        <Pagination totalCount={getMyAcademies?.data?.data?.listTotalCount}
+                            link={`/account/mypage/adpayment`}/>}
+                    {isPaymentInfoOpen && !!selectedAcademy && (
+                    <div css={S.SProductContainer}>
+                        {ispurchase.isLoading ? <></> : !!isAcademyPaid
+                        ? (
+                        <div css={S.SPurchaseInfoBox}>
+                            <div css={S.SPurchaseInfo}>
+                                <span>결제된 내용</span>
+                                <div>상품 : {isAcademyPaid.productName}</div>
+                                <div>가격 : {isAcademyPaid.productPrice}원</div>
+                                <div>기간 : {isAcademyPaid.productPeriod}일</div>
+                                <div>상품 기간 : {formatDate(isAcademyPaid.purchaseDate)} ~ {formatDate(addDays(isAcademyPaid.purchaseDate, isAcademyPaid.productPeriod))}</div>
+                                <div>상품설명 : {isAcademyPaid.productPrice}원의 행복</div>
+                            </div>
+                        </div>
+                        )
+                        : products.map(product => {
+                                return (
+                                <div css={S.SProductLayout} onClick={() => { handlePaymentSubmit(product); }}>
+                                    <div css={S.SProductImgBox}>
+                                        <img css={S.SProductImg} src={productImg} alt="" />
+                                        <p css={S.SProductImgText}>{product.productPrice}원</p>
+                                    </div>
+                                        <div css={S.SProductDetail}>
+                                        <div>상품 : {product.productName}</div>
+                                        <div>가격 : {product.productPrice}원</div>
+                                        <div>기간 : {product.productPeriod}일</div>
+                                        <div>상품설명 : {product.productPrice}원의 행복</div>
+                                    </div>
+                                </div>
+                                );
+                            })
+                        }
+                    </div>
+                    )}
+                </>}
+            </div>
+        </div>
+    );
+
+
+   결제 완료 후 마이페이지의 결제된 학원 리스트들을 볼 수 있다.
 </details>
   
 <details>
