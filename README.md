@@ -924,6 +924,319 @@ public interface AccountMapper {
   
 <details>
 <summary>개인 정보 수정</summary>
+
+<br/>
+
+유저의 개인 정보를 수정하는 페이지, 이메일 인증 기능
+
+---
+
+### **Front End**
+
+**html**
+
+``` html
+<h2>🛠️ 개인 정보 수정</h2>
+<div>
+    <div css={S.SButtonBox}>
+        <div>
+            내 정보
+        </div>
+        {isEdit? 
+        <button onClick={handleEditSubmitOnClick}>확인</button> 
+        : <button onClick={handleEditBtnOnClick}>변경하기</button>}
+    </div>
+    <table css={S.STable}>
+        <tbody>
+            <tr>
+                <td>이메일</td>
+                <td>
+                    {isEdit ?
+                        <input type="text"
+                            name='email' 
+                            value={newUser.email}
+                            onChange={handleInputChange}/>
+                        :principalState.data.data.email}
+                    {principalState.data.data.enabled > 0 ?
+                        <button disabled>
+                            인증 완료
+                        </button>
+                        : (!isEdit ? 
+                                <button onClick={handleSendMail}>
+                                    인증 하기
+                                </button>
+                                : <button disabled>
+                                    인증 하기
+                                </button>)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>이름</td>
+                <td>
+                    {isEdit ?
+                        <input type="text"
+                            name='name' 
+                            value={newUser.name}
+                            onChange={handleInputChange}/>
+                        :principalState.data.data.name}
+                </td>
+            </tr>
+
+            ...
+
+        </tbody>
+    </table>
+</div>
+```
+- principalState에 로그인한 유저 정보가 담겨있다.
+- isEdit 상태에 따라 input 또는 텍스트로 바꿔준다.
+- enabled가 0이면 이메일 인증 안 된 유저, 1이면 인증된 유저
+
+<br/>
+
+**이메일 인증 메일 전송**
+``` javascript
+    const handleSendMail = async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            await instance.post("/account/auth/email", {}, option);  // 주소, 데이터, 옵션
+            alert("인증 메일 전송 완료. 인증 요청 메일을 확인해주세요.");
+        } catch (error) {
+            alert("인증 메일 전송 실패. 다시 시도해주세요.");
+        }
+    }
+```
+- /account/auth/email 로 요청
+
+
+<br/>
+
+**수정 버튼 클릭 이벤트**
+``` javascript
+    const handleEditSubmitOnClick = async () => {
+        try {
+            setIsEdit(false);
+            if(JSON.stringify(newUser) !== JSON.stringify(user)) {  // 기존 유저와 달라졌을 때만 수정
+                const option = {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken")
+                    }
+                }
+                const response = await instance.put(`/account/user/${principalState.data.data.userId}`, newUser, option);
+                queryClient.refetchQueries(["getPrincipal"]);
+                alert("개인정보 변경이 완료 되었습니다.");
+            }
+        } catch (error) {
+            console.error(error);
+            if(Object.keys(error.response.data).includes("email")) {
+                alert(error.response.data.email);
+            } else if(Object.keys(error.response.data).includes("nickname")) {
+                alert(error.response.data.nickname);
+            }
+            setNewUser(user);
+        }
+    }
+```
+- newUser 객체에 변경된 유저 정보를 담아서 /account/user/{userId}로 put 요청
+- 기존 유저와 달라졌을 때만 put 요청
+- 이메일, 닉네임 중복시, 이메일 유효성 검사 실패시엔 중복 메시지 alert
+
+<br/>
+
+---
+
+<br/>
+
+### **Back End**
+
+**AccountController**
+
+``` java
+    // 개인 정보 수정
+    @ValidAop
+    @PutMapping("/api/account/user/{userId}")
+    public ResponseEntity<?> editUser(@PathVariable int userId,
+                                      @Valid @RequestBody EditUserReqDto editUserReqDto,
+                                      BindingResult bindingResult) {
+        return ResponseEntity.ok(accountService.updateUser(userId,editUserReqDto));
+    }
+
+    // 이메일 인증하기
+    @PostMapping("/api/account/auth/email")
+    public ResponseEntity<?> sendAuthenticationMail() {
+        return ResponseEntity.ok(accountService.sendAuthMail());
+    }
+
+    // 인증된 이메일 가져오기
+    @GetMapping("/api/account/auth/email")
+    public ResponseEntity<?> authenticateMail (String token) {
+        //주소의 토큰을 받고 유효한지 확인
+        return ResponseEntity.ok(accountService.authenticateMail(token) ? "인증 완료" : "인증 실패");
+    }
+```
+- ValidAop로 유효성 검사
+
+<br/>
+
+**AccountService**
+
+**인증 메일 전송**
+``` java
+    public boolean sendAuthMail() {
+        PrincipalUser principalUser = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String toEmail = principalUser.getUser().getEmail();
+
+        MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMailMessage, false, "utf-8");
+            helper.setSubject("학습 나침반 이메일 인증");
+            helper.setFrom("mini011029@gmail.com");
+            helper.setTo(toEmail);
+
+            String token = jwtProvider.generateAuthMailToken(toEmail);      //이메일 인증을 위한 토큰 발행
+
+            mimeMailMessage.setText(
+                    //html로 mail을 전송하기 위함
+                    "<div>" +
+                            "<h1>학습 나침반 이메일 인증 메일</h1>"+
+                            "<p>이메일 인증을 완료하려면 아래의 버튼을 클릭하세요.</p>" +
+                            "<a href=\"http://localhost:8080/api/account/auth/email?token=" + token + "\">인증하기</a>" +
+                    "</div>", "utf-8", "html"
+            );
+            javaMailSender.send(mimeMailMessage);       //설정한 메시지를 sender를 통해 전달함
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SendMailException("이메일 전송이 실패했습니다.");
+        }
+        return true;
+    }
+```
+- generateAuthMailToken : 이메일 인증 토큰 발행(유효기간 - 5분)
+- http://localhost:8080/api/account/auth/email 로 a 태그 만들어서 인증하도록 한다.
+
+<br/>
+
+**이메일 인증**
+
+``` java
+    @Transactional(rollbackFor = Exception.class)
+    public boolean authenticateMail(String token) {
+        Claims claims = jwtProvider.getClaims(token);
+        if(claims == null) {    // 유효하지 않은 토큰
+            throw new AuthMailException("만료된 인증 요청입니다.");
+        }
+
+        String email = claims.get("email").toString();
+        User user = accountMapper.findUserByEmail(email);
+
+        if(user.getEnabled() > 0) { // 이미 인증된 상태
+            throw new AuthMailException("이미 인증이 완료된 요청입니다.");
+        }
+
+        return accountMapper.updateEnabledToEmail(email) > 0;
+    }
+```
+- 이메일의 a 태그 링크를 통해 들어오는 요청 Service
+- 해당 유저의 enabled가 1이라면 이미 인증된 상태로 예외 처리
+- 토큰이 유효하다면 enabled를 1로 업데이트(enabled 1 : 인증 상태)
+
+<br/>
+
+**유저 정보 수정**
+``` java
+    public boolean updateUser(int userId, EditUserReqDto editUserReqDto) {
+        User newUser = editUserReqDto.toUser();
+        newUser.setUserId(userId);
+
+        int errorCode = accountMapper.checkDuplicateAndIdNot(newUser);
+        if(errorCode > 0) {
+            authService.responseDuplicateError(errorCode);
+        }
+
+        PrincipalUser principalUser = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User oldUser = principalUser.getUser();
+
+        if(oldUser.getEnabled() > 0 && !Objects.equals(oldUser.getEmail(), newUser.getEmail())) {  // 이메일 변경 하면 enabled 0으로 업데이트 해줘야 함.
+            newUser.setEnabled(0);
+        } else {
+            newUser.setEnabled(oldUser.getEnabled());
+        }
+
+        return accountMapper.updateUser(newUser) > 0;
+    }
+```
+- 기존 유저를 가져와 새 유저의 이메일이 변경됐을 때는 enabled를 0으로 변경한다.(enabled 0 : 미인증 상태)
+
+<br/>
+
+**account_mapper.xml**
+``` xml
+    <update id="updateUser">
+        update
+            user_tb
+        set
+            email = #{email},
+            name = #{name},
+            nickname = #{nickname},
+            phone = #{phone},
+            enabled = #{enabled}
+        where
+            user_id = #{userId}
+    </update>
+    <update id="updateEnabledToEmail">
+        update
+            user_tb
+        set
+            enabled = 1
+        where
+            email = #{email}
+    </update>
+    <select id="findUserByEmail" resultMap="userMap">
+        select
+            user_id,
+            email,
+            oauth2_id,
+            name,
+            nickname,
+            phone,
+            provider,
+            enabled,
+            role_id
+        from
+            user_tb
+        where
+            email = #{email}
+    </select>
+    <select id="checkDuplicateAndIdNot"
+            parameterType="com.aws.compass.entity.User"
+            resultType="java.lang.Integer">
+        select
+            (select
+                if(count(*) > 0, 1, 0)
+            from
+                user_tb
+            where
+                email = #{email}
+                and user_id != #{userId}
+            )
+            + (select
+                if(count(*) > 0, 2, 0)
+            from
+                user_tb
+            where
+                nickname = #{nickname}
+                and user_id != #{userId}
+            ) as result
+    </select>
+```
+- checkDuplicateAndIdNot : 이메일, 닉네임이 중복인지 확인하는 sql, 해당 유저의 이메일과 닉네임은 중복체크 되면 안 되기에 user_id != #{userId} 조건을 넣어준다. (0 : 중복x, 1 : 이메일 중복, 2 : 닉네임 중복, 3 : 둘 다 중복)
+
+<br/>
 </details>
   
 <details>
