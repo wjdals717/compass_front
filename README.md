@@ -930,6 +930,7 @@ public interface AccountMapper {
 <details>
 <summary>개인 정보 수정</summary>
 
+![개인정보 수정](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137989664/6b0f558d-5380-4c29-81d8-04b1e35b5d7e)
 <br/>
 
 유저의 개인 정보를 수정하는 페이지, 이메일 인증 기능
