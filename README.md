@@ -607,6 +607,8 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
 <details>
 <summary>관심 학원</summary>
 
+![관심학원 기능](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137989664/e21b6c5a-3504-4e7d-ac96-bca7fca5a316)
+
 ### FrontEnd
 
 #### 학원 상세페이지  좋아요 버튼
