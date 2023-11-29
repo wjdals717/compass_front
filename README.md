@@ -1540,6 +1540,8 @@ public interface AccountMapper {
 <details>
 <summary>나의 학원</summary>
 
+![나의 학원정보 수정](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137989664/38ecf768-96e3-472e-b5ff-eaf65702c3fc)
+
 <br/>
 
 승인된 나의 학원 목록을 보고 학원 상세 정보를 수정할 수 있는 기능
@@ -2184,6 +2186,8 @@ public interface AccountMapper {
  
 <details>
 <summary>광고 결제</summary>
+
+![광고결제](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137989664/dd5537d8-ec3a-411a-8b59-98741f6ed723)
 
 ### FrontEnd
 
