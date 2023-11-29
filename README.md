@@ -1248,6 +1248,8 @@ public interface AccountMapper {
 <details>
 <summary>학원 신청 목록</summary>
 
+![학원 신청 목록 승인대기  거절](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137989664/7c33f976-4e43-409a-bfb7-b1f95e233ef5)
+
 <br/>
 
 승인 대기, 승인 거절 상태의 학원을 볼 수 있는 기능
