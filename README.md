@@ -140,6 +140,9 @@ https://www.notion.so/bc3babdfb67544f3a07ad13bd6ce9a2a?v=30e68966d92344eca0545ce
 ### **회원가입 및 로그인**
 <details>
 <summary>로그인 유효성 검사 및 예외 처리 영상 그 외 토큰 부여 및 권한 코드 리뷰</summary>
+
+![회원가입 및 로그인](https://github.com/KoreaIt-J-23-2-2/compass_front/assets/137989664/9d67bee5-eb25-4dd6-910d-f4e482bd4098)
+
 <div markdown="1">
 
 ## **OAuth2 로그인**

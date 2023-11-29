@@ -5,9 +5,11 @@ import * as S from "./Style"
 import { useQueryClient } from 'react-query';
 import { async } from 'q';
 import { instance } from '../../../api/config/instance';
+import * as GS from "../../../styles/Global/Common"
+import { Navigate, useNavigate } from 'react-router-dom';
 
 function MypageUser(props) {
-    
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const principalState = queryClient.getQueryState("getPrincipal");
 
@@ -21,6 +23,24 @@ function MypageUser(props) {
     }
 
     const [ newUser, setNewUser ] = useState(user)
+
+    const handleWithdrawal = async () => {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            if(window.confirm("정말로 회원 탈퇴하시겠습니까?\n탈퇴는 되돌릴 수 없습니다.")) {
+                await instance.delete(`/account/${principalState.data.data.userId}`, option);
+                localStorage.removeItem("accessToken");
+                await queryClient.refetchQueries(["getPrincipal"]);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const handleEditBtnOnClick = () => {
         setIsEdit(true);
@@ -81,7 +101,12 @@ function MypageUser(props) {
                     </div>
                     {isEdit? 
                     <button onClick={handleEditSubmitOnClick}>확인</button> 
-                    : <button onClick={handleEditBtnOnClick}>변경하기</button>}
+                    : 
+                    <div>
+                        <button onClick={handleWithdrawal}>회원 탈퇴</button>
+                        <button onClick={handleEditBtnOnClick}>변경하기</button>
+                    </div>
+                    }
                 </div>
                 <table css={S.STable}>
                     <tbody>

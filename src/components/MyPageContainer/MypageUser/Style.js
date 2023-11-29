@@ -34,7 +34,7 @@ export const SButtonBox = css`
     & button {
         border: none;
         border-radius: 10px;
-        padding: 5px 30px;
+        padding: 5px 15px;
         background-color: #5FA8D3;
         color: white;
         font-size: 16px;
@@ -45,6 +45,15 @@ export const SButtonBox = css`
         }
         :active {
             background-color: #5596BC;
+        }
+    }
+
+    & div > button:first-of-type {
+        margin-right: 5px;
+        background-color: #f49292;
+        
+        :active {
+            background-color: #dbdbdb;
         }
     }
 `;
