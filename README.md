@@ -566,18 +566,882 @@ function SigninOauth2(props) {  // /auth/oauth2/signin
 
 
 ### **홈 / 학원찾기**
-<details>
-<summary>찾기 코드 리뷰</summary>
-<div markdown="1">
-  홈
 
-  
-  학원찾기
+<details>
+<summary>모달 코드 리뷰</summary>
+<div markdown="1">
+
+## FrontEnd
+
+각각 다른 컴포넌트와 페이지에서 선택한 조건들을 학원 찾기 페이지에서 모아 필터링하기 때문에 store폴더에서 atom으로 조건들에 대한 상태를 관리한다.
+
+```javascript
+import { atom } from 'recoil';
+
+// 지역
+export const selectedLocationState = atom({
+    key: 'selectedLocationState',
+    default: {
+        atpt_ofcdc_sc_code: "",
+        si_do_name:"",
+        admst_zone_nm: ""
+    }
+});
+
+// 카테고리(분야)
+export const selectedCategoryState = atom({
+    key: 'selectedCategoryState',
+    default: {
+        realm_sc_nm: "",
+        le_crse_nm: ""
+    }
+});
+
+// 학원 이름
+export const selectedContentState = atom({
+    key: 'selectedContentState',
+    default: ""
+});
+
+// 수강 연령
+export const selectedAgeState = atom({
+    key: 'selectedAgeState',
+    default: []
+});
+
+// 시설 및 편의사항
+export const selectedConvenienceState = atom({
+    key: 'selectedConvenienceState',
+    default: []
+});
+```
+### LocationModal
+
+```javascript
+const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // 선택된 교육청, 행정구역 정보
+const [ educationOfficeOptions, setEducationOfficeOptions ] = useState([]); // 교육청 목록
+const [ educationOfficeOption, setEducationOfficeOption ] = useState(selectedLocation.atpt_ofcdc_sc_code); // 선택된 교육청
+const [ siDoName, setSiDoName ] = useState(selectedLocation.si_do_name);  // 선택된 교육청에서 '교육청'부분을 때낸다
+const [ administrativeDistrictOptions, setAdministrativeDistrictOptions ] = useState([]); // 행정구역 목록
+const [ administrativeDistrictOption, setAdministrativeDistrictOption ] = useState(selectedLocation.admst_zone_nm); // 선택된 행정구역
+
+// educationOfficeOption이 선택되었거나 administrativeDistrictOption이 존재하는 경우에만 districtOptionShow를 true로 설정
+const isDistrictOptionShow = !!educationOfficeOption || !!administrativeDistrictOption;
+
+// educationOfficeOption과 일치하는 administrativeDistrictOptions 필터링
+const filteredAdministrativeDistrictOptions = administrativeDistrictOptions.filter(option => {
+    return option.educationOfficeCode === educationOfficeOption;
+});
+
+<ReactModal isOpen={modalIsOpen} onRequestClose={closeModal} css={S.SLayout}>
+    <div css={S.STitle}>지역 선택</div>
+    <div css={S.SListContainer}>
+        <ul css={S.SEducationOfficeList}>
+            {educationOfficeOptions.map((option) => (
+                <li key={option.value} onClick={() => {
+                    setEducationOfficeOption(option.value);
+                    setAdministrativeDistrictOption("");
+                    setSiDoName(option.label);
+                    }}
+                    css={[
+                        S.SEducationOfficeListItem, // 기존 스타일을 포함
+                        option.value === educationOfficeOption && S.SCategoryListItemSelected // 선택된 li
+                    ]}
+                >
+                    {option.label}
+                </li>
+            ))}
+        </ul>
+        <ul css={S.SDistrictOptionList(isDistrictOptionShow)}>    // districtOptionShow가 true일 때 보인다.
+            {filteredAdministrativeDistrictOptions.map((option) => (
+                <li key={option.administrativeDistrictId} 
+                    onClick={() => {setAdministrativeDistrictOption(option.administrativeDistrictName)}}
+                    css={[
+                        S.SDistrictOptionListItem, // 기존 스타일을 포함
+                        option.administrativeDistrictName === administrativeDistrictOption && S.SDistrictOptionListItemSelected // 선택된 li에 대한 스타일
+                    ]}
+                >
+                    {option.administrativeDistrictName}
+                </li>
+            ))}
+        </ul>
+    </div>
+    <div css={S.ButtonContainer}>
+        <button onClick={handleResetButton} css={GS.SButton}>초기화</button>
+        <button onClick={closeModal} css={GS.SButton}>선택</button>
+    </div>
+</ReactModal>
+```
+
+### CategoryModal
+
+```javascript
+const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 선택된 카테고리, 상세 카테고리 정보  
+const [ categoryOptions, setCategoryOptions ] = useState([]); // 카테고리 목록
+const [ categoryOption, setCategoryOption ] = useState(selectedCategory.realm_sc_nm); // 선택된 카테고리
+const [ categoryDetailOptions, setCategoryDetailOptions ] = useState([]); // 상세 카테고리 목록
+const [ categoryDetailOption, setCategoryDetailOption ] = useState(selectedCategory.le_crse_nm); // 선택된 상세 카테고리
+
+// educationOfficeOption이 선택되었거나 administrativeDistrictOption이 존재하는 경우에만 districtOptionShow를 true로 설정
+const isDetailOptionShow = !!categoryOption || !!categoryDetailOption;
+
+// categoryOption 일치하는 categoryDetailOptions 필터링
+const filteredCategoryDetailOptions = categoryDetailOptions.filter(option => {
+    return option.categoryValue === categoryOption;
+});
+
+<ReactModal isOpen={modalIsOpen} onRequestClose={closeModal} css={S.SLayout}>
+    <div css={S.STitle}>카테고리 선택</div>
+    <div css={S.SListContainer}>
+        <ul css={S.SCategoryList}>
+        {categoryOptions.map((option) => (
+            <li
+            key={option.value}
+            onClick={() => {
+                setCategoryOption(option.value);
+                setCategoryDetailOption("");
+            }}
+            css={[
+                S.SCategoryListItem, // 기존 스타일을 포함
+                option.value === categoryOption && S.SCategoryListItemSelected, // 선택된 li에 대한 스타일
+            ]}
+            >
+            {option.label}
+            </li>
+        ))}
+        </ul>
+        <ul css={S.SCategoryDetailList(isDetailOptionShow)}>    // districtOptionShow가 true일 때 보인다. 
+        {filteredCategoryDetailOptions.map((option) => (
+            <li
+            key={option.categoryDetailValue}
+            onClick={() => {
+                setCategoryDetailOption(option.categoryDetailValue);
+            }}
+            css={[
+                S.SCategoryDetailListItem, // 기존 스타일을 포함
+                option.categoryDetailValue === categoryDetailOption &&
+                S.SCategoryDetailListItemSelected, // 선택된 li에 대한 스타일
+            ]}
+            >
+            {option.categoryDetailName}
+            </li>
+        ))}
+        </ul>
+    </div>
+    <div css={S.ButtonContainer}>
+        <button onClick={handleResetButton} css={GS.SButton}>
+        초기화
+        </button>
+        <button onClick={closeModal} css={GS.SButton}>
+        선택
+        </button>
+    </div>
+</ReactModal>;
+```
+***
+
+</br>
+
+- 입력 받은 값 처리
+
+
+### Location
+```javascript
+// 선택 버튼
+const closeModal = () => {
+    // 지역 검색 정보
+    setSelectedLocation({
+        ...selectedLocation,
+        atpt_ofcdc_sc_code: educationOfficeOption,
+        si_do_name: siDoName,
+        admst_zone_nm: administrativeDistrictOption
+    })
+    setModalIsOpen(false);
+    enableBodyScroll();
+};
+
+// 초기화
+const handleResetButton = () => {
+    setEducationOfficeOption("");
+    setAdministrativeDistrictOption("");
+    setSelectedLocation({
+        atpt_ofcdc_sc_code: "",
+        si_do_name: "",
+        admst_zone_nm: ""
+    })
+}
+```
+
+### Category
+```javascript
+// 선택 버튼
+const closeModal = () => {
+    // api로 넘길 카테고리 검색 정보
+    setSelectedCategory({
+        ...selectedCategory,
+        realm_sc_nm: categoryOption,
+        le_crse_nm: categoryDetailOption
+    })
+    setModalIsOpen(false);
+    enableBodyScroll();
+};
+
+// 초기화
+const handleResetButton = () => {
+    setCategoryOption("");
+    setCategoryDetailOption("");
+    setSelectedCategory({
+        realm_sc_nm: "",
+        category_nm: "",
+        le_crse_nm: ""
+    });
+}
+```
+
+***
+
+</br>
+
+- 요청
+
+
+### LocationModal
+
+```javascript
+
+// 교육청 목록 요청
+const educationOfficeOptionsState = useQuery(["educationOfficeOptionsState"], async () => {
+    try {
+        return await instance.get("/option/education-offices");
+    }catch(error) {
+        console.error(error);
+    }
+},
+{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setEducationOfficeOptions(response.data.map(option => {
+            const label = option.educationOfficeName.substring(0, option.educationOfficeName.length - 3);
+            return {value: option.educationOfficeCode, label: label};
+        }));
+    }
+});
+
+// 행정구역 목록 요청
+const getAdministrativeDistrictOptionsState = useQuery(["getAdministrativeDistrictOptionsState"], async () => {
+    try {
+        return await instance.get("/option/administrative-districts");
+    } catch (error) {
+        console.error(error);
+    }
+},{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setAdministrativeDistrictOptions(response.data);
+    }
+});
+
+```
+
+### CategoryModal
+
+``` javascript
+
+// 분야명 목록 요청
+const categoryOptionsState = useQuery(["categoryOptionsState"], async () => {
+    try {
+        return await instance.get("/option/categories");
+    }catch(error) {
+        console.error(error);
+    }
+},
+{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setCategoryOptions(response.data.map(option => {
+            return { value: option.categoryValue, label: option.categoryName }
+        }))
+    }
+});
+
+// 교습과정명 목록 요청
+const categoryDetailOptionsState = useQuery(["categoryDetailOptionsState"], async () => {
+    try {
+        return await instance.get("/option/category-details");
+    }catch(error) {
+        console.error(error);
+    }
+},
+{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setCategoryDetailOptions(response.data);
+    }
+});
+
+```
+
+***
+
+## BackEnd
+
+### OptionsController
+```java
+public class OptionsController {
+
+    private final OptionService optionService;
+
+    // 교육청 전체 불러오기
+    @GetMapping("/education-offices")
+    public ResponseEntity<?> getEducationOffices() {
+        return ResponseEntity.ok(optionService.getEducationOfficeList());
+    }
+
+    // 행정구역 전체 불러오기
+    @GetMapping("/administrative-districts")
+    public ResponseEntity<?> getAdministrativeDistrict() {
+        return  ResponseEntity.ok(optionService.getAdministrativeDistrictList());
+    }
+
+    // 분야명 전체 불러오기
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        return  ResponseEntity.ok(optionService.getCategoryList());
+    }
+
+    // 교습 과정 목록명 전체 불러오기
+    @GetMapping("/category-details")
+    public ResponseEntity<?> getCategoryDetails() {
+        return  ResponseEntity.ok(optionService.getCategoryDetailList());
+    }
+}
+```
+
+목록 전체를 불러오는 GET요청
+
+### OptionService
+
+```java
+public class OptionService {
+    private final OptionMapper optionMapper;
+
+    public List<EducationOfficeRespDto> getEducationOfficeList() {
+        List<EducationOfficeRespDto> educationOfficeRespDtos = new ArrayList<>();
+        optionMapper.getEducationOfficeList().forEach(educationOffice -> educationOfficeRespDtos.add(educationOffice.toEducationOfficeDto()));
+        return educationOfficeRespDtos;
+    }
+
+    public  List<AdministrativeDistrictRespDto> getAdministrativeDistrictList() {
+        List<AdministrativeDistrictRespDto> administrativeDistrictRespDtos = new ArrayList<>();
+        optionMapper.getAdministrativeDistrictList().forEach(administrativeDistrict -> administrativeDistrictRespDtos.add(administrativeDistrict.toAdministrativeDistrictDto()));
+        return administrativeDistrictRespDtos;
+    }
+
+    public List<CategoryRespDto> getCategoryList() {
+        List<CategoryRespDto> categoryRespDtos = new ArrayList<>();
+        optionMapper.getCategoryList().forEach(category -> categoryRespDtos.add(category.toCategoryDto()));
+        return categoryRespDtos;
+    }
+
+    public List<CategoryDetailRespDto> getCategoryDetailList() {
+        List<CategoryDetailRespDto> categoryDetailRespDtos = new ArrayList<>();
+        optionMapper.getCategoryDetailList().forEach(categoryDetail -> categoryDetailRespDtos.add(categoryDetail.toCategoryDetailDto()));
+        return categoryDetailRespDtos;
+    }
+}
+```
+
+### repository - Mapper
+```java
+@Mapper
+public interface OptionMapper {
+    public List<EducationOffice> getEducationOfficeList();
+    public List<AdministrativeDistrict> getAdministrativeDistrictList();
+    public List<Category> getCategoryList();
+    public List<CategoryDetail> getCategoryDetailList();
+}
+```
+
+### option_mapper
+
+```java
+<mapper namespace="com.aws.compass.repository.OptionMapper">
+
+    <resultMap id="educationOfficeMap" type="com.aws.compass.entity.EducationOffice">
+        <id property="educationOfficeId" column="education_office_id" />
+        <result property="educationOfficeName" column="education_office_name" />
+        <result property="educationOfficeCode" column="education_office_code" />
+    </resultMap>
+    <resultMap id="administrativeDistrictMap" type="com.aws.compass.entity.AdministrativeDistrict">
+        <id property="administrativeDistrictId" column="administrative_district_id" />
+        <result property="educationOfficeCode" column="education_office_code" />
+        <result property="administrativeDistrictName" column="administrative_district_name" />
+    </resultMap>
+    <resultMap id="categoryMap" type="com.aws.compass.entity.Category">
+        <id property="categoryId" column="category_id" />
+        <result property="categoryValue" column="category_value" />
+        <result property="categoryName" column="category_name" />
+    </resultMap>
+    <resultMap id="categoryDetailMap" type="com.aws.compass.entity.CategoryDetail">
+        <id property="categoryDetailId" column="category_detail_id" />
+        <result property="categoryValue" column="category_value" />
+        <result property="categoryDetailValue" column="category_detail_value" />
+        <result property="categoryDetailName" column="category_detail_name" />
+    </resultMap>
+
+    <select id="getEducationOfficeList" resultMap="educationOfficeMap">
+        select
+            education_office_id,
+            education_office_name,
+            education_office_code
+        from
+            education_office_tb
+    </select>
+
+    <select id="getAdministrativeDistrictList" resultMap="administrativeDistrictMap">
+        select
+            administrative_district_id,
+            education_office_code,
+            administrative_district_name
+        from
+            administrative_district_tb
+    </select>
+
+    <select id="getCategoryList" resultMap="categoryMap">
+        select
+            category_id,
+            category_value,
+            category_name
+        from
+            category_tb
+    </select>
+
+    <select id="getCategoryDetailList" resultMap="categoryDetailMap">
+        select
+            category_detail_id,
+            category_value,
+            category_detail_value,
+            category_detail_name
+        from
+            category_detail_tb
+    </select>
+</mapper>
+```
 </div>
 </details>
 
-<br/>
 
+<details>
+<summary>홈 코드 리뷰</summary>
+<div markdown="1">
+
+
+## FrontEnd
+
+```javascript
+const navigate = useNavigate();
+
+const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
+const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
+const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
+
+const [ modalIsOpen, setModalIsOpen ] = useState(false);
+const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);
+
+// 모달이 열릴 때 스크롤 막기
+const disableBodyScroll = () => {
+    document.body.style.overflow = 'hidden';
+}
+
+// 모달이 닫힐 때 스크롤 복원
+const enableBodyScroll = () => {
+    document.body.style.overflow = 'auto';
+}
+
+const openLocationModal = () => {
+    setModalIsOpen(true);
+    disableBodyScroll();
+};
+
+const openCategoryModal = () => {
+    setCategoryModalIsOpen(true);
+    disableBodyScroll();
+};
+
+const handleInputOnChange = (e) => {
+    setSelectedContent(e.target.value);
+}
+
+const handleSearch = () => {
+    navigate("academy/find/1");
+}
+
+<>
+    <div css={S.SMainLayout}>
+        <div css={S.SMainContainer}>
+            <div css={S.STextContainer}>
+                <h1><b>학습 나침반</b>에서</h1>
+                <h1>쉽고 빠르게 <b>원하는 학원을 찾아보세요.</b></h1>
+            </div>
+            <div css={S.SImgBox}>
+                <img  css={S.SImgBox} src={HomeImg} alt="" />
+            </div>
+        </div>
+    </div>
+    <RootContainer>
+        <div css={S.SSearchContainer}>
+            <div css={S.SInputBox}>
+                <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요' onChange={handleInputOnChange}/>
+            </div>
+            <div onClick={openLocationModal}>
+                <SelectModalBtn>
+                    {selectedLocation.atpt_ofcdc_sc_code
+                        ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
+                        : "지역 선택"
+                    }   
+                </SelectModalBtn>
+            </div>
+            <div onClick={openCategoryModal}>
+                <SelectModalBtn>
+                    {selectedCategory.realm_sc_nm
+                        ? `${selectedCategory.category_nm} ${selectedCategory.le_crse_nm}`
+                        : "카테고리 선택"
+                    }
+                </SelectModalBtn>
+            </div>
+            <SearchBtn onClick={handleSearch}/>
+        </div>
+        <div css={S.SLinkContainer}>
+            <div css={S.SRegistContainer}>
+                <div css={S.SImgCover}>
+                    <img css={S.SImg} src={teacher} alt="" />
+                </div>
+                <div css={S.SCommentContainer}>
+                    <div css={S.SRegistTitle}>학원 관리자 등록하기</div>
+                    <div css={S.SRegistComment}>학원 나침반에 등록해서 나의 학원을 홍보해보세요!</div>
+                    <LinkBtn link={"/academy/regist"} btn={"등록하기"}/>
+                </div>
+            </div>
+            <div css={S.SRegistContainer}>
+                <div css={S.SImgCover}>
+                    <img css={S.SImg} src={student} alt="" />
+                </div>
+                <div css={S.SCommentContainer}>
+                    <div css={S.SRegistTitle}>나의 관심 학원 보기</div>
+                    <div css={S.SRegistComment}>관심있는 학원에 하트를 누르고 한 번에 볼 수 있어요!</div>
+                    <LinkBtn link={"/account/mypage/like/1"} btn={"보러가기"} />
+                </div>
+            </div>
+        </div>
+        <LocationModal modalIsOpen={modalIsOpen} 
+            setModalIsOpen={setModalIsOpen} 
+            enableBodyScroll={enableBodyScroll}
+            setSelectedLocation={setSelectedLocation}/>
+        <CategoryModal modalIsOpen={categoryModalIsOpen} 
+            setModalIsOpen={setCategoryModalIsOpen} 
+            enableBodyScroll={enableBodyScroll}
+            setSelectedCategory={setSelectedCategory}/>
+    </RootContainer>
+</>
+
+```
+
+- 모달을 열어 선택 시 atom으로 전역에 조건 저장 > 학원 찾기 페이지 랜더링 시 전역에 저장된 조건에 맞는 학원 목록 표시
+- 로그인 하지 않고 LinkBtn 클릭 시 alert창 '로그인 후 이용해주세요' 표시 후 로그인 페이지로 이동
+- 헤더의 네비게이션바로 이동 시 전역 상태 초기화
+
+
+</br>
+
+</div>
+</details>
+
+
+<details>
+<summary>상세 검색 코드 리뷰</summary>
+<div markdown="1">
+
+## FrontEnd
+지역, 카테고리와 마찬가지로 store폴더의 searchOptions에서 atom으로 조건들에 대한 상태를 관리한다.
+
+```javascript
+import { atom } from 'recoil';
+
+export const selectedAgeState = atom({
+    key: 'selectedAgeState',
+    default: []
+});
+
+export const selectedConvenienceState = atom({
+    key: 'selectedConvenienceState',
+    default: []
+});
+```
+
+
+### FindAcademiesSidebar
+
+```javascript
+const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState);
+const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState);
+
+const reset = () => {
+    setSelectedAgeOptions([]);
+    setSelectedConvenienceOptions([]);
+}
+
+<div css={S.FilterLayout}>
+    <div css={S.InitialContainer}>
+        <h2>상세 검색</h2>
+        <button onClick={reset}>필터 초기화</button>
+    </div>
+    <AgeOptions />
+    <ConvenienceOptions />
+</div>
+```
+수강 연령과 시설 및 편의사항을 초기화 할 수 있는 버튼을  AgeOptions와 ConvenienceOptions의 전역 상태에 두어 관리할 수 있게함
+
+### AgeOptions
+```javascript
+const [ ageOptions, setAgeOptions ] = useState([]);
+const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState);
+
+<div css={S.FilterContainer}>
+    <h3>수강 연령</h3>
+    {ageOptions?.map((option) => (
+        <div key={option.value}>
+            <input
+                type="checkbox"
+                checked={selectedAgeOptions.includes(option.value)}
+                onChange={() => handleCheckboxChange(option.value)}
+            />
+            {option.label}
+        </div>
+    ))}
+</div>
+);
+```
+### ConvenienceOptions 
+```javascript
+const [ convenienceOptions, setConvenienceOptions ] = useState([]);
+const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState);
+
+<div css={S.FilterContainer}>
+    <h3>시설 및 편의사항</h3>
+    {convenienceOptions?.map((option) => (
+        <div key={option.value}>
+            <input
+                type="checkbox"
+                checked={selectedConvenienceOptions.includes(option.value)}
+                onChange={() => handleCheckboxChange(option.value)}
+            />
+            {option.label}
+        </div>
+    ))}
+</div>
+```
+
+***
+
+- 입력받은 값 처리
+
+### AgeOptions
+```javascript
+// 선택된 ConvenienceOption의 value값을 리스트에 추가 또는 제거
+const handleCheckboxChange = (value) => {
+    setSelectedAgeOptions((prevOptions) => {
+        const updatedList = prevOptions.includes(value)
+            ? prevOptions.filter(option => option !== value)
+            : [...prevOptions, value];
+
+        return updatedList;  // 수정된 배열을 직접 반환
+    });
+};
+```
+
+### ConvenienceOptions 
+```javascript
+// 선택된 ConvenienceOption의 value값을 리스트에 추가 또는 제거
+const handleCheckboxChange = (value) => {
+    setSelectedConvenienceOptions((prevOptions) => {
+        const updatedList = prevOptions.includes(value)
+            ? prevOptions.filter(option => option !== value)
+            : [...prevOptions, value];
+
+        return updatedList;  // 수정된 배열을 직접 반환
+    });
+};
+```
+
+***
+- 요청
+
+### AgeOptions
+```javascript
+// 수강 연령 목록  
+const ageOptionsState = useQuery(["ageOptionsState"], async () => {
+    try {
+        return await instance.get("/option/ages");
+    }catch(error) {
+        console.error(error);
+    }
+},
+{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setAgeOptions(response.data.map(option => {
+            return { value: option.ageId, label: option.ageRange }
+        }))
+    }
+});
+```
+
+### ConvenienceOptions 
+```javascript
+// 시설 및 편의사항 목록
+const convenienceOptionsState = useQuery(["convenienceOptionsState"], async () => {
+    try {
+        return await instance.get("/option/conveniences");
+    }catch(error) {
+        console.error(error);
+    }
+},
+{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setConvenienceOptions(response.data.map(option => {
+            return { value: option.convenienceId, label: option.convenienceName }
+        }))
+    }
+});
+```
+
+***
+</br>
+
+## BackEnd
+
+### OptionsController
+```java
+public class OptionsController {
+
+    private final OptionService optionService;
+    
+    // 시설 및 편의사항 전체 불러오기
+    @GetMapping("/conveniences")
+    public ResponseEntity<?> getConvenienceOptions() {
+        return ResponseEntity.ok(optionService.getConvenienceList());
+    }
+
+    // 수강 연령 전체 불러오기
+    @GetMapping("/ages")
+    public ResponseEntity<?> getAgeOptions() {
+        return ResponseEntity.ok(optionService.getAgeList());
+    }
+
+}
+```
+목록 전체를 불러오는 GET요청
+
+### OptionsService
+```java
+public class OptionService {
+    private final OptionMapper optionMapper;
+
+    public List<ConvenienceRespDto> getConvenienceList() {
+        List<ConvenienceRespDto> convenienceRespDtos = new ArrayList<>();
+        optionMapper.getConvenienceList().forEach(convenience -> convenienceRespDtos.add(convenience.toConvenienceDto()));
+        return convenienceRespDtos;
+    }
+
+    public List<AgeRespDto> getAgeList() {
+        List<AgeRespDto> ageRespDtos = new ArrayList<>();
+        optionMapper.getAgeList().forEach(age -> ageRespDtos.add(age.toAgeDto()));
+        return ageRespDtos;
+    }
+}
+```
+
+### repository - Mapper
+```java
+@Mapper
+public interface OptionMapper {
+    public List<Convenience> getConvenienceList();
+    public List<Age> getAgeList();
+}
+```
+
+### option_mapper
+```java
+<mapper namespace="com.aws.compass.repository.OptionMapper">
+
+    <resultMap id="convenienceMap" type="com.aws.compass.entity.Convenience">
+        <id property="convenienceId" column="convenience_id" />
+        <result property="convenienceName" column="convenience_name" />
+    </resultMap>
+
+    <resultMap id="ageMap" type="com.aws.compass.entity.Age">
+        <id property="ageId" column="age_id" />
+        <result property="ageRange" column="age_range" />
+    </resultMap>
+
+
+    <select id="getConvenienceList" resultMap="convenienceMap">
+        select
+            convenience_id,
+            convenience_name
+        from
+            convenience_tb
+        order by
+            convenience_id
+    </select>
+
+    <select id="getAgeList" resultMap="ageMap">
+        select
+            age_id,
+            age_range
+        from
+            age_tb
+        order by
+            age_id
+    </select>
+
+</mapper>
+
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>학원 찾기 코드 리뷰</summary>
+<div markdown="1">
+
+
+## FrontEnd
+
+```javascript
+
+```
+
+## BackEnd
+
+```java
+
+```
+
+</div>
+</details>
+
+
+<br/>
 
 
 ### **학원 등록**
