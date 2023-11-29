@@ -91,7 +91,7 @@ function FileUpload({ academyContent, setAcademyContent, uploadeFile, setUploade
                 <p>{businessRegistrationFile}</p>
                 <input type="file" name='businessRegistrationFile' id='businessRegistrationFile' onChange={uploadLabelChange} />
                 {businessProgressPercent != 0 && businessProgressPercent != 100 && 
-                    <Line percent={businessProgressPercent} strokeWidth={2} strokeColor="#00f2ff" trailColor="#D3D3D3"/>
+                    <Line percent={businessProgressPercent} strokeWidth={2} strokeColor="#ffe600" trailColor="#D3D3D3"/>
                 }
             </div>
             <div css={S.SFileUploadContainer}>
@@ -102,7 +102,7 @@ function FileUpload({ academyContent, setAcademyContent, uploadeFile, setUploade
                 <p>{idFile}</p>
                 <input type="file" name='idFile' id='idFile' onChange={uploadLabelChange} disabled={uploadeFile.businessRegistrationFile !== 1}/>
                 {idProgressPercent != 0 && idProgressPercent != 100 && 
-                    <Line percent={idProgressPercent} strokeWidth={2} strokeColor="#00f2ff" trailColor="#D3D3D3"/>
+                    <Line percent={idProgressPercent} strokeWidth={2} strokeColor="#ffe600" trailColor="#D3D3D3"/>
                 }
             </div>
             {academyContent.match === 'false' ? 
@@ -114,7 +114,7 @@ function FileUpload({ academyContent, setAcademyContent, uploadeFile, setUploade
                     <p>{operationRegistrationFile}</p>
                     <input type="file" name='operationRegistrationFile' id='operationRegistrationFile' onChange={uploadLabelChange} disabled={uploadeFile.idFile !== 1} />
                     {operationProgressPercent != 0 && operationProgressPercent != 100 && 
-                        <Line percent={operationProgressPercent} strokeWidth={2} strokeColor="#00f2ff" trailColor="#D3D3D3"/>
+                        <Line percent={operationProgressPercent} strokeWidth={2} strokeColor="#ffe600" trailColor="#D3D3D3"/>
                     }
                 </div>
                 : <></>

@@ -13,8 +13,6 @@ import AcademyInfoReviews from '../../components/AcademyInfoReviews/AcademyInfoR
 import AcademyInfoSidebar from '../../components/AcademyInfoSidebar/AcademyInfoSidebar';
 import AcademyInfoClass from '../../components/AcademyInfoClass/AcademyInfoClass';
 
-    
-
 function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 넘겨받음
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -38,8 +36,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
     const { page } = useParams();
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const academyId = searchParams.get('ACADEMY_ID')
-
+    const academyId = searchParams.get('ACADEMY_ID');
     
     const [ reviewWriteData, setReviewWriteData] = useState({
         ACADEMY_ID: parseInt(academyId),
@@ -83,6 +80,27 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
         }
     })
 
+    //학원 리뷰 가져오기
+    const getReviews = useQuery(["getReviews", page], async () => {
+        try {
+            const options = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }
+            return await instance.get(`/academy/${academyId}/reviews/${page}`, options);
+        }catch(error) {
+            console.error(error);
+        }
+    },
+    {
+        retry: 0,
+        refetchOnWindowFocus: false,
+        onSuccess: response => {
+            setReviewData(response.data);
+        }
+    });
+
     useEffect(() => {   //페이지 스크롤에 따른 네비게이션바 이동
         const handleScroll = () => {
             if (window.scrollY > 200) {
@@ -124,7 +142,7 @@ function AcademyInfo(props) { //교육청 코드, 학원코드, 학원 이름 �
                                 {academyData?.academy.FA_TELNO}</div>
                             <div css={S.SScoreAndReviewContainer}>
                                 <AiFillStar css={S.SAcademyStar}/> 
-                                별점 {reviewData?.reviewCount?.score_avg} · 학원후기({reviewData?.reviewCount?.review_count}개)
+                                별점 {reviewData?.reviewCount?.scoreAvg} · 학원후기({reviewData?.reviewCount?.reviewCount}개)
                             </div>
                         </div>
                     </div>
