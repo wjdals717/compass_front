@@ -56,6 +56,12 @@ function Home(props) {
         navigate("academy/find/1");
     }
 
+    const handleKeyUp = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
     return (
         <>
             <div css={S.SMainLayout}>
@@ -72,7 +78,7 @@ function Home(props) {
             <RootContainer>
                 <div css={S.SSearchContainer}>
                     <div css={S.SInputBox}>
-                        <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요' onChange={handleInputOnChange}/>
+                        <input type="text" placeholder='학원명, 지역, 과목으로 검색해보세요' onChange={handleInputOnChange} onKeyUp={handleKeyUp}/>
                     </div>
                     <div onClick={openLocationModal}>
                         <SelectModalBtn>
