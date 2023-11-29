@@ -69,7 +69,10 @@ function MyPage(props) {
         setUncheckedAnswerCount={setUncheckedAnswerCount}
         />
         : roleId === 2
-        ? <AcademySidebar />
+        ? <AcademySidebar 
+        uncheckedAnswerCount={uncheckedAnswerCount}
+        setUncheckedAnswerCount={setUncheckedAnswerCount}
+        />
         : null;
 
     if (!isAuthenticated) {
