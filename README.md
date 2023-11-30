@@ -1428,14 +1428,660 @@ public interface OptionMapper {
 ## FrontEnd
 
 ```javascript
+const navigate = useNavigate();
+    
+const [ selectedLocation, setSelectedLocation ] = useRecoilState(selectedLocationState); // 지역
+const [ selectedCategory, setSelectedCategory ] = useRecoilState(selectedCategoryState); // 카테고리
+const [ selectedContent, setSelectedContent ] = useRecoilState(selectedContentState); // 학원 이름
+const [ inputValue, setInputValue ] = useState(selectedContent); // 학원이름 검색창 
 
+const [ selectedAgeOptions, setSelectedAgeOptions ] = useRecoilState(selectedAgeState); // 수강연령 정보
+const [ selectedConvenienceOptions, setSelectedConvenienceOptions ] = useRecoilState(selectedConvenienceState); // 편의사항 정보
+
+const [ classify, setClassify ] = useState("등록순");    
+
+const [ totalCount, setTotalCount ] = useState(0);    // 학원 수
+const { page } = useParams();
+const [ academyList, setAcademyList] = useState([]);    // 학원 목록
+
+const [ modalIsOpen, setModalIsOpen ] = useState(false);    // Location 모달 열기
+const [ categoryModalIsOpen, setCategoryModalIsOpen ] = useState(false);    // Category 모달 열기
+
+// 모달이 열릴 때 스크롤 막기
+const disableBodyScroll = () => {
+    document.body.style.overflow = 'hidden';
+}
+
+// 모달이 닫힐 때 스크롤 복원
+const enableBodyScroll = () => {
+    document.body.style.overflow = 'auto';
+}
+
+
+<RootContainer>
+    <div css={S.SearchLayout}>
+        <h1>학원찾기</h1>
+        <div css={S.SearchContainer}>    // 선택한 정보가 보이도록 지정
+            <div onClick={openLocationModal}>
+                <SelectModalBtn>
+                    {selectedLocation.atpt_ofcdc_sc_code
+                        ? `${selectedLocation.si_do_name} ${selectedLocation.admst_zone_nm}`
+                        : "지역 선택"
+                    }   
+                </SelectModalBtn>
+            </div>
+            <div onClick={openCategoryModal}>
+                <SelectModalBtn>
+                    {selectedCategory.realm_sc_nm
+                        ? `${selectedCategory.realm_sc_nm === '국제화'
+                        ? '외국어'
+                        : selectedCategory.realm_sc_nm === '정보'
+                        ? 'IT'
+                        : selectedCategory.realm_sc_nm.replace(/\(대\)/g, '').trim()} 
+                        ${selectedCategory.le_crse_nm.includes("전체") ? "" : selectedCategory.le_crse_nm}`
+                        : "카테고리 선택"
+                    }
+                </SelectModalBtn>
+            </div>
+            <div>
+                <input type="text" 
+                    placeholder='나에게 맞는 학원을 찾아보세요' 
+                    value={inputValue} 
+                    onChange={handleInputOnChange}
+                    onKeyUp={handleKeyUp}
+                />
+            </div>
+            <SearchBtn onClick={handleSelectContent}/>
+        </div>
+    </div>
+    <div css={S.PageLayout}>
+        <FindAcademiesSidebar />
+        <div css={S.SAcademiesContainer}>
+            <div css={S.PageContainer}>
+                <div css={S.InfoBox}>
+                    <div>{totalCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}개의 학원이 있습니다.</div>    // 학원 수는 3자리마다 , 로 표시
+                </div>
+                <div>
+                    <div css={S.HeaderBox}>
+                        <h3>이런 학원은 어떠세요?</h3>
+                        <div>
+                            <span>광고</span>
+                            <RiAdvertisementFill size={22}/>
+                        </div>
+                    </div>
+                    <ul css={S.UlBox}>
+                    {!getPurchaseAcademyList.isLoading && Array.isArray(getPurchaseAcademyList?.data?.data) && getPurchaseAcademyList?.data?.data.map(academy => {
+                        return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy}/>
+                    })}
+                    </ul>
+                </div>
+                <div>
+                    <div css={S.HeaderBox}>
+                        <h3>검색된 정보</h3>
+                        <select 
+                            css={S.ClassifyBox} 
+                            name="classifyBox" id=""
+                            value={classify}  // 현재 상태 값을 선택된 값으로 설정
+                            onChange={handleClassifyChange}  // 변경 시 이벤트 핸들러 호출
+                        >
+                            <option value="등록순">등록순</option>
+                            <option value="좋아요순">좋아요순</option>
+                            <option value="별점순">별점순</option>
+                        </select>
+                    </div>
+                    <ul css={S.UlBox}>
+                    {getAcademyList.isLoading ? (
+                        <Loading />
+                    ) : (
+                        getAcademyList.isFetching ? (
+                            <Loading />
+                        ) : (
+                            academyList.length > 0 ? (
+                                academyList.map((academy) => {
+                                    return <LiAcademyBox key={academy.ACADEMY_ID} academy={academy} />;
+                                })
+                            ) : (
+                                <NoResult />
+                            )
+                        )
+                    )}
+                    </ul>
+                </div>
+            </div>
+            {totalCount === 0 ? ( <></> ) : ( <Pagination totalCount={totalCount} link={`/academy/find`}/> ) }    // 학원이 0개일때는 Pagination  숨기기
+        </div>
+    </div>
+    <LocationModal modalIsOpen={modalIsOpen} 
+        setModalIsOpen={setModalIsOpen} 
+        enableBodyScroll={enableBodyScroll}/>
+    <CategoryModal modalIsOpen={categoryModalIsOpen} 
+        setModalIsOpen={setCategoryModalIsOpen} 
+        enableBodyScroll={enableBodyScroll}/>
+</RootContainer>
 ```
+getAcademyList요청이 Loading중이거나 Fetch 중일 때 Loading 페이지를 보여주고 결과가 없을때는 NoResult를 보여줌
+
+### LiAcademyBox - 광고와 학원목록
+```javascript
+const navigate = useNavigate();
+
+const academyNameWithoutParentheses = academy.ACA_NM.replace(/\([^)]*\)/g, ''); // "()"를 빈 문자열로 대체
+const koreanChars = academyNameWithoutParentheses.match(/[ㄱ-ㅎ가-힣]/g); // 한글만 추출
+const firstTwoKoreanChars = koreanChars ? koreanChars.slice(0, 2).join('') : '';
+const address = academy.FA_RDNMA.split(' ').slice(0, 2).join(' ');
+const realm =
+    academy.REALM_SC_NM === '국제화'
+        ? '외국어'
+        : academy.REALM_SC_NM === '정보'
+        ? 'IT'
+        : academy.REALM_SC_NM.replace(/\(대\)/g, '').trim();
+
+// 랜덤 색상을 useState로 한 번만 생성
+const [randomColor, setRandomColor] = useState(generateRandomColor());
+
+// 랜덤 색상을 생성하는 함수
+function generateRandomColor() {
+    return `rgb(${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)}, ${Math.floor(Math.random() * 127 + 128)})`;
+}
+
+<li css={S.LiBox} className='recent' onClick={()=> {navigate(`/academy/info/1?ACADEMY_ID=${academy.ACADEMY_ID}`)}}>
+    {academy.logoImg ? (
+        <img src={academy.logoImg} alt={`${academy.ACA_NM}의 로고`}  />
+    ): (
+        <div css={[S.SRandomImg, { backgroundColor: randomColor }]}>
+            <span>{firstTwoKoreanChars}</span>
+        </div>
+    )}
+    <strong>{academy.ACA_NM}</strong>
+    <div css={S.SAddress}><FaLocationDot />{address}</div>
+    <div>{realm}</div>
+    <div css={S.SLikeAndRating}>
+        <div>💕{academy.like_count}</div>
+        <div>⭐{academy.avg_score}</div>
+    </div>
+</li>
+```
+랜덤색상으로 학원이름 앞 두글자를 딴 이미지를 로고에 표시
+
+***
+- 입력 받은 값 처리
+```
+// 조건이 생길 때 학원목록 업데이트, 1page로 이동
+useEffect(() => {
+    navigate("/academy/find/1");
+    if(page === "1") {
+        getAcademyList.refetch();
+    }
+}, [selectedLocation, selectedCategory, selectedContent, selectedAgeOptions.length, selectedConvenienceOptions.length, classify]);
+
+
+const handleInputOnChange = (e) => {
+    setInputValue(e.target.value);
+}
+
+// 학원 이름 검색창에서 엔터 쳤을때 검색
+const handleKeyUp = (e) => {
+    if (e.key === 'Enter') {
+        handleSelectContent();
+    }
+};
+
+const handleSelectContent = () => {
+    setSelectedContent(inputValue);
+}
+
+// 학원 순서 필터링(등록순, 별점순, 관심학원순)
+const handleClassifyChange = (e) => {
+    setClassify(e.target.value);
+};
+
+const openLocationModal = () => {
+    setModalIsOpen(true);
+    disableBodyScroll();
+};
+
+const openCategoryModal = () => {
+    setCategoryModalIsOpen(true);
+    disableBodyScroll();
+};
+```
+지역, 카테고리, 이름, 수강연령, 시설 및 편의시설, 배열순서가 바뀔때마다 학원 목록을 다시 불러온다
+
+***
+- 요청
+```javascript
+// 광고 목록 가지고오기
+const getPurchaseAcademyList = useQuery(["getPurchaseAcademyList"], async () => {
+    try{
+        return await instance.get(`/ad/academies/random`)
+
+    } catch(error) {
+        console.error(error)
+    }
+}, {
+    retry: 0,
+    refetchOnWindowFocus: false
+})
+
+// 학원 목록 가지고오기
+const getAcademyList = useQuery(["getAcademyList", page], async () => {
+    try {
+        setTotalCount(0);
+        setAcademyList([]);
+        const options = {
+            params: {
+                pIndex: page,
+                pSize: 15,
+                ATPT_OFCDC_SC_CODE: selectedLocation.atpt_ofcdc_sc_code,
+                ADMST_ZONE_NM: selectedLocation.admst_zone_nm,
+                REALM_SC_NM: selectedCategory.realm_sc_nm,
+                LE_CRSE_NM: selectedCategory.le_crse_nm,
+                ACA_NM: selectedContent,
+                ageIds: selectedAgeOptions,
+                countAgeId: selectedAgeOptions.length,
+                convenienceIds: selectedConvenienceOptions,
+                countConvenienceId: selectedConvenienceOptions.length,
+                classify: classify
+            },
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            },
+            paramsSerializer: params => QueryString.stringify(params, {arrayFormat: 'repeat'})
+        }
+
+        // options를 get 요청
+        const response = await instance.get("/academies", options);
+
+        // Update academyList with the data from the response
+        setAcademyList(response.data.academies);
+
+        // Set the total count
+        setTotalCount(response.data.listTotalCount);
+        
+    } catch (error) {
+        console.error(error);
+    }
+}, {
+    retry: 0,
+    refetchOnWindowFocus: false
+}) 
+```
+- 광고목록은 유효한 학원 중 랜덤으로 3개 가지고옴 -> 빈도수에 따라 민원 제기 가능 -> 빈도수를 비슷하게 처리하는 로직 필요
+- qs 라이브러리를 이용해 ageIds와 convenienceIds는 파라미터를 반복해서 직렬로 전달 -> 서버에서 리스트로 받을 수 있다( IntegerList )
+***
 
 ## BackEnd
 
+### SecurityConfig
+
 ```java
+        http.authorizeRequests()
+                .antMatchers("/api/auth/**", "/api/option/**",
+                        "/api/academies", "/api/academy/**",
+                        "/api/review/**", "/api/purchase/**", "/api/academy/check/**",
+                        "/api/ad/academies/random")
+```
+
+학원 찾기와 학원 상세 페이지는 로그인 하지 않고도 이용 가능
+
+### AcademyController
+```java
+public class AcademyController {
+
+    private final AcademyService academyService;
+
+    //학원 전체 리스트 가져오기
+    @GetMapping("/api/academies")
+    public ResponseEntity<?> getAcademies(SearchAcademysReqDto searchAcademysReqDto) {
+        return ResponseEntity.ok(academyService.getAcademies(searchAcademysReqDto));
+    }
+}
+```
+
+### AcademyService
+```java
+public class AcademyService {
+
+    private final AcademyMapper academyMapper;
+
+    public AcademyListRespDto getAcademies(SearchAcademysReqDto searchAcademysReqDto) {
+        int listTotalCount = academyMapper.getListTotalCount(searchAcademysReqDto.toVo());    // 학원 수
+        List<Academy> academies = academyMapper.getAcademies(searchAcademysReqDto.toVo());    // 학원 목록
+        return new AcademyListRespDto(listTotalCount, academies);
+    }
+}    
+```
+AcademyListRespDto로 학원 수와 학원을 한번의 요청으로 응답함
+
+
+### repository - AcademyMapper
+```java
+@Mapper
+public interface AcademyMapper {
+    public List<Academy> getAcademies(AcademySearchVo academySearchVo);
+    public int getListTotalCount(AcademySearchVo academySearchVo);
+}
+```
+### academy_mapper
+```xml
+<mapper namespace="com.aws.compass.repository.AcademyMapper">
+    <resultMap id="academyMap" type="com.aws.compass.entity.Academy">
+        <id property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="ATPT_OFCDC_SC_CODE" column="ATPT_OFCDC_SC_CODE" />
+        <result property="ATPT_OFCDC_SC_NM" column="ATPT_OFCDC_SC_NM" />
+        <result property="ADMST_ZONE_NM" column="ADMST_ZONE_NM" />
+        <result property="ACA_INSTI_SC_NM" column="ACA_INSTI_SC_NM" />
+        <result property="ACA_ASNUM" column="ACA_ASNUM" />
+        <result property="ACA_NM" column="ACA_NM" />
+        <result property="ESTBL_YMD" column="ESTBL_YMD" />
+        <result property="REG_YMD" column="REG_YMD" />
+        <result property="REG_STTUS_NM" column="REG_STTUS_NM" />
+        <result property="CAA_BEGIN_YMD" column="CAA_BEGIN_YMD" />
+        <result property="CAA_END_YMD" column="CAA_END_YMD" />
+        <result property="TOFOR_SMTOT" column="TOFOR_SMTOT" />
+        <result property="DTM_RCPTN_ABLTY_NMPR_SMTOT" column="DTM_RCPTN_ABLTY_NMPR_SMTOT" />
+        <result property="REALM_SC_NM" column="REALM_SC_NM" />
+        <result property="LE_ORD_NM" column="LE_ORD_NM" />
+        <result property="LE_CRSE_LIST_NM" column="LE_CRSE_LIST_NM" />
+        <result property="LE_CRSE_NM" column="LE_CRSE_NM" />
+        <result property="PSNBY_THCC_CNTNT" column="PSNBY_THCC_CNTNT" />
+        <result property="THCC_OTHBC_YN" column="THCC_OTHBC_YN" />
+        <result property="BRHS_ACA_YN" column="BRHS_ACA_YN" />
+        <result property="FA_RDNMA" column="FA_RDNMA" />
+        <result property="FA_RDNDA" column="FA_RDNDA" />
+        <result property="FA_RDNZC" column="FA_RDNZC" />
+        <result property="FA_TELNO" column="FA_TELNO" />
+        <result property="LOAD_DTM" column="LOAD_DTM" />
+        <result property="logoImg" column="logo_img" />
+        <result property="like_count" column="LIKE_COUNT" />
+        <result property="avg_score" column="AVG_SCORE" />
+    </resultMap>
+
+    <select id="getListTotalCount" resultType="int" parameterType="com.aws.compass.vo.AcademySearchVo">
+        select
+            count(*)
+        FROM
+            academy_tb
+        WHERE
+            1 = 1
+            <if test="atptOfcdcScCode != null and !atptOfcdcScCode.equals('')">
+                AND ATPT_OFCDC_SC_CODE = #{atptOfcdcScCode}
+            </if>
+            <if test="admstZoneNm != null and !admstZoneNm.equals('')">
+                AND ADMST_ZONE_NM = #{admstZoneNm}
+            </if>
+            <if test="acaAsnum != null and !acaAsnum.equals('')">
+                AND ACA_ASNUM = #{acaAsnum}
+            </if>
+            <if test="acaNm != null and !acaNm.equals('')">
+                AND ACA_NM LIKE CONCAT('%', #{acaNm}, '%')
+            </if>
+            <if test="realmScNm != null and !realmScNm.equals('')">
+                AND REALM_SC_NM = #{realmScNm}
+            </if>
+            <if test="leOrdNm != null and !leOrdNm.equals('')">
+                AND LE_ORD_NM = #{leOrdNm}
+            </if>
+            <if test="leCrseNm != null and !leCrseNm.equals('')">
+                AND LE_CRSE_NM = #{leCrseNm}
+            </if>
+            <if test="ageIds != null and !ageIds.isEmpty()">
+                AND ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN attendance_age_tb aat ON aat.academy_info_id = ait.academy_info_id
+                    WHERE
+                        aat.age_id IN
+                        <foreach collection="ageIds" item="ageId" open="(" separator="," close=")">
+                            #{ageId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT aat.age_id) = #{countAgeId}
+                )
+            </if>
+            <if test="convenienceIds != null and !convenienceIds.isEmpty()">
+                AND ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN academy_convenience_tb act ON act.academy_info_id = ait.academy_info_id
+                    WHERE
+                        act.convenience_id IN
+                        <foreach collection="convenienceIds" item="convenienceId" open="(" separator="," close=")">
+                            #{convenienceId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT act.convenience_id) = #{countConvenienceId}
+                )
+            </if>
+    </select>
+
+    <select id="getAcademies" parameterType="com.aws.compass.vo.AcademySearchVo" resultMap="academyMap">
+        SELECT
+            at.ACADEMY_ID,
+            at.ATPT_OFCDC_SC_CODE,
+            at.ADMST_ZONE_NM,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.REALM_SC_NM,
+            at.LE_CRSE_NM,
+            at.FA_RDNMA,
+            at.FA_RDNDA,
+            at.FA_RDNZC,
+            at.FA_TELNO,
+            ait.logo_img,
+            IFNULL(lt.LIKE_COUNT, 0) AS LIKE_COUNT,
+            IFNULL(rt.AVG_SCORE, 0) AS AVG_SCORE
+        FROM
+            academy_tb at
+            left outer join academy_info_tb ait ON (ait.ACADEMY_ID = at.ACADEMY_ID)
+            left outer join (
+                SELECT ACADEMY_ID, COUNT(*) AS LIKE_COUNT
+                FROM like_tb
+                GROUP BY ACADEMY_ID
+            ) lt ON lt.ACADEMY_ID = at.ACADEMY_ID
+            left outer join (
+                SELECT ACADEMY_ID, AVG(score) AS AVG_SCORE
+                FROM review_tb
+                GROUP BY ACADEMY_ID
+            ) rt ON rt.ACADEMY_ID = at.ACADEMY_ID
+        WHERE
+            1 = 1
+            <if test="atptOfcdcScCode != null and !atptOfcdcScCode.equals('')">
+                AND at.ATPT_OFCDC_SC_CODE = #{atptOfcdcScCode}
+            </if>
+            <if test="admstZoneNm != null and !admstZoneNm.equals('')">
+                AND at.ADMST_ZONE_NM = #{admstZoneNm}
+            </if>
+            <if test="acaAsnum != null and !acaAsnum.equals('')">
+                AND at.ACA_ASNUM = #{acaAsnum}
+            </if>
+            <if test="acaNm != null and !acaNm.equals('')">
+                AND at.ACA_NM LIKE CONCAT('%', #{acaNm}, '%')
+            </if>
+            <if test="realmScNm != null and !realmScNm.equals('')">
+                AND at.REALM_SC_NM = #{realmScNm}
+            </if>
+            <if test="leOrdNm != null and !leOrdNm.equals('')">
+                AND at.LE_ORD_NM = #{leOrdNm}
+            </if>
+            <if test="leCrseNm != null and !leCrseNm.equals('')">
+                AND at.LE_CRSE_NM = #{leCrseNm}
+            </if>
+            <if test="ageIds != null and !ageIds.isEmpty()">
+                AND at.ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN attendance_age_tb aat ON aat.academy_info_id = ait.academy_info_id
+                    WHERE
+                        aat.age_id IN
+                        <foreach collection="ageIds" item="ageId" open="(" separator="," close=")">
+                            #{ageId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT aat.age_id) = #{countAgeId}
+                )
+            </if>
+            <if test="convenienceIds != null and !convenienceIds.isEmpty()">
+                AND at.ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN academy_convenience_tb act ON act.academy_info_id = ait.academy_info_id
+                    WHERE
+                        act.convenience_id IN
+                        <foreach collection="convenienceIds" item="convenienceId" open="(" separator="," close=")">
+                            #{convenienceId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT act.convenience_id) = #{countConvenienceId}
+                )
+            </if>
+        GROUP BY
+            at.ACADEMY_ID
+        ORDER BY
+            CASE
+                WHEN #{classify} = '등록순' THEN ait.academy_info_id
+                WHEN #{classify} = '좋아요순' THEN LIKE_COUNT
+                WHEN #{classify} = '별점순' THEN AVG_SCORE
+                ELSE ait.ACADEMY_ID
+            END DESC
+        LIMIT #{index}, #{pSize}
+    </select>
+</mapper>
+```
+ - 조건에 맞는 학원 수와 학원목록을 가지고 오는 쿼리
+ - getAcademies는 동적쿼리를 사용하여 파라미터 값이 있는 경우에만 조건이 추가되게함.
+ - 학원을 가지고 오는 시간을 단축하기 위해 ageIds와 convenienceIds는 조건이 있는 경우에만 서브쿼리를 사용해 academy_tb와 조인함
+ - ageIds와 convenienceIds는 List이기 때문에 foreach를 사용하여 IN 조건을 줌
+
+***
+
+### AdvertisementController
+```java
+public class AdvertisementController {
+
+    private final AdvertisementService advertisementService;
+
+    // 광고 학원 랜덤 나타내기
+    @GetMapping("/api/ad/academies/random")
+    public ResponseEntity<?> getRandomAcademies() {
+        return ResponseEntity.ok(advertisementService.getADOfRandomAcademies());
+    }
+
+
+}
+```
+### AdvertisementService
+```java
+public class AdvertisementService {
+    private final AdvertisementMapper advertisementMapper;
+
+    public List<Academy> getADOfRandomAcademies() {
+        return advertisementMapper.getADOfRandomAcademies();
+    }
+}
+```
+
+### repository - AdvertisementMapper
+```java
+@Mapper
+public interface AdvertisementMapper {
+
+    public List<Academy> getADOfRandomAcademies();
+}
 
 ```
+
+### advertisement_mapper
+```xml
+<mapper namespace="com.aws.compass.repository.AdvertisementMapper">
+    <resultMap id="academyMap" type="com.aws.compass.entity.Academy">
+        <id property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="ATPT_OFCDC_SC_CODE" column="ATPT_OFCDC_SC_CODE" />
+        <result property="ATPT_OFCDC_SC_NM" column="ATPT_OFCDC_SC_NM" />
+        <result property="ADMST_ZONE_NM" column="ADMST_ZONE_NM" />
+        <result property="ACA_INSTI_SC_NM" column="ACA_INSTI_SC_NM" />
+        <result property="ACA_ASNUM" column="ACA_ASNUM" />
+        <result property="ACA_NM" column="ACA_NM" />
+        <result property="ESTBL_YMD" column="ESTBL_YMD" />
+        <result property="REG_YMD" column="REG_YMD" />
+        <result property="REG_STTUS_NM" column="REG_STTUS_NM" />
+        <result property="CAA_BEGIN_YMD" column="CAA_BEGIN_YMD" />
+        <result property="CAA_END_YMD" column="CAA_END_YMD" />
+        <result property="TOFOR_SMTOT" column="TOFOR_SMTOT" />
+        <result property="DTM_RCPTN_ABLTY_NMPR_SMTOT" column="DTM_RCPTN_ABLTY_NMPR_SMTOT" />
+        <result property="REALM_SC_NM" column="REALM_SC_NM" />
+        <result property="LE_ORD_NM" column="LE_ORD_NM" />
+        <result property="LE_CRSE_LIST_NM" column="LE_CRSE_LIST_NM" />
+        <result property="LE_CRSE_NM" column="LE_CRSE_NM" />
+        <result property="PSNBY_THCC_CNTNT" column="PSNBY_THCC_CNTNT" />
+        <result property="THCC_OTHBC_YN" column="THCC_OTHBC_YN" />
+        <result property="BRHS_ACA_YN" column="BRHS_ACA_YN" />
+        <result property="FA_RDNMA" column="FA_RDNMA" />
+        <result property="FA_RDNDA" column="FA_RDNDA" />
+        <result property="FA_RDNZC" column="FA_RDNZC" />
+        <result property="FA_TELNO" column="FA_TELNO" />
+        <result property="LOAD_DTM" column="LOAD_DTM" />
+        <result property="logoImg" column="logo_img" />
+        <result property="like_count" column="LIKE_COUNT" />
+        <result property="avg_score" column="AVG_SCORE" />
+    </resultMap>
+
+    <select id="getADOfRandomAcademies"
+            resultMap="academyMap">
+        select
+            pit.ACADEMY_ID,
+            at.ACA_NM,
+            at.FA_RDNMA,
+            at.FA_RDNDA,
+            at.REALM_SC_NM,
+            at.LE_CRSE_LIST_NM,
+            at.FA_TELNO,
+            ait.logo_img,
+            IFNULL(lt.LIKE_COUNT, 0) AS LIKE_COUNT,
+            IFNULL(rt.AVG_SCORE, 0) AS AVG_SCORE
+        from
+            purchase_info_tb pit
+            left outer join academy_info_tb ait ON (ait.ACADEMY_ID = pit.ACADEMY_ID)
+            left outer join product_tb pt on(pt.product_id = pit.product_id)
+            left outer join academy_tb at on(at.ACADEMY_ID = pit.ACADEMY_ID)
+            left outer join (
+                SELECT ACADEMY_ID, COUNT(*) AS LIKE_COUNT
+                FROM like_tb
+                GROUP BY ACADEMY_ID
+            ) lt ON lt.ACADEMY_ID = at.ACADEMY_ID
+            left outer join (
+                SELECT ACADEMY_ID, AVG(score) AS AVG_SCORE
+                FROM review_tb
+                GROUP BY ACADEMY_ID
+            ) rt ON rt.ACADEMY_ID = at.ACADEMY_ID
+        where
+            now() <![CDATA[ <= ]]> date_add(purchase_date, interval pt.product_period DAY)    // 광고 유효성 검사
+        ORDER BY RAND() 
+        LIMIT 3;
+    </select>
+</mapper>
+```
+유효한 광고를 랜덤으로 배열 후 위의 3개를 가져옴
 
 </div>
 </details>
