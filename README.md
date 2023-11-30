@@ -968,7 +968,7 @@ public interface OptionMapper {
 
 ### option_mapper
 
-```java
+```xml
 <mapper namespace="com.aws.compass.repository.OptionMapper">
 
     <resultMap id="educationOfficeMap" type="com.aws.compass.entity.EducationOffice">
@@ -1378,7 +1378,7 @@ public interface OptionMapper {
 ```
 
 ### option_mapper
-```java
+```xml
 <mapper namespace="com.aws.compass.repository.OptionMapper">
 
     <resultMap id="convenienceMap" type="com.aws.compass.entity.Convenience">
