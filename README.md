@@ -955,7 +955,7 @@ public class OptionService {
 }
 ```
 
-### repository - Mapper
+### repository - OptionMapper
 ```java
 @Mapper
 public interface OptionMapper {
@@ -1368,7 +1368,7 @@ public class OptionService {
 }
 ```
 
-### repository - Mapper
+### repository - OptionMapper
 ```java
 @Mapper
 public interface OptionMapper {
