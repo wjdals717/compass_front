@@ -3037,6 +3037,519 @@ public interface AccountMapper {
   
 <details>
 <summary>나의 문의</summary>
+
+## FrontEnd
+
+### AcademyInquiry
+```javascript
+const navigate = useNavigate();
+const location = useLocation();
+const queryParams = new URLSearchParams(location.search);
+const academyId = queryParams.get('academyId');
+
+const queryClient = useQueryClient();
+const principal = queryClient.getQueryState("getPrincipal");
+
+const [ academyData, setAcademyData ] = useState(); // 학원 정보 상태
+const [ inquiryData, setInquiryData ] = useState({    // 문의 정보
+    userId: "",
+    academyId: "",
+    inquiryTitle: "",
+    inquiryContent: "",
+    answerChecked: 0
+});
+
+useEffect(() => {
+    setInquiryData({
+        ...inquiryData,
+        userId: principal.data.data.userId,
+        academyId: academyId
+    })
+}, []);
+
+<RootContainer>
+    <div css={S.SLayout}>
+        <h1 >문의사항</h1>
+        <div css={S.AcademyContainer}>
+            학원명: 
+            <div>{academyData?.ACA_NM}</div>
+        </div>
+        <div css={S.InputContainer}>
+            <input type="text" name='title' placeholder='제목' onChange={handleTitle}/>
+            <textarea placeholder='문의 내용을 입력해주세요!' style={{ resize: "none" }} name="" id="" cols="30" rows="10" onChange={handleContent}></textarea>
+        </div>
+        <div css={S.ButtonContainer}>
+            <button onClick={InquiryButtonClick}>문의하기</button>
+        </div>
+    </div>
+</RootContainer>
+```
+
+
+확인 하지 않은 답변의 개수는 StudentSidebar의 전역에서 관리(학원관리자도 쓰기 때문에)
+```javascript
+const [uncheckedAnswerCount, setUncheckedAnswerCount] = useState();
+
+        <StudentSidebar
+        uncheckedAnswerCount={uncheckedAnswerCount}
+        setUncheckedAnswerCount={setUncheckedAnswerCount}
+        />
+```
+
+### StudentSidebar
+```javascript
+<MyPageSidebar role={'학생'}>
+    <div css={S.IconContainer}>
+        <NavLink to='/account/mypage/like/1' activeClassName='active'>
+            <div>
+                <span>❤️</span>
+                <span>관심 학원 {likeCountOfMypage?.data?.data}개</span>
+            </div>
+        </NavLink>
+        <NavLink to='/account/mypage/user' activeClassName='active'>
+            <div>
+                <span><AiFillSetting/></span>
+                <span>개인 정보 수정</span>
+            </div>
+        </NavLink>
+    </div>
+    <div css={S.RoleContainer}>
+        <NavLink to='/account/mypage/appliedacademy/1' activeClassName='active'>
+            🗒️ 학원 신청 목록
+        </NavLink>
+        <NavLink to='/account/mypage/inquiry/1' activeClassName='active'>
+            <div css={S.InquiryBox}>
+                📞 나의 문의 
+                { uncheckedAnswerCount > 0 && <div>{uncheckedAnswerCount}</div>}
+            </div>
+        </NavLink>
+        <NavLink to='/account/mypage/review/1' activeClassName='active'>
+            📜 작성한 후기
+        </NavLink>
+    </div>
+</MyPageSidebar>
+```
+uncheckedAnswerCount가 0일때는 나타나지 않도록 처리
+### MypageInquiry
+```javascript
+<div>
+    <h2>📞 나의 문의</h2>
+    <div>
+        {getUserInquiryList.data.data.listTotalCount === 0 ? 
+        <EmptyBox comment={"정보가 궁금한 학원에 문의를 남겨보세요!"} link={'/academy/find/1'} btn={"보러 가기"}/> : 
+        <>
+            <div css={S.SComment}>학원을 클릭해서 작성한 문의와 답변을 확인해보세요! 확인 버튼을 누르면 알림이 사라집니다.</div>
+            <table css={GS.STable}>
+                <tbody>
+                    <tr>
+                        <td>No</td>
+                        <td>학원명</td>
+                        <td>문의사항</td>
+                        <td>답변</td>
+                    </tr>
+                    {!getUserInquiryList.isLoading && Array.isArray(getUserInquiryList?.data?.data.inquiries) && getUserInquiryList?.data?.data.inquiries.map(inquiry => {
+                        const answerDisplay = inquiry.answer ? 'O' : 'X';
+                        return  <tr key={inquiry.inquiryId} 
+                                    onClick={() => handleInquiryOnClick(inquiry)} 
+                                    style={{
+                                        fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal',
+                                        color: inquiry.answerChecked === 1 ? 'red' : 'black', cursor: 'pointer'
+                                    }}>
+                                    <td>{inquiry.inquiryId}</td>
+                                    <td>{inquiry.acaNm}</td>
+                                    <td>{inquiry.inquiryTitle}</td>
+                                    <td>{answerDisplay}</td>
+                                </tr>
+                    })}
+                </tbody>
+            </table>
+            <Pagination totalCount={getUserInquiryList.data.data.listTotalCount}
+                link={'/account/mypage/inquiry'}/>
+            {!!selectedInquiry && 
+                <SelectedInquiry 
+                    selectedInquiry={selectedInquiry}  
+                    setSelectedInquiry={setSelectedInquiry}
+                    page={page}/>
+            }
+        </>}
+    </div>
+</div>
+```
+getUserInquiryList가 빈값 일때는 보러가기 버튼을 통해 학원 찾기 페이지로 이동 가능
+
+### SelectedInquiry
+```javascript
+<div css={S.SContainer}>
+    <div css={S.SNameContainer}>
+        <span css={S.SName}>문의 내역</span>
+        <div css={S.SAnswerStatusColor(selectedInquiry.answer)}>{selectedInquiry.answer !== null ? '답변 완료' : '답변 대기중'}</div>
+    </div>
+    <div>
+        <div css={S.SInfoContainer}>
+            <span>학원명</span>
+            <div>{selectedInquiry.acaNm}</div>
+        </div>
+        <div css={S.SInfoContainer}>
+            <span>제목</span>
+            <div>{selectedInquiry.inquiryTitle}</div>
+        </div>
+        <div css={S.SInfoContainer}>
+            <span>내용</span>
+            <div>{selectedInquiry.inquiryContent}</div>
+        </div>
+    </div>
+    {!!selectedInquiry.answer && 
+        <div css={S.SInfoContainer}>
+            <span>답변</span>
+            <div>{selectedInquiry.answer}</div>
+        </div>}
+    <div css={S.SButtonContainer}>
+        <button onClick={handleCheckButton}>확인</button>
+    </div>
+</div>
+```
+
+***
+- 입력받은 값 처리
+
+### AcademyInquiry
+```javascript
+const handleTitle = (e) => {
+    setInquiryData({
+        ...inquiryData,
+        inquiryTitle: e.target.value
+    });
+}
+
+const handleContent = (e) => {
+    setInquiryData({
+        ...inquiryData,
+        inquiryContent: e.target.value
+    });
+}
+```
+타이틀과 문의내용이 둘다 입력되어야 문의 가능
+
+### StudentSidebar
+```javascript
+<div css={S.InquiryBox}>
+📞 나의 문의 
+{ uncheckedAnswerCount > 0 && <div>{uncheckedAnswerCount}</div>}
+</div>
+```
+uncheckedAnswerCount는 StudentSidebar가 랜더링 될 때마다 불러옴 
+
+### MypageInquiry
+```javascript
+{!getUserInquiryList.isLoading && Array.isArray(getUserInquiryList?.data?.data.inquiries) && getUserInquiryList?.data?.data.inquiries.map(inquiry => {
+    const answerDisplay = inquiry.answer ? 'O' : 'X';
+    return  <tr key={inquiry.inquiryId} 
+                onClick={() => handleInquiryOnClick(inquiry)} 
+                style={{
+                    fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal',
+                    color: inquiry.answerChecked === 1 ? 'red' : 'black', cursor: 'pointer'
+                }}>
+                <td>{inquiry.inquiryId}</td>
+                <td>{inquiry.acaNm}</td>
+                <td>{inquiry.inquiryTitle}</td>
+                <td>{answerDisplay}</td>
+            </tr>
+})}
+```
+- 답변을 확인 하지 않은 문의는 글자를 붉게 표시
+- 문의를 누르면 문의 상세페이지가 표 아래에 나타남
+- 선택된 문의는 bold를 써서 나타냄
+
+### SelectedInquiry
+```javascript
+const handleCheckButton = () => {
+    setSelectedInquiry(null);
+    queryClient.invalidateQueries(['getUserInquiryList', page]);
+}
+```
+확인 버튼을 누르면 선택된 문의 지우고 리스트 다시 블러오기
+
+***
+
+- 요청
+### AcademyInquiry
+```javascript
+// 학원 정보 가져오기
+const getAcademy = useQuery(["getAcademy"], async () => {
+    try {
+        const options = {
+            params: {
+                pIndex: 1,
+                pSize: 1,
+                ACADEMY_ID: academyId
+            },
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        // api, options를 get 요청
+        return await instance.get("/academy", options);
+    }catch (error) {
+        console.error(error);
+    }
+},
+{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setAcademyData(response.data.academy)
+    }
+})
+
+// 문의하기 버튼 클릭
+const InquiryButtonClick = async() => {
+    // inquiryTitle과 inquiryContent가 빈값이나 null인지 확인
+    if (!inquiryData.inquiryTitle || !inquiryData.inquiryContent) {
+        // 필수 입력값이 비어있는 경우 처리
+        alert("제목과 내용을 모두 입력해주세요.");
+        return;
+    }
+
+    const confirmed = window.confirm(`[${academyData.ACA_NM}]에 문의하시겠습니까?`);
+    if (confirmed) {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        try {
+            await instance.post("/inquiry", inquiryData, option);
+            navigate("/account/mypage/inquiry/1");
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        return;
+    }
+}
+```
+
+### StudentSidebar
+```javascript
+// 확인하지 않은 문의 수 불러오기
+const getUncheckedAnswerCount = useQuery(['getUncheckedAnswerCount'], async () => {
+    try {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/inquiry/${principal?.data?.data.userId}/UncheckedAnswerCount`, option)
+    } catch (error) {
+        console.error(error);
+    }
+},{
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: (data) => {
+        // uncheckedInquiryCount 값을 가져와서 상태 업데이트
+        setUncheckedAnswerCount(data.data);
+    }
+})
+```
+
+### MypageInquiry
+```javascript
+// 사용자가 작성한 문의 목록 가져오기
+const getUserInquiryList = useQuery(['getUserInquiryList', page], async () => {
+    try {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/student/inquiries/${principal.data.data.userId}/${page}`,option)
+    } catch (error) {
+        console.error(error);
+    }
+}, {
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: (data) => {
+        setSelectedInquiry(null);
+        // uncheckedInquiryCount 값을 가져와서 상태 업데이트
+        setUncheckedAnswerCount(data.data.uncheckedInquiryCount); 
+    }
+})
+
+// 문의 선택
+const handleInquiryOnClick = async (inquiry) => {
+    // 만약 answerChecked가 1이면 서버에 업데이트 요청을 보냄
+    if (inquiry.answerChecked === 1) {
+        try {
+            const option = {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            };
+            // 서버에 업데이트 요청
+            await instance.put(`/inquiry/${inquiry.inquiryId}/updateAnswerChecked?answerChecked=0`, null, option);
+            setSelectedInquiry(inquiry);
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        // answerChecked가 0이면 그냥 선택만 함
+        setSelectedInquiry(inquiry);
+    }
+};
+```
+- 사용자가 작성한 문의 목록 가져오기(정보를 전부 가져온다 -> 선택된 문의에 대한 요청을 따로 날리지 않음)
+- 문의 선택 시 답변 확인 업데이트(answer_checked가 1일때만 실행)
+
+## BackEnd
+
+### InquiryController
+```java
+public class InquiryController {
+
+    private final InquiryService inquiryService;
+
+    // 문의 작성
+    @PostMapping("/api/inquiry")
+    public ResponseEntity<?> writeInquiry(@Valid @RequestBody WriteInquiryReqDto inquiryReqDto, BindingResult bindingResult) {
+        return ResponseEntity.ok(inquiryService.writeInquiry(inquiryReqDto));
+    }
+
+    // 사용자(학생)가 작성한 후기 가져오기
+    @GetMapping("/api/student/inquiries/{userId}/{page}")
+    public ResponseEntity<?> getUserInquiryList(@PathVariable int userId,
+                                                @PathVariable int page) {
+        return ResponseEntity.ok(inquiryService.getUserInquiries(userId, page));
+    }
+
+    // 답변이 달린 문의 확인
+    @PutMapping("/api/inquiry/{inquiryId}/updateAnswerChecked")
+    public ResponseEntity<?> updateAnswerChecked(@PathVariable int inquiryId, @RequestParam int answerChecked) {
+        return ResponseEntity.ok(inquiryService.updateAnswerChecked(inquiryId, answerChecked));
+    }
+
+    // 답이 달렸지만 확인하지 않은 문의 수 가져오기
+    @GetMapping("/api/inquiry/{userId}/UncheckedAnswerCount")
+    public ResponseEntity<?> getUncheckedAnswerCount(@PathVariable int userId) {
+        return ResponseEntity.ok(inquiryService.getuncheckedAnswerCount(userId));
+    }
+
+}
+```
+
+### InquiryService
+
+```java
+public class InquiryService {
+    private final InpuiryMapper inpuiryMapper;
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean writeInquiry(WriteInquiryReqDto inquiryReqDto) {
+        Inquiry inquiry = inquiryReqDto.toInquiry();
+        return inpuiryMapper.saveInpuiry(inquiry) > 0;
+    }
+
+    public UserInquiriesRespDto getUserInquiries(int userId, int page) {
+        int index = (page - 1) * 5;
+
+        List<Inquiry> inquiries = inpuiryMapper.getUserInquiries(userId, index);
+        int listTotalCount = inpuiryMapper.getUserInquiriesCount(userId);
+        int uncheckedInquiryCount = inpuiryMapper.getUncheckedInquiry(userId);
+
+        return new UserInquiriesRespDto(inquiries, listTotalCount, uncheckedInquiryCount);
+    }
+
+    public boolean updateAnswerChecked(int inquiryId, int answerChecked) {
+        return  inpuiryMapper.updateAnswerChecked(inquiryId, answerChecked)> 0;
+    }
+
+    public int getuncheckedAnswerCount(int userId) {
+        return inpuiryMapper.getUncheckedInquiry(userId);
+    }
+}
+
+```
+
+### repository-InpuiryMapper
+```java
+@Mapper
+public interface InpuiryMapper {
+    public int saveInpuiry(Inquiry inquiry);
+    public int getUserInquiriesCount(int userId);
+    public List<Inquiry> getUserInquiries(int userId, int index);
+    public int updateAnswerChecked(int inquiryId, int answerChecked);
+    public int getUncheckedInquiry(int userId);
+}
+```
+updateAnswerChecked는 answer_checked를 무조건 0으로 바꾼다
+
+### inpuiry_mapper
+```xml
+<mapper namespace="com.aws.compass.repository.InpuiryMapper">
+    <resultMap id="getUserInquiryMap" type="com.aws.compass.entity.Inquiry">
+        <id property="inquiryId" column="inquiry_id"></id>
+        <result property="acaNm" column="ACA_NM"></result>
+        <result property="inquiryTitle" column="inquiry_title"></result>
+        <result property="inquiryContent" column="inquiry_content"></result>
+        <result property="answer" column="answer"></result>
+        <result property="answerChecked" column="answer_checked"></result>
+    </resultMap>
+
+    <insert id="saveInpuiry" parameterType="com.aws.compass.entity.Inquiry">
+        insert into inquiry_tb
+        value(0, #{userId}, #{academyId}, #{inquiryTitle}, #{inquiryContent}, #{answer}, #{answerChecked})
+    </insert>
+
+    <update id="updateAnswerChecked">
+        update inquiry_tb
+        set
+            answer_checked = #{answerChecked}
+        where
+            inquiry_id = #{inquiryId}
+    </update>
+
+    <select id="getUserInquiries" resultMap="getUserInquiryMap">
+        SELECT
+            it.inquiry_id,
+            at.ACA_NM,
+            it.inquiry_title,
+            it.inquiry_content,
+            it.answer,
+            it.answer_checked
+        FROM
+            inquiry_tb it
+            LEFT OUTER JOIN academy_tb at ON (at.ACADEMY_ID = it.ACADEMY_ID)
+        WHERE
+            user_id = #{userId}
+        ORDER BY
+            it.inquiry_id DESC
+        LIMIT #{index}, 5
+    </select>
+
+    <select id="getUserInquiriesCount" resultType="java.lang.Integer">
+        select
+            count(*)
+        FROM
+            inquiry_tb it
+            left outer join academy_tb at on(at.ACADEMY_ID = it.ACADEMY_ID)
+        WHERE
+            user_id = #{userId}
+    </select>
+
+    <select id="getUncheckedInquiry" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            inquiry_tb it
+            LEFT OUTER JOIN academy_tb at ON (at.ACADEMY_ID = it.ACADEMY_ID)
+        WHERE
+            user_id = #{userId}
+            and answer_checked = 1
+    </select>
+</mapper>
+```
+문의가 작성될때 answer_checked = 0, 답변이 달릴때 answer_checked = 1, 답변을 확인했을 때 answer_checked  = 0이 된다
 </details>
   
 <details>
