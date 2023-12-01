@@ -4908,7 +4908,7 @@ public interface AcademyMapper {
 등록이 된 학원만 있는 academy_info_tb에서 user_id로 학원을 찾아 ACADEMY_ID와 이름만 가지고 온다 -> 필터링에 사용
 
 ***
-#### 문의답변 부분
+### 문의답변 부분
 ### InquiryController 
 ```java
 public class InquiryController {
