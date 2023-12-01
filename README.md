@@ -4586,6 +4586,463 @@ public interface PaymentMapper {
   
 <details>
 <summary>나의 학원 문의</summary>
+
+#### 나의 문의는 학생과 동일
+
+## FrontEnd
+### MypageConsultation
+```javascript
+const navigate = useNavigate();
+const { page } = useParams();
+
+const queryClient = useQueryClient();
+const principal = queryClient.getQueryState("getPrincipal");
+
+const [ academyList, setAcademyList ] = useState();
+const [ selectedAcademy, setSelectedAcademy ] = useState({ value: null, label: '전체' });
+const [ selectedInquiry, setSelectedInquiry ] = useState();
+const [ unansweredOnly, setUnansweredOnly ] = useState(0);
+
+<div>
+    <h2>📩 나의 학원 문의</h2>
+    <div>
+        {getMyAcademyAll.data.data.listTotalCount === 0 ? 
+        <EmptyBox comment={"나의 학원이 없습니다."} link={'/academy/regist'} btn={"등록하기"}/> : 
+        <>
+            <div css={S.SOptionBox}>
+                <Select options={academyList} 
+                    css={S.SSelect}
+                    defaultValue={selectedAcademy}
+                    onChange={handleAcademyChange} 
+                />
+                <div>
+                    <input 
+                        type="checkbox" 
+                        id='unansweredOnly' 
+                        onChange={handleUnansweredOnlyChange} 
+                    />
+                    <label htmlFor="unansweredOnly">미답변 문의</label>
+                </div>
+            </div>
+            <div>
+                {!getInquiryList.isLoading && getInquiryList.data.data.inquiries.length === 0 ? 
+                <div css={S.SEmptyBox}>{selectedAcademy.label}에는 남겨진 문의가 없습니다...</div> : 
+                <>
+                    <table css={GS.STable}>
+                        <tbody>
+                            <tr>
+                                <td>No</td>
+                                <td>학원명</td>
+                                <td>문의사항</td>
+                                <td>등록자</td>
+                                <td>답변</td>
+                            </tr>
+                            { getInquiryList?.data?.data.inquiries.map(inquiry => {
+                                const answerDisplay = inquiry.answer ? 'O' : 'X';
+                                return  <tr key={inquiry.inquiryId} 
+                                            onClick={() => handleInquiryOnClick(inquiry)} 
+                                            style={{ fontWeight: selectedInquiry === inquiry ? 'bold' : 'normal', cursor: 'pointer'}}>
+                                            <td>{inquiry.inquiryId}</td>
+                                            <td>{inquiry.acaNm}</td>
+                                            <td>{inquiry.inquiryTitle}</td>
+                                            <td>{inquiry.nickname}</td>
+                                            <td>{answerDisplay}</td>
+                                        </tr>
+                            })}
+                        </tbody>
+                    </table>
+                    {!getInquiryList.isLoading &&
+                        <Pagination totalCount={getInquiryList.data.data.listTotalCount}
+                            link={`/account/mypage/consultation`}/>}
+                    {!!selectedInquiry && 
+                        <SelectedInquiry
+                            key={selectedInquiry.inquiryId}
+                            selectedInquiry={selectedInquiry}
+                            setSelectedInquiry={setSelectedInquiry}
+                            page={page} 
+                            selectedAcademy={selectedAcademy}
+                        />
+                    }
+                </>}
+            </div>
+        </>
+        }
+    </div>
+</div>
+```
+- 등록된 학원들의 문의 조회 가능
+- 학원 및 미답변 문의 필터링 가능 
+
+### SelectedInquiry
+```javascript
+const queryClient = useQueryClient(); // useQueryClient 훅을 사용하여 queryClient 가져오기
+const [ inquiry, setInquiry ] = useState({
+    answer: selectedInquiry.answer,
+    answerChecked: 1
+});
+
+<div css={S.SContainer}>
+    <div css={S.SNameContainer}>
+        <div css={S.SNameContainerLeft}>
+            <div css={S.SName}>문의 내역</div>
+            <div css={S.SAnswerStatusColor(selectedInquiry.answer)}>
+                {selectedInquiry.answer ? '답변 완료' : '답변 대기중'}
+            </div>
+        </div>
+        <div css={S.SClose} onClick={handleClose}>✖</div>
+    </div>
+    <div>
+        <div css={S.SInfoContainer}>
+            <span>학원명</span>
+            <div>{selectedInquiry.acaNm}</div>
+        </div>
+        <div css={S.SInfoContainer}>
+            <span>제목</span>
+            <div>{selectedInquiry.inquiryTitle}</div>
+        </div>
+        <div css={S.SInfoContainer}>
+            <span>내용</span>
+            <div css={S.SInquiry}>{selectedInquiry.inquiryContent}</div>
+        </div>
+    </div>
+    <div css={S.SLine}></div>
+    <div css={S.SInquiryAnswerContainer}>
+        <div css={S.SInquiryAnswer}>
+            <span>답변</span>
+            <textarea name="" id="" cols="80" rows="10"
+                defaultValue={inquiry.answer}
+                onChange={handleAnswerOnChange}
+            />
+        </div>
+        <div css={S.SButtonContainer}>
+            <button onClick={handleAnswerSubmit}>
+                확인
+            </button>
+        </div>
+        
+    </div>
+</div>
+```
+- 랜더링 될 때 answerChecked = 1로 고정 -> 작성자에게 답변이 달리거나 수정되었을 때 안내
+- 답변 수정 및 작성 가능 
+
+***
+- 입력받은 값 처리
+
+### MypageConsultation
+```javascript
+// 학원 선택 -> 기본 전체
+const handleAcademyChange = (selectedOption) => {
+    setSelectedAcademy(selectedOption);
+};
+
+// 문의 선택
+const handleInquiryOnClick = (inquiry) => {
+    setSelectedInquiry(inquiry);
+}
+
+// 미답변 문의 선택 여부 checked = 미답변 문의만 표시
+const handleUnansweredOnlyChange = (event) => {
+    setUnansweredOnly(event.target.checked ? 1 : 0);
+};
+
+if(getMyAcademyAll.isLoading || getInquiryList.isLoading) {
+    return <></>;
+}
+```
+
+### SelectedInquiry
+```javascript
+// 서버로 보낼 값 setting
+const handleAnswerOnChange = (e) => {
+    setInquiry({
+        ...inquiry,
+        answer: e.target.value
+    });
+}
+
+// 닫기 버튼
+const handleClose = () => {
+    setSelectedInquiry(null);
+}
+```
+
+***
+- 요청
+
+### MypageConsultation
+```javascript
+// 내가 가진 학원 목록
+const getMyAcademyAll = useQuery(['getMyAcademyAll'], async () => {
+    try {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/academies/${principal.data.data.userId}`,option)
+    } catch (error) {
+        console.error(error);
+    }
+}, {
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: response => {
+        setAcademyList([{ value: null, label: '전체' }, ...response.data.map(academy => {
+            return { value: academy.academyId, label: academy.acaNm };
+        })])
+        
+    }
+})
+
+// 내가 가진 학원에 대한 문의 목록
+const getInquiryList = useQuery(['getInquiryList', page, selectedAcademy, unansweredOnly], async () => {
+    try {
+        const option = {
+            params: {
+                userId: principal.data.data.userId,
+                academyId: selectedAcademy ? selectedAcademy.value : null,
+                page: page,
+                unansweredOnly: unansweredOnly
+            },
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        return await instance.get(`/academy/inquiries`,option)
+    } catch (error) {
+        console.error(error);
+    }
+}, {
+    retry: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: () => {
+        setSelectedInquiry(null);
+    }
+})
+```
+
+### SelectedInquiry
+```javascript
+// 답변 저장
+const handleAnswerSubmit = async () => {
+    if (inquiry.answer === selectedInquiry.answer) {
+        return;
+    }
+    if (inquiry.answer === "") {
+        alert("답변을 입력해 주세요");
+        return;
+    }
+    try {
+        const option = {
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+        }
+        await instance.put(`/inquiry/${selectedInquiry.inquiryId}/answer`, inquiry, option);
+        alert("답변 완료.")
+        // getInquiryList 쿼리를 다시 불러오기 위해 invalidateQueries 사용
+        queryClient.invalidateQueries(['getInquiryList', page, selectedAcademy]);
+    } catch (error) {
+        console.error(error);
+    }
+}
+```
+답변 완료 후 문의 목록을 다시 불러와 답변이 들어간것을 보여줌
+</br>
+
+## BackEnd
+
+### 나의학원 전부 가져오기 부분
+### AcademyController 
+```java
+public class AcademyController {
+
+    private final AcademyService academyService;
+
+    // 나의 학원 정보
+    @GetMapping("/api/academies/{userId}")
+    public ResponseEntity<?> getMyAcademyNames(@PathVariable int userId) {
+        return ResponseEntity.ok(academyService.getMyAcademyNames(userId));
+    }
+}
+```
+
+### AcademyService 
+```java
+public class AcademyService {
+
+    private final AcademyMapper academyMapper;
+
+    public List<MyAcademyNamesRespDto> getMyAcademyNames(int userId) {
+        List<MyAcademyNamesRespDto> myAcademyNamesRespDtos = new ArrayList<>();
+        academyMapper.getAcademyByuserId(userId).forEach(academy -> myAcademyNamesRespDtos.add(academy.toMyAcademyNamesRespDto()));
+        return myAcademyNamesRespDtos;
+    }
+}
+```
+
+### repository - AcademyMapper 
+```java
+@Mapper
+public interface AcademyMapper {
+    public List<Academy> getAcademyByuserId(int userId);
+}
+```
+
+### academy_mapper 
+```xml
+<mapper namespace="com.aws.compass.repository.AcademyMapper">
+    <select id="getAcademyByuserId" resultType="com.aws.compass.entity.Academy">
+        select
+            ait.ACADEMY_ID,
+            at.ACA_NM
+        from
+            academy_info_tb ait
+            left outer join academy_tb at on(at.ACADEMY_ID = ait.ACADEMY_ID)
+        where
+            ait.user_id = #{userId}
+    </select>
+</mapper>
+```
+등록이 된 학원만 있는 academy_info_tb에서 user_id로 학원을 찾아 ACADEMY_ID와 이름만 가지고 온다 -> 필터링에 사용
+
+***
+#### 문의답변 부분
+### InquiryController 
+```java
+public class InquiryController {
+
+    private final InquiryService inquiryService;
+
+    // 등록된 학원 문의 가져오기
+    @GetMapping("/api/academy/inquiries")
+    public ResponseEntity<?> getInquiryList(AcademyInquiryReqDto inquiryReqDto) {
+        System.out.println(inquiryReqDto);
+        return ResponseEntity.ok(inquiryService.getInquiryList(inquiryReqDto));
+    }
+
+    // 문의 답변 작성
+    @PutMapping("/api/inquiry/{inquiryId}/answer")
+    public ResponseEntity<?> writeInquiryAnswer(@PathVariable int inquiryId,
+                                                @Valid @RequestBody WriteInquiryAnswerReqDto inquiryAnswerReqDto,
+                                                BindingResult bindingResult) {
+        return ResponseEntity.ok(inquiryService.writeInquiryAnswer(inquiryId, inquiryAnswerReqDto));
+    }
+}
+```
+
+### InquiryService 
+```java
+public class InquiryService {
+    private final InpuiryMapper inpuiryMapper;
+
+    public AcademyInquiriesRespDto getInquiryList(AcademyInquiryReqDto inquiryReqDto) {
+        int index = (inquiryReqDto.getPage() - 1) * 5;
+        int userId = inquiryReqDto.getUserId();
+        int academyId = inquiryReqDto.getAcademyId();
+        int unansweredOnly = inquiryReqDto.getUnansweredOnly();
+        List<AcademyInquiry> inquiries = inpuiryMapper.getAcademyInquiries(userId, index, academyId, unansweredOnly);
+        int listTotalCount = inpuiryMapper.getAcademyInquiriesCount(userId, academyId, unansweredOnly);
+
+        return new AcademyInquiriesRespDto(inquiries, listTotalCount);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean writeInquiryAnswer(int inquiryId, WriteInquiryAnswerReqDto inquiryAnswerReqDto) {
+        Inquiry inquiry = inquiryAnswerReqDto.toInquiry();
+        inquiry.setInquiryId(inquiryId);
+        return inpuiryMapper.updateInquiry(inquiry) > 0;
+    }
+}
+
+```
+unansweredOnly는 미답변 항목 필터링을 위한 변수이다.
+
+### repository - InpuiryMapper 
+
+```java
+@Mapper
+public interface InpuiryMapper {
+    public List<AcademyInquiry> getAcademyInquiries(int userId, int index, int academyId, int unansweredOnly);
+    public int getAcademyInquiriesCount(int userId, int academyId, int unansweredOnly);
+    public int updateInquiry(Inquiry inquiry);
+}
+```
+
+### inpuiry_mapper
+```xml
+<mapper namespace="com.aws.compass.repository.InpuiryMapper">
+
+    <resultMap id="getAcademyInquiryMap" type="com.aws.compass.entity.AcademyInquiry">
+        <id property="inquiryId" column="inquiry_id"></id>
+        <result property="academyId" column="ACADEMY_ID"></result>
+        <result property="acaNm" column="ACA_NM"></result>
+        <result property="nickname" column="nickname"></result>
+        <result property="inquiryTitle" column="inquiry_title"></result>
+        <result property="inquiryContent" column="inquiry_content"></result>
+        <result property="answer" column="answer"></result>
+        <result property="answerChecked" column="answer_checked"></result>
+    </resultMap>
+
+    <update id="updateInquiry">
+        update inquiry_tb
+        set
+            answer= #{answer},
+            answer_checked = #{answerChecked}
+        where
+            inquiry_id = #{inquiryId}
+    </update>
+
+    <select id="getAcademyInquiries" resultMap="getAcademyInquiryMap">
+        SELECT
+            it.inquiry_id,
+            it.ACADEMY_ID,
+            at.ACA_NM,
+            ut.nickname,
+            it.inquiry_title,
+            it.inquiry_content,
+            it.answer,
+            it.answer_checked
+        FROM
+            inquiry_tb it
+            LEFT OUTER JOIN academy_tb at ON (at.ACADEMY_ID = it.ACADEMY_ID)
+            LEFT OUTER JOIN academy_info_tb aif ON(aif.ACADEMY_ID = it.ACADEMY_ID)
+            LEFT OUTER JOIN user_tb ut ON(ut.user_id = it.user_id)
+        where
+            aif.user_id = #{userId}
+            <if test="academyId != null and !academyId.equals('') and !academyId.equals(0)">
+                and it.ACADEMY_ID = #{academyId}
+            </if>
+            <if test="unansweredOnly.equals(1)">
+                AND it.answer IS NULL
+            </if>
+        order by
+            it.inquiry_id desc
+        LIMIT #{index}, 5
+    </select>
+
+    <select id="getAcademyInquiriesCount" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            inquiry_tb it
+            LEFT OUTER JOIN academy_tb at ON (at.ACADEMY_ID = it.ACADEMY_ID)
+            LEFT OUTER JOIN academy_info_tb aif ON(aif.ACADEMY_ID = it.ACADEMY_ID)
+            LEFT OUTER JOIN user_tb ut ON(ut.user_id = it.user_id)
+        where
+            aif.user_id = #{userId}
+            <if test="academyId != null and !academyId.equals('') and !academyId.equals(0)">
+                and it.ACADEMY_ID = #{academyId}
+            </if>
+            <if test="unansweredOnly.equals(1)">
+                AND it.answer IS NULL
+            </if>
+    </select>
+</mapper>
+``` 
+답변은 answer과 answer_checked만 업로드 형식으로 들어감 -> 추가적인 질문을 할때는 문의를 새로 써야한다
+
 </details>
 
 <br/>
